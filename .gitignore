@@ -1,14 +1,14 @@
 .DS_Store
 .dart_tool/
-*/pubspec.lock
 .packages
 .pub/
 *.iml
 .idea
-
+.metadata
 
 build/
 ios/.generated/
 ios/Flutter/Generated.xcconfig
 ios/Runner/GeneratedPluginRegistrant.*
 android/local.properties
+**/pubspec.lock

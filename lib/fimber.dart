@@ -1,7 +1,5 @@
 library fimber;
 
-import 'package:flutter/foundation.dart';
-
 /// Main static Fimber logging.
 class Fimber {
   static v(String msg, {Exception ex}) {
@@ -29,6 +27,7 @@ class Fimber {
         ?.forEach((logger) => logger.log(level, msg, tag: tag, ex: ex));
   }
 
+  /// Plant a tree - the source that will receive log messages.
   static plantTree(LogTree tree) {
     tree.getLevels().forEach((level) {
       var logList = _trees[level];
@@ -40,16 +39,21 @@ class Fimber {
     });
   }
 
+  /// Clear all trees from Fimber.
   static clearAll() {
     _trees.clear();
   }
 
   static Map<String, List<LogTree>> _trees = new Map<String, List<LogTree>>();
 
+  /// Creates auto tag and logger, then executes the code block with a logger to use.
+  /// Limiting number of 'stacktrace' based tag generation inside the block.
   static dynamic block(RunWithLog block) {
     return withTag(LogTree.getTag(stackIndex: 2), block);
   }
 
+  /// Creates logger with tag, then executes the code block with a logger to use.
+  /// Removing need of tag generation.
   static dynamic withTag(String tag, RunWithLog block) {
     var logger = FimberLog(tag);
     return block(logger);
@@ -69,9 +73,9 @@ class DebugTree extends LogTree {
   log(String level, String msg, {String tag, Exception ex}) {
     var logTag = tag ?? LogTree.getTag();
     if (logTag != null) {
-      debugPrint("$level\t$logTag:\t $msg \n${ex?.toString() ?? ''}");
+      print("$level\t$logTag:\t $msg \n${ex?.toString() ?? ''}");
     } else {
-      debugPrint("$level $msg \n${ex?.toString() ?? ''}");
+      print("$level $msg \n${ex?.toString() ?? ''}");
     }
   }
 
@@ -87,6 +91,7 @@ abstract class LogTree {
 
   List<String> getLevels();
 
+  /// Gets tag with $stackIndex - how many steps in stacktrace should be taken to grab log call.
   static String getTag({int stackIndex = 6}) {
     var stackTraceList = StackTrace.current.toString().split('\n');
     if (stackTraceList.length > stackIndex) {
@@ -103,6 +108,7 @@ abstract class LogTree {
 class FimberLog {
   String tag;
 
+  /// Creates FimberLog for a tag.
   FimberLog(this.tag);
 
   v(String msg, {Exception ex}) {
