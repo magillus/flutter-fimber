@@ -11,4 +11,14 @@ void main() {
   var logger = FimberLog("MY_TAG");
   logger.d("Test message", ex: Exception("test error"));
   logger.w("Test message with parameter: $parameter");
+
+  Fimber.withTag("TEST BLOCK", (log) {
+    log.d("Started block");
+    for (var i = 0; i >= 1; i++) {
+      log.d("value: $i");
+    }
+    log.i("End of block");
+  });
+
+
 }
