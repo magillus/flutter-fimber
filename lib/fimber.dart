@@ -43,7 +43,15 @@ class Fimber {
   }
 
   static Map<String, List<LogTree>> _trees = new Map<String, List<LogTree>>();
+
+  static dynamic withTag(String tag, RunWithLog block) {
+    var logger = FimberLog(tag);
+    return block(logger);
+  }
+
 }
+
+typedef RunWithLog = dynamic Function(FimberLog log);
 
 /// Debug log tree. Tag generation included
 class DebugTree extends LogTree {

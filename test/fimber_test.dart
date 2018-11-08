@@ -28,7 +28,7 @@ void main() {
     assert(assertTree.lastLogLine.contains("test error"));
   });
 
-  test('STATIC - log INFO message tag', (){
+  test('STATIC - log INFO message tag', () {
     Fimber.clearAll();
     var assertTree = AssertTree(["I", "W"]);
     Fimber.plantTree(assertTree);
@@ -37,7 +37,7 @@ void main() {
     assert(assertTree.lastLogLine.contains("I:main"));
   });
 
-  test('STATIC - log DEBUG message tag', (){
+  test('STATIC - log DEBUG message tag', () {
     var assertTree = AssertTree(["I", "W", "D", "E", "V"]);
     Fimber.plantTree(assertTree);
     Fimber.d("Test message");
@@ -45,7 +45,7 @@ void main() {
     assert(assertTree.lastLogLine.contains("D:main"));
   });
 
-  test('STATIC - log VERBOSE message tag', (){
+  test('STATIC - log VERBOSE message tag', () {
     Fimber.clearAll();
     var assertTree = AssertTree(["I", "W", "D", "E", "V"]);
     Fimber.plantTree(assertTree);
@@ -54,7 +54,7 @@ void main() {
     assert(assertTree.lastLogLine.contains("V:main"));
   });
 
-  test('STATIC - log ERROR message tag', (){
+  test('STATIC - log ERROR message tag', () {
     Fimber.clearAll();
     var assertTree = AssertTree(["I", "W", "D", "E", "V"]);
     Fimber.plantTree(assertTree);
@@ -63,7 +63,7 @@ void main() {
     assert(assertTree.lastLogLine.contains("E:main"));
   });
 
-  test('STATIC - log WARNING message tag', (){
+  test('STATIC - log WARNING message tag', () {
     Fimber.clearAll();
     var assertTree = AssertTree(["I", "W", "D", "E", "V"]);
     Fimber.plantTree(assertTree);
@@ -127,11 +127,39 @@ void main() {
     assert(assertTree.lastLogLine.contains("E:MYTAG"));
   });
 
+  test('Test with block tag', () {
+    Fimber.clearAll();
+    var assertTree = AssertTree(["I", "W", "D", "E", "V"]);
+    Fimber.plantTree(assertTree);
+    Fimber.plantTree(DebugTree());
+    var someMessage = "Test message from outside of block";
+    var output = Fimber.withTag("TEST BLOCK", (log) {
+      log.d("Started block");
+      var i = 0;
+      for (i = 0; i < 10; i++) {
+        log.d("$someMessage, value: $i");
+      }
+      log.i("End of block");
+      return i;
+    });
+    expect(10, output);
+    expect(12, assertTree.allLines.length);
+    assertTree.allLines.forEach((line) {
+      // test tag
+      assert(line.contains("TEST BLOCK"));
+    });
+    //inside lines contain external value
+    assertTree.allLines.sublist(1, 11).forEach((line) {
+      assert(line.contains(someMessage));
+      assert(line.contains("D:TEST BLOCK"));
+    });
+  });
 }
 
 class AssertTree extends LogTree {
   List<String> logLevels;
   String lastLogLine;
+  List<String> allLines = [];
 
   AssertTree(this.logLevels);
 
@@ -142,7 +170,8 @@ class AssertTree extends LogTree {
 
   @override
   log(String level, String msg, {String tag, Exception ex}) {
-    tag = (tag??getTag());
+    tag = (tag ?? getTag());
     lastLogLine = "$level:$tag\t$msg\t$ex}";
+    allLines.add(lastLogLine);
   }
 }
