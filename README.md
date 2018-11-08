@@ -13,7 +13,21 @@ To start add using it:
 dependencies:
   fimber: ^0.1.0
   ```
+- remember about import
+```dart
+import 'fimber.dart';
 
+```
+
+- Initialize logging tree on start of your application
+```dart
+
+void main() {
+  Fimber.addTree(DebugTree());
+  runApp(new MyApp());
+}
+ 
+```
 - Start using it with static methods:
 
 ```dart
