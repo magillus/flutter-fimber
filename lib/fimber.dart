@@ -73,10 +73,15 @@ class DebugTree extends LogTree {
   log(String level, String msg, {String tag, Exception ex}) {
     var logTag = tag ?? LogTree.getTag();
     if (logTag != null) {
-      print("$level\t$logTag:\t $msg \n${ex?.toString() ?? ''}");
+      printLog("$level\t$logTag:\t $msg \n${ex?.toString() ?? ''}");
     } else {
-      print("$level $msg \n${ex?.toString() ?? ''}");
+      printLog("$level $msg \n${ex?.toString() ?? ''}");
     }
+  }
+
+  /// Methog to overload printing to output stream the formatted logline
+  printLog(String logLine) {
+    print(logLine);
   }
 
   @override
