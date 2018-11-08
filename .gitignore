@@ -1,14 +1,17 @@
 .DS_Store
-.dart_tool/
+**/.dart_tool/
 .packages
 .pub/
 *.iml
 .idea
 .metadata
 
-build/
-ios/.generated/
-ios/Flutter/Generated.xcconfig
-ios/Runner/GeneratedPluginRegistrant.*
-android/local.properties
+*/fimber.iml
+*/flutter_fimber.iml
+
+**/build/
+**/ios/.generated/
+**/ios/Flutter/Generated.xcconfig
+**/ios/Runner/GeneratedPluginRegistrant.*
+**/android/local.properties
 **/pubspec.lock
