@@ -23,7 +23,8 @@ class Fimber {
   }
 
   static log(String level, String msg, {String tag, Exception ex}) {
-    _trees[level]?.forEach((logger) => logger.log(level, msg, tag:tag, ex: ex));
+    _trees[level]
+        ?.forEach((logger) => logger.log(level, msg, tag: tag, ex: ex));
   }
 
   static plantTree(LogTree tree) {
@@ -47,6 +48,9 @@ class Fimber {
 /// Debug log tree. Tag generation included
 class DebugTree extends LogTree {
   static const List<String> DEFAULT = ["D", "I", "W", "E"];
+  List<String> logLevels;
+
+  DebugTree({this.logLevels = DEFAULT});
 
   @override
   log(String level, String msg, {String tag, Exception ex}) {
@@ -60,7 +64,7 @@ class DebugTree extends LogTree {
 
   @override
   List<String> getLevels() {
-    return DEFAULT;
+    return logLevels;
   }
 }
 

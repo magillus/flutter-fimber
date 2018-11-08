@@ -60,3 +60,12 @@ class SomeBloc {
   }
 }
 ```
+
+
+## TODO
+
+- Make this Dart only Logger and use flutter dependency only for plugins
+- Add Tree for platform specific log/tag logging via channels - plugins
+- Add Crashlytics plugin (maybe other remote logger tools) with [flutter_crashlytics](https://pub.dartlang.org/packages/flutter_crashlytics)
+
+
