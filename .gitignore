@@ -3,6 +3,7 @@
 */pubspec.lock
 .packages
 .pub/
+*.iml
 
 build/
 ios/.generated/
