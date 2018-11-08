@@ -4,8 +4,11 @@
 .packages
 .pub/
 *.iml
+.idea
+
 
 build/
 ios/.generated/
 ios/Flutter/Generated.xcconfig
 ios/Runner/GeneratedPluginRegistrant.*
+android/local.properties
