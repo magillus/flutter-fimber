@@ -44,11 +44,14 @@ class Fimber {
 
   static Map<String, List<LogTree>> _trees = new Map<String, List<LogTree>>();
 
+  static dynamic block(RunWithLog block) {
+    return withTag(LogTree.getTag(stackIndex: 2), block);
+  }
+
   static dynamic withTag(String tag, RunWithLog block) {
     var logger = FimberLog(tag);
     return block(logger);
   }
-
 }
 
 typedef RunWithLog = dynamic Function(FimberLog log);
@@ -62,7 +65,7 @@ class DebugTree extends LogTree {
 
   @override
   log(String level, String msg, {String tag, Exception ex}) {
-    var logTag = tag ?? getTag();
+    var logTag = tag ?? LogTree.getTag();
     if (logTag != null) {
       print("$level\t$logTag:\t $msg \n${ex?.toString() ?? ''}");
     } else {
@@ -82,11 +85,15 @@ abstract class LogTree {
 
   List<String> getLevels();
 
-  String getTag() {
+  static String getTag({int stackIndex = 6}) {
     var stackTraceList = StackTrace.current.toString().split('\n');
-    return stackTraceList[6]
-        .replaceFirst("<anonymous closure>", "<ac>")
-        .split(' ')[6]; // need better error handling
+    if (stackTraceList.length > stackIndex) {
+      return stackTraceList[stackIndex]
+          .replaceFirst("<anonymous closure>", "<ac>")
+          .split(' ')[6]; // need better error handling
+    } else {
+      return "Flutter"; //default
+    }
   }
 }
 

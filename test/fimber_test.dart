@@ -154,6 +154,35 @@ void main() {
       assert(line.contains("D:TEST BLOCK"));
     });
   });
+
+  test('Test with block autotag', () {
+    Fimber.clearAll();
+    var assertTree = AssertTree(["I", "W", "D", "E", "V"]);
+    Fimber.plantTree(assertTree);
+    Fimber.plantTree(DebugTree());
+    var someMessage = "Test message from outside of block";
+    var output = Fimber.block((log) {
+      log.d("Started block");
+      var i = 0;
+      for (i = 0; i < 10; i++) {
+        log.d("$someMessage, value: $i");
+      }
+      log.i("End of block");
+      return i;
+    });
+    expect(10, output);
+    expect(12, assertTree.allLines.length);
+    assertTree.allLines.forEach((line) {
+      // test tag
+      assert(line.contains("main"));
+    });
+    //inside lines contain external value
+    assertTree.allLines.sublist(1, 11).forEach((line) {
+      assert(line.contains(someMessage));
+      assert(line.contains("D:main"));
+    });
+  });
+
 }
 
 class AssertTree extends LogTree {
@@ -170,7 +199,7 @@ class AssertTree extends LogTree {
 
   @override
   log(String level, String msg, {String tag, Exception ex}) {
-    tag = (tag ?? getTag());
+    tag = (tag ?? LogTree.getTag());
     lastLogLine = "$level:$tag\t$msg\t$ex}";
     allLines.add(lastLogLine);
   }
