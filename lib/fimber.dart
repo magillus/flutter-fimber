@@ -1,5 +1,7 @@
 library fimber;
 
+import 'package:flutter/foundation.dart';
+
 /// Main static Fimber logging.
 class Fimber {
   static v(String msg, {Exception ex}) {
@@ -67,9 +69,9 @@ class DebugTree extends LogTree {
   log(String level, String msg, {String tag, Exception ex}) {
     var logTag = tag ?? LogTree.getTag();
     if (logTag != null) {
-      print("$level\t$logTag:\t $msg \n${ex?.toString() ?? ''}");
+      debugPrint("$level\t$logTag:\t $msg \n${ex?.toString() ?? ''}");
     } else {
-      print("$level $msg \n${ex?.toString() ?? ''}");
+      debugPrint("$level $msg \n${ex?.toString() ?? ''}");
     }
   }
 
