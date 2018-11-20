@@ -72,11 +72,7 @@ class DebugTree extends LogTree {
   @override
   log(String level, String msg, {String tag, Exception ex}) {
     var logTag = tag ?? LogTree.getTag();
-    if (logTag != null) {
-      printLog("$level\t$logTag:\t $msg \n${ex?.toString() ?? ''}");
-    } else {
-      printLog("$level $msg \n${ex?.toString() ?? ''}");
-    }
+    printLog("$level\t$logTag:\t $msg \n${ex?.toString() ?? ''}");
   }
 
   /// Methog to overload printing to output stream the formatted logline
@@ -92,6 +88,8 @@ class DebugTree extends LogTree {
 
 /// Interface for LogTree
 abstract class LogTree {
+  static const String _defaultTag = "Flutter";
+
   log(String level, String msg, {String tag, Exception ex});
 
   List<String> getLevels();
@@ -100,11 +98,17 @@ abstract class LogTree {
   static String getTag({int stackIndex = 6}) {
     var stackTraceList = StackTrace.current.toString().split('\n');
     if (stackTraceList.length > stackIndex) {
-      return stackTraceList[stackIndex]
-          .replaceFirst("<anonymous closure>", "<ac>")
-          .split(' ')[6]; // need better error handling
+      var lineChunks = stackTraceList[stackIndex]
+          .replaceFirst("<anonymous closure>", "<ac>");
+      if (lineChunks.length > 6) {
+        return lineChunks
+            .split(' ')[6] ??
+            _defaultTag; // need better error handling
+      } else {
+        return _defaultTag;
+      }
     } else {
-      return "Flutter"; //default
+      return _defaultTag; //default
     }
   }
 }

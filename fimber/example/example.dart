@@ -12,6 +12,7 @@ void main() {
   logger.d("Test message", ex: Exception("test error"));
   logger.w("Test message with parameter: $parameter");
 
+  // save auto tag generation on each call in call block.
   Fimber.withTag("TEST BLOCK", (log) {
     log.d("Started block");
     for (var i = 0; i >= 1; i++) {
