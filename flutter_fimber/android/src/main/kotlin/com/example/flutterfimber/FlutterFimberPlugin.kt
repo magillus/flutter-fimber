@@ -1,4 +1,4 @@
-package com.example.flutterfimber
+package com.perlak.flutterfimber
 
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -16,8 +16,9 @@ class FlutterFimberPlugin : MethodCallHandler {
     }
 
     override fun onMethodCall(call: MethodCall, result: Result) {
-        if (call.method == "getPlatformVersion") {
-            result.success("Android ${android.os.Build.VERSION.RELEASE}")
+        if (call.method == "log") {
+
+            result.success()
         } else {
             result.notImplemented()
         }
