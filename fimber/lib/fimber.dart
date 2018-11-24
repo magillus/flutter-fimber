@@ -72,7 +72,13 @@ class DebugTree extends LogTree {
   @override
   log(String level, String msg, {String tag, Exception ex}) {
     var logTag = tag ?? LogTree.getTag();
-    printLog("$level\t$logTag:\t $msg \n${ex?.toString() ?? ''}");
+    if (ex != null) {
+      var stackTrace =
+      LogTree.getStacktrace().map((stackLine) => "\t$stackLine").join("\n");
+      printLog("$level\t$logTag:\t $msg \n${ex.toString()}\n$stackTrace");
+    } else {
+      printLog("$level\t$logTag:\t $msg");
+    }
   }
 
   /// Methog to overload printing to output stream the formatted logline
@@ -101,8 +107,7 @@ abstract class LogTree {
       var lineChunks = stackTraceList[stackIndex]
           .replaceFirst("<anonymous closure>", "<ac>");
       if (lineChunks.length > 6) {
-        return lineChunks
-            .split(' ')[6] ??
+        return lineChunks.split(' ')[6] ??
             _defaultTag; // need better error handling
       } else {
         return _defaultTag;
@@ -110,6 +115,12 @@ abstract class LogTree {
     } else {
       return _defaultTag; //default
     }
+  }
+
+  /// Gets tag with $stackIndex - how many steps in stacktrace should be taken to grab log call.
+  static List<String> getStacktrace({int stackIndex = 6}) {
+    var stackTraceList = StackTrace.current.toString().split('\n');
+    return stackTraceList.sublist(stackIndex);
   }
 }
 

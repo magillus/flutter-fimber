@@ -64,7 +64,17 @@ class _MyAppState extends State<MyApp> {
                 onPressed: () {
                   Fimber.d("Debug message test ${DateTime.now()}");
                 },
-              )
+              ),
+              FlatButton(
+                child: Text("LOG - WARNING with exception"),
+                onPressed: () {
+                  try {
+                    throw Exception("Test exception here");
+                  } catch (e) {
+                    Fimber.w("Warning message test ${DateTime.now()}", ex: e);
+                  }
+                },
+              ),
             ],
           ),
         ),

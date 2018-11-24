@@ -13,14 +13,19 @@ class FimberTree extends LogTree {
   @override
   log(String level, String msg, {String tag, Exception ex}) {
     var logTag = tag ?? LogTree.getTag();
-    var logLine = LogLine(
-        level, logTag, msg, exceptionDump: ex?.toString() ?? '');
+    var exDump = null;
+    if (ex != null) {
+      var stackTrace = LogTree.getStacktrace().map((
+          stackLine) => "\t$stackLine").join("\n");
+      exDump = "${ex.toString()} \n$stackTrace";
+    }
+    var logLine = LogLine(level, logTag, msg,
+        exceptionDump: exDump);
     var invokeMsg = logLine.toMsg();
     _channel.invokeMethod("log", invokeMsg);
 // todo test messsage events
     //    var message = logLine.serialize();
 //    _channel.send(message);
-
   }
 
   @override
@@ -30,7 +35,6 @@ class FimberTree extends LogTree {
 
   //static const BasicMessageChannel _channel = const BasicMessageChannel('flutter_fimber', StandardMessageCodec());
   static const MethodChannel _channel = const MethodChannel('flutter_fimber');
-
 }
 
 /// Transport object to native value
