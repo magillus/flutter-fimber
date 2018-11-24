@@ -1,6 +1,6 @@
 name: flutter_fimber
 description: Flutter extension for Fimber logging API.
-version: 0.0.1
+version: 0.1.2
 author: Mateusz Perlak <mati.akip@gmail.com>
 homepage: https://github.com/magillus/flutter-fimber
 
@@ -8,9 +8,7 @@ environment:
   sdk: ">=2.0.0-dev.68.0 <3.0.0"
 
 dependencies:
-  fimber:
-    path: ../fimber
-
+  fimber: "^0.1.2"
 
   flutter:
     sdk: flutter
