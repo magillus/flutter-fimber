@@ -17,5 +17,5 @@ dependencies:
 
 flutter:
   plugin:
-    androidPackage: com.example.flutterfimber
+    androidPackage: com.perlak.flutterfimber
     pluginClass: FlutterFimberPlugin

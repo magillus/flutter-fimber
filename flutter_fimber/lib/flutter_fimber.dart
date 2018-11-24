@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:fimber/fimber.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -14,8 +13,14 @@ class FimberTree extends LogTree {
   @override
   log(String level, String msg, {String tag, Exception ex}) {
     var logTag = tag ?? LogTree.getTag();
-    _channel.invokeMethod("log",
-        LogLine(level, logTag, msg, exceptionDump: ex?.toString() ?? ''));
+    var logLine = LogLine(
+        level, logTag, msg, exceptionDump: ex?.toString() ?? '');
+    var invokeMsg = logLine.toMsg();
+    _channel.invokeMethod("log", invokeMsg);
+// todo test messsage events
+    //    var message = logLine.serialize();
+//    _channel.send(message);
+
   }
 
   @override
@@ -23,6 +28,7 @@ class FimberTree extends LogTree {
     return logLevels;
   }
 
+  //static const BasicMessageChannel _channel = const BasicMessageChannel('flutter_fimber', StandardMessageCodec());
   static const MethodChannel _channel = const MethodChannel('flutter_fimber');
 
 }
@@ -35,6 +41,33 @@ class LogLine {
   String exceptionDump;
 
   LogLine(this.level, this.tag, this.message, {this.exceptionDump});
+
+  // to use with message event
+  ByteData serialize() {
+    WriteBuffer buffer = WriteBuffer();
+    _putString(buffer, level);
+    _putString(buffer, tag);
+    _putString(buffer, message);
+    _putString(buffer, exceptionDump);
+  }
+
+  _putString(WriteBuffer buffer, String value) {
+    buffer.putUint8(0xfe);
+    buffer.putInt32(value.length);
+    value.runes.map((int rune) {
+      buffer.putInt32(rune);
+    });
+  }
+
+  // to use with method call
+  dynamic toMsg() {
+    return {
+      "level": level,
+      "tag": tag,
+      "message": message,
+      "ex": exceptionDump
+    };
+  }
 }
 
 /// Logging tree that uses `debugPrint` which is not skipping log lines printed on Android

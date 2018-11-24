@@ -1,4 +1,4 @@
-group 'com.example.flutterfimber'
+group 'com.perlak.flutterfimber'
 version '1.0-SNAPSHOT'
 
 buildscript {

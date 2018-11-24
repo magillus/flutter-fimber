@@ -1,4 +1,4 @@
-package com.example.flutterfimberexample
+package com.perlak.flutterfimberexample
 
 import android.os.Bundle
 
