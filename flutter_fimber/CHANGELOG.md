@@ -1,3 +1,5 @@
-## 0.0.1 
+## 0.1.2 Android Plugin release for fimber dart logging
 
-* TODO: Describe initial release.
+* First version with Android Log support
+* Adds stacktrace from dart to std output when exception is passed
+* Log levels passed through
