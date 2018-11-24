@@ -14,7 +14,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  TargetPlatform platform;
 
   @override
   void initState() {
@@ -34,19 +33,16 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    platform = Theme
-        .of(context)
-        .platform;
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Plugin example app'),
+          title: const Text('Fimber Plugin example app'),
         ),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text('Fimber on on: $platform\n'),
+              Text('Fimber test'),
               FlatButton(
                 child: Text("LOG - ERROR"),
                 onPressed: () {
