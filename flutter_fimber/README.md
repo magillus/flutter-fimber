@@ -10,7 +10,7 @@ Supported only on Android as of right now.
 
 ### Dependency setup
 ```yaml
-  flutter_fimber: ^0.1.2
+  flutter_fimber: ^0.1.3
 ```
 ### Import setup
 ```dart
@@ -22,5 +22,7 @@ In code on start of your application add `FimberTree` like this:
 ```dart
   Fimber.plantTree(FimberTree());
 ``` 
+
+### Use as normal Fimber
 
 For more usage see [Fimber project](https://pub.dartlang.org/packages/fimber)
