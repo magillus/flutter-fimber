@@ -16,11 +16,14 @@ public class SwiftFlutterFimberPlugin: NSObject, FlutterPlugin {
     do {
      
         let data = call.arguments as! NSDictionary
-        print("level = ", data["level"])//["level"])
-        print("message = ", data["message"])
-        print("tag = ", data["tag"])
-        //print("tag: %s", t0)
-        //    print("level: %s", tag.level)
+        let message = data["message"] as? String?
+        if (message != nil) {
+            let tag = (data["tag"] as? String) ?? "flutter"
+            let level = (data["level"] as? String) ?? "D"
+            let exDump = (data["ex"])
+            
+            print("\(Date()) \(tag)/\(level):\t\(message!!)");
+        }
         result(0)
     } catch {
         result(-1)
