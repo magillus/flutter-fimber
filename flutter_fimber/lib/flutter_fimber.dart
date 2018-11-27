@@ -53,6 +53,7 @@ class LogLine {
     _putString(buffer, tag);
     _putString(buffer, message);
     _putString(buffer, exceptionDump);
+    return buffer.done();
   }
 
   _putString(WriteBuffer buffer, String value) {

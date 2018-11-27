@@ -171,7 +171,7 @@ void main() {
       return i;
     });
     expect(10, output);
-    expect(12, assertTree.allLines.length);
+    expect(12, assertTree.allLines.length); // 10 + start and end line
     assertTree.allLines.forEach((line) {
       // test tag
       assert(line.contains("main"));
@@ -181,6 +181,32 @@ void main() {
       assert(line.contains(someMessage));
       assert(line.contains("D:main"));
     });
+  });
+
+  test('Unplant trees test', () {
+    Fimber.clearAll();
+    var assertTreeA = AssertTree(["I", "W", "D", "E", "V"]);
+    var assertTreeB = AssertTree(["I", "W", "E"]);
+    Fimber.plantTree(assertTreeA);
+    Fimber.plantTree(assertTreeB);
+    Fimber.plantTree(DebugTree());
+
+    Fimber.e("Test Error");
+    Fimber.w("Test Warning");
+    Fimber.i("Test Info");
+    Fimber.d("Test Debug");
+
+    expect(4, assertTreeA.allLines.length);
+    expect(3, assertTreeB.allLines.length);
+
+    Fimber.unplantTree(assertTreeA);
+    Fimber.i("Test Info");
+    Fimber.d("Test Debug");
+    Fimber.w("Test Warning");
+    Fimber.e("Test Error");
+
+    expect(4, assertTreeA.allLines.length);
+    expect(6, assertTreeB.allLines.length);
   });
 
 }

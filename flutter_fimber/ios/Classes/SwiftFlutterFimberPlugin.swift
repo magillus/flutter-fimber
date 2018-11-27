@@ -9,6 +9,24 @@ public class SwiftFlutterFimberPlugin: NSObject, FlutterPlugin {
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    result("iOS " + UIDevice.current.systemVersion)
+    guard call.method == "log" else {
+        result(FlutterMethodNotImplemented)
+        return
+    }
+    do {
+     
+        let data = call.arguments as! NSDictionary
+        let message = data["message"] as? String?
+        if (message != nil) {
+            let tag = (data["tag"] as? String) ?? "flutter"
+            let level = (data["level"] as? String) ?? "D"
+            let exDump = (data["ex"])
+            // iOS devs help me to make it look better ;-)
+            print("\(Date()) \(tag)/\(level):\t\(message!!)");
+        }
+        result(0)
+    } catch {
+        result(-1)
+    }
   }
 }

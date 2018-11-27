@@ -8,27 +8,28 @@ Using similar (as far as Dart lang allows) method API with same concepts for tre
 ## Getting Started
 
 To start add using it:
-- Add `fimber` to `pubspec.yaml` 
+### Add `fimber` to `pubspec.yaml` 
 ```yaml
 dependencies:
-  fimber: ^0.1.2
+  fimber: ^0.1.3
   ```
-- remember about import
+- remember about import in file you plan to use Fimber
 ```dart
-import 'fimber.dart';
+import 'package:fimber/fimber.dart';
 
 ```
 
-- Initialize logging tree on start of your application
+### Initialize logging tree on start of your application
 ```dart
 
 void main() {
   Fimber.addTree(DebugTree());
-  runApp(new MyApp());
+  // app code here ...
 }
  
 ```
-- Start using it with static methods:
+
+### Start using it with static methods:
 
 ```dart
 import 'fimber.dart';
@@ -51,7 +52,9 @@ void main() {
 
 This will log the value and grab a TAG from stacktrace - that is little costly and if more logs will be done per second.
 
-- Create tagged version of Fimber and use its instance inside class, you can create logger for a dart file or for a class.
+### Create tagged version of Fimber 
+
+And use its instance inside class, you can create logger for a dart file or for a class.
 
 ```dart
 var logger = FimberLog("MY_TAG");
@@ -75,15 +78,29 @@ class SomeBloc {
 }
 ```
 
+### Use block function and pass method that uses logger.
+
+Use this function to log multiple messages with same tag, allows optional return value.
+Due to nature of auto-tag generation from stacktrace this block only does it once and create local FimberLog instance to pass into the anonymous method.
+
+```dart
+    var someMessage = "Test message from inside of block";
+    var output = Fimber.block((log) {
+      log.d("Started block");
+      var i = 0;
+      for (i = 0; i < 10; i++) {
+        log.d("$someMessage, value: $i");
+      }
+      log.i("End of block");
+      return i;
+    });
+```
 
 ## TODO - road map
 
 - un-plant single tree
-- Make this Dart only Logger and use flutter dependency only for plugins
-- withLogger blocks
-- Add Tree for platform specific log/tag logging via channels - plugins
+- allow line format configuration from dart code 
 - Add Crashlytics plugin (maybe other remote logger tools) with [flutter_crashlytics](https://pub.dartlang.org/packages/flutter_crashlytics)
-
 
 ## Licence
 
