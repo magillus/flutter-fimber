@@ -21,7 +21,7 @@ public class SwiftFlutterFimberPlugin: NSObject, FlutterPlugin {
             let tag = (data["tag"] as? String) ?? "flutter"
             let level = (data["level"] as? String) ?? "D"
             let exDump = (data["ex"])
-            
+            // iOS devs help me to make it look better ;-)
             print("\(Date()) \(tag)/\(level):\t\(message!!)");
         }
         result(0)

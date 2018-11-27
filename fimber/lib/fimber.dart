@@ -39,6 +39,12 @@ class Fimber {
     });
   }
 
+  static unplantTree(LogTree tree) {
+    _trees.forEach((level, levelTrees) {
+      levelTrees.remove(tree);
+    });
+  }
+
   /// Clear all trees from Fimber.
   static clearAll() {
     _trees.clear();
