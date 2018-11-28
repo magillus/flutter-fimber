@@ -13,20 +13,19 @@ public class SwiftFlutterFimberPlugin: NSObject, FlutterPlugin {
         result(FlutterMethodNotImplemented)
         return
     }
-    do {
-     
         let data = call.arguments as! NSDictionary
         let message = data["message"] as? String?
         if (message != nil) {
             let tag = (data["tag"] as? String) ?? "flutter"
             let level = (data["level"] as? String) ?? "D"
-            let exDump = (data["ex"])
+            let exDump = (data["ex"] as? String)
+            var logOutput = "\(Date()) \(tag)/\(level):\t\(message!!))"
+            if (exDump != nil) {
+                logOutput = "\(logOutput)\n\(String(describing: exDump!))"
+            }
             // iOS devs help me to make it look better ;-)
-            print("\(Date()) \(tag)/\(level):\t\(message!!)");
+            print(logOutput);
         }
         result(0)
-    } catch {
-        result(-1)
-    }
   }
 }
