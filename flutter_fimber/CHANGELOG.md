@@ -1,3 +1,7 @@
+## 0.1.4 iOS update
+
+* dump stacktrace for exception passed to log method
+
 ## 0.1.3 iOS plugin release
 
 * iOS plugin part
