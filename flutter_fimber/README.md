@@ -6,7 +6,7 @@ This plug-in will make the logging via Fimber into native OS logging output.
 
 ### Dependency setup
 ```yaml
-  flutter_fimber: ^0.1.3
+  flutter_fimber: ^0.1.4
 ```
 ### Import setup
 ```dart
@@ -19,5 +19,6 @@ In code on start of your application add `FimberTree` like this:
   Fimber.plantTree(FimberTree());
 ``` 
 
+iOS and Android platforms supported.
 
 For more usage see [Fimber project](https://pub.dartlang.org/packages/fimber)

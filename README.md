@@ -1,4 +1,4 @@
-# fimber 
+# Fimber 
 
 Extensible logging for Flutter.
 
@@ -11,7 +11,7 @@ To start add using it:
 ### Add `fimber` to `pubspec.yaml` 
 ```yaml
 dependencies:
-  fimber: ^0.1.3
+  fimber: ^0.1.4
   ```
 - remember about import in file you plan to use Fimber
 ```dart

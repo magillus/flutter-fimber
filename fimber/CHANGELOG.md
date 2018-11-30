@@ -1,3 +1,7 @@
+## [0.1.4] - iOS exception stacktrace logging
+
+- no update on fimber, only mirror update for flutter_fimber iOS plugin
+
 ## [0.1.3] - iOS plugin part for logging
 
 - Added support for iOS log output.
