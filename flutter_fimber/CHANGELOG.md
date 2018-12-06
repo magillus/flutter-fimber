@@ -1,3 +1,5 @@
+## 0.1.5 parity update with `fimber`
+
 ## 0.1.4 iOS update
 
 * dump stacktrace for exception passed to log method
