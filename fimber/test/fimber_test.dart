@@ -222,11 +222,31 @@ void main() {
     expect(3, assertTree.allLines.length);
     assert(assertTree.allLines[1].contains("new TestClass"));
   });
+
+  test('Factory method Log Tag generation', () {
+    Fimber.clearAll();
+
+    var assertTree = AssertTree(["I", "W", "D", "E", "V"]);
+    Fimber.plantTree(assertTree);
+    Fimber.plantTree(DebugTree());
+
+    Fimber.i("Start log test");
+    TestClass.factory1();
+    Fimber.i("End log test");
+    expect(4, assertTree.allLines.length);
+    assert(assertTree.allLines[1].contains("new TestClass.factory1"));
+    assert(assertTree.allLines[2].contains("new TestClass"));
+  });
 }
 
 class TestClass {
   TestClass() {
     Fimber.i("Logging from test class constructor.");
+  }
+
+  factory TestClass.factory1() {
+    Fimber.i("Logging from factory method");
+    return TestClass();
   }
 }
 
