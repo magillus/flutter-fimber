@@ -113,8 +113,14 @@ abstract class LogTree {
       var lineChunks = stackTraceList[stackIndex]
           .replaceFirst("<anonymous closure>", "<ac>");
       if (lineChunks.length > 6) {
-        return lineChunks.split(' ')[6] ??
-            _defaultTag; // need better error handling
+        var lineParts = lineChunks.split(' ');
+        if (lineParts.length > 8 &&
+            lineParts[6] == 'new') { // constructor logging
+          return "${lineParts[6]} ${lineParts[7]}";
+        } else {
+          return lineParts[6] ??
+              _defaultTag; // need better error handling
+        }
       } else {
         return _defaultTag;
       }

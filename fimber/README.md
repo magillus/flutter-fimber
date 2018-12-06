@@ -2,8 +2,9 @@
 
 Extensible logging for Flutter.
 
-Based on famous Android logging library - [Timber](https://github.com/JakeWharton/timber), this is library for simplify logging for Flutter.
+Package is based on famous Android logging library API - [Timber](https://github.com/JakeWharton/timber), this is library for simplify logging for Flutter.
 Using similar (as far as Dart lang allows) method API with same concepts for tree and planting logging tree.
+Also check out `flutter_fimber` which extends `fimber` to platform specific output and logging style.
 
 ## Getting Started
 
@@ -11,7 +12,7 @@ To start add using it:
 ### Add `fimber` to `pubspec.yaml` 
 ```yaml
 dependencies:
-  fimber: ^0.1.4
+  fimber: ^0.1.5
   ```
 - remember about import in file you plan to use Fimber
 ```dart
