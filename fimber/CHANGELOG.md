@@ -1,3 +1,7 @@
+## [0.1.5] - bug fixes 
+
+- Bug fix for log tag auto creation inside constructor.
+
 ## [0.1.4] - iOS exception stacktrace logging
 
 - no update on fimber, only mirror update for flutter_fimber iOS plugin

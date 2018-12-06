@@ -209,6 +209,25 @@ void main() {
     expect(6, assertTreeB.allLines.length);
   });
 
+  test('Constructor Log Tag generation', () {
+    Fimber.clearAll();
+
+    var assertTree = AssertTree(["I", "W", "D", "E", "V"]);
+    Fimber.plantTree(assertTree);
+    Fimber.plantTree(DebugTree());
+
+    Fimber.i("Start log test");
+    TestClass();
+    Fimber.i("End log test");
+    expect(3, assertTree.allLines.length);
+    assert(assertTree.allLines[1].contains("new TestClass"));
+  });
+}
+
+class TestClass {
+  TestClass() {
+    Fimber.i("Logging from test class constructor.");
+  }
 }
 
 class AssertTree extends LogTree {
