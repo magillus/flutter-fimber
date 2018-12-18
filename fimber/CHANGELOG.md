@@ -1,3 +1,8 @@
+## [0.1.6] - DebugTree time options
+
+- Added Elapsed time option for debug tree logging (useful for server side/dart vm logging)
+- Added Time option for debug tree
+
 ## [0.1.5] - bug fixes 
 
 - Bug fix for log tag auto creation inside constructor.

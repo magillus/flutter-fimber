@@ -189,7 +189,7 @@ void main() {
     var assertTreeB = AssertTree(["I", "W", "E"]);
     Fimber.plantTree(assertTreeA);
     Fimber.plantTree(assertTreeB);
-    Fimber.plantTree(DebugTree());
+    Fimber.plantTree(DebugTree(printTimeType: DebugTree.TIME_ELAPSED));
 
     Fimber.e("Test Error");
     Fimber.w("Test Warning");
@@ -214,7 +214,7 @@ void main() {
 
     var assertTree = AssertTree(["I", "W", "D", "E", "V"]);
     Fimber.plantTree(assertTree);
-    Fimber.plantTree(DebugTree());
+    Fimber.plantTree(DebugTree(printTimeType: null));
 
     Fimber.i("Start log test");
     TestClass();
@@ -228,7 +228,7 @@ void main() {
 
     var assertTree = AssertTree(["I", "W", "D", "E", "V"]);
     Fimber.plantTree(assertTree);
-    Fimber.plantTree(DebugTree());
+    Fimber.plantTree(DebugTree(printTimeType: DebugTree.TIME_ELAPSED));
 
     Fimber.i("Start log test");
     TestClass.factory1();
