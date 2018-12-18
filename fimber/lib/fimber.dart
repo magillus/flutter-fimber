@@ -71,9 +71,18 @@ typedef RunWithLog = dynamic Function(FimberLog log);
 /// Debug log tree. Tag generation included
 class DebugTree extends LogTree {
   static const List<String> DEFAULT = ["D", "I", "W", "E"];
+  static const int TIME_ELAPSED = 0;
+  static const int TIME_CLOCK = 1;
   List<String> logLevels;
+  final int printTimeType;
+  Stopwatch _elapsedTimeStopwatch;
 
-  DebugTree({this.logLevels = DEFAULT});
+  DebugTree({this.printTimeType = TIME_CLOCK, this.logLevels = DEFAULT}) {
+    if (printTimeType == TIME_ELAPSED) {
+      _elapsedTimeStopwatch = Stopwatch();
+      _elapsedTimeStopwatch.start();
+    }
+  }
 
   @override
   log(String level, String msg, {String tag, Exception ex}) {
@@ -87,9 +96,19 @@ class DebugTree extends LogTree {
     }
   }
 
-  /// Methog to overload printing to output stream the formatted logline
+  /// Method to overload printing to output stream the formatted logline
+  /// Adds handing of time
   printLog(String logLine) {
-    print(logLine);
+    if (printTimeType != null) {
+      if (printTimeType == TIME_ELAPSED) {
+        var timeElapsed = _elapsedTimeStopwatch.elapsed.toString();
+        print("$timeElapsed\t$logLine");
+      } else {
+        var date = DateTime.now().toIso8601String();
+        print("$date\t$logLine");
+      }
+    } else
+      print(logLine);
   }
 
   @override
@@ -114,12 +133,11 @@ abstract class LogTree {
           .replaceFirst("<anonymous closure>", "<ac>");
       if (lineChunks.length > 6) {
         var lineParts = lineChunks.split(' ');
-        if (lineParts.length > 8 &&
-            lineParts[6] == 'new') { // constructor logging
+        if (lineParts.length > 8 && lineParts[6] == 'new') {
+          // constructor logging
           return "${lineParts[6]} ${lineParts[7]}";
         } else {
-          return lineParts[6] ??
-              _defaultTag; // need better error handling
+          return lineParts[6] ?? _defaultTag; // need better error handling
         }
       } else {
         return _defaultTag;

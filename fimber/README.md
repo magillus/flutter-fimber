@@ -12,7 +12,7 @@ To start add using it:
 ### Add `fimber` to `pubspec.yaml` 
 ```yaml
 dependencies:
-  fimber: ^0.1.5
+  fimber: ^0.1.6
   ```
 - remember about import in file you plan to use Fimber
 ```dart
@@ -26,6 +26,12 @@ import 'package:fimber/fimber.dart';
 void main() {
   Fimber.addTree(DebugTree());
   // app code here ...
+  
+  // DebugTree options for time elapsed
+  // by default DebugTree will output timestamp of the VM/Flutter app
+  // to enable elapsed time since planting the tree log
+  Fimber.plantTree(DebugTree(printTimeType: DebugTree.TIME_ELAPSED));
+  
 }
  
 ```
