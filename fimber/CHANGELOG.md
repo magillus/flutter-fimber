@@ -1,3 +1,8 @@
+## [0.1.7] - Changed the `ex` class
+
+- Accepting dynamic (any class) on `ex` property of Logger. 
+This allows to pass Error or Exception or any other value to log statement - `toString()` is used for printout
+
 ## [0.1.6] - DebugTree time options
 
 - Added Elapsed time option for debug tree logging (useful for server side/dart vm logging)

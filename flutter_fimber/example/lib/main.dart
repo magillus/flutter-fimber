@@ -5,6 +5,7 @@ import 'package:flutter_fimber/flutter_fimber.dart';
 
 void main() {
   Fimber.plantTree(FimberTree());
+  Fimber.plantTree(DebugBufferTree.elapsed());
   runApp(MyApp());
 }
 
@@ -66,6 +67,16 @@ class _MyAppState extends State<MyApp> {
                 onPressed: () {
                   try {
                     throw Exception("Test exception here");
+                  } catch (e) {
+                    Fimber.w("Warning message test ${DateTime.now()}", ex: e);
+                  }
+                },
+              ),
+              FlatButton(
+                child: Text("LOG - WARNING with Error"),
+                onPressed: () {
+                  try {
+                    throw AssertionError();
                   } catch (e) {
                     Fimber.w("Warning message test ${DateTime.now()}", ex: e);
                   }

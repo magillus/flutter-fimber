@@ -228,7 +228,7 @@ void main() {
 
     var assertTree = AssertTree(["I", "W", "D", "E", "V"]);
     Fimber.plantTree(assertTree);
-    Fimber.plantTree(DebugTree(printTimeType: DebugTree.TIME_ELAPSED));
+    Fimber.plantTree(DebugTree.elapsed());
 
     Fimber.i("Start log test");
     TestClass.factory1();
@@ -236,6 +236,20 @@ void main() {
     expect(4, assertTree.allLines.length);
     assert(assertTree.allLines[1].contains("new TestClass.factory1"));
     assert(assertTree.allLines[2].contains("new TestClass"));
+  });
+
+  test('Throw Error and other any class', () {
+    Fimber.clearAll();
+    var assertTree = AssertTree(["I", "W"]);
+    Fimber.plantTree(assertTree);
+    Fimber.plantTree(DebugTree.elapsed());
+    Fimber.i("Test log statement");
+    Fimber.i("Test throw ERROR", ex: ArgumentError.notNull("testValue"));
+    Fimber.i("Test throw DATA", ex: TestClass());
+    Fimber.w("End log statment");
+    assert(assertTree.allLines[1]
+        .contains("Invalid argument(s) (testValue): Must not be null"));
+    assert(assertTree.allLines[3].contains("TestClass.instance"));
   });
 }
 
@@ -247,6 +261,11 @@ class TestClass {
   factory TestClass.factory1() {
     Fimber.i("Logging from factory method");
     return TestClass();
+  }
+
+  @override
+  String toString() {
+    return "TestClass.instance";
   }
 }
 
@@ -263,7 +282,7 @@ class AssertTree extends LogTree {
   }
 
   @override
-  log(String level, String msg, {String tag, Exception ex}) {
+  log(String level, String msg, {String tag, dynamic ex}) {
     tag = (tag ?? LogTree.getTag());
     lastLogLine = "$level:$tag\t$msg\t$ex}";
     allLines.add(lastLogLine);
