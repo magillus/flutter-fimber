@@ -2,27 +2,27 @@ library fimber;
 
 /// Main static Fimber logging.
 class Fimber {
-  static v(String msg, {Exception ex}) {
+  static v(String msg, {dynamic ex}) {
     log("V", msg, ex: ex);
   }
 
-  static d(String msg, {Exception ex}) {
+  static d(String msg, {dynamic ex}) {
     log("D", msg, ex: ex);
   }
 
-  static i(String msg, {Exception ex}) {
+  static i(String msg, {dynamic ex}) {
     log("I", msg, ex: ex);
   }
 
-  static w(String msg, {Exception ex}) {
+  static w(String msg, {dynamic ex}) {
     log("W", msg, ex: ex);
   }
 
-  static e(String msg, {Exception ex}) {
+  static e(String msg, {dynamic ex}) {
     log("E", msg, ex: ex);
   }
 
-  static log(String level, String msg, {String tag, Exception ex}) {
+  static log(String level, String msg, {String tag, dynamic ex}) {
     _trees[level]
         ?.forEach((logger) => logger.log(level, msg, tag: tag, ex: ex));
   }
@@ -84,8 +84,12 @@ class DebugTree extends LogTree {
     }
   }
 
+  factory DebugTree.elapsed({List<String> logLevels = DEFAULT}) {
+    return DebugTree(logLevels: logLevels, printTimeType: TIME_ELAPSED);
+  }
+
   @override
-  log(String level, String msg, {String tag, Exception ex}) {
+  log(String level, String msg, {String tag, dynamic ex}) {
     var logTag = tag ?? LogTree.getTag();
     if (ex != null) {
       var stackTrace =
@@ -121,7 +125,7 @@ class DebugTree extends LogTree {
 abstract class LogTree {
   static const String _defaultTag = "Flutter";
 
-  log(String level, String msg, {String tag, Exception ex});
+  log(String level, String msg, {String tag, dynamic ex});
 
   List<String> getLevels();
 
@@ -161,27 +165,27 @@ class FimberLog {
   /// Creates FimberLog for a tag.
   FimberLog(this.tag);
 
-  v(String msg, {Exception ex}) {
+  v(String msg, {dynamic ex}) {
     _log("V", tag, msg, ex: ex);
   }
 
-  d(String msg, {Exception ex}) {
+  d(String msg, {dynamic ex}) {
     _log("D", tag, msg, ex: ex);
   }
 
-  i(String msg, {Exception ex}) {
+  i(String msg, {dynamic ex}) {
     _log("I", tag, msg, ex: ex);
   }
 
-  w(String msg, {Exception ex}) {
+  w(String msg, {dynamic ex}) {
     _log("W", tag, msg, ex: ex);
   }
 
-  e(String msg, {Exception ex}) {
+  e(String msg, {dynamic ex}) {
     _log("E", tag, msg, ex: ex);
   }
 
-  _log(String level, String tag, String msg, {Exception ex}) {
+  _log(String level, String tag, String msg, {dynamic ex}) {
     Fimber.log(level, msg, tag: tag, ex: ex);
   }
 }
