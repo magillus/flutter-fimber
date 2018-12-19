@@ -6,7 +6,7 @@ This plug-in will make the logging via Fimber into native OS logging output.
 
 ### Dependency setup
 ```yaml
-  flutter_fimber: ^0.1.5
+  flutter_fimber: ^0.1.7
 ```
 ### Import setup
 ```dart

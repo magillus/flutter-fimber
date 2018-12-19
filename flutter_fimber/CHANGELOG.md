@@ -1,3 +1,7 @@
+## 0.1.7 Following 0.1.7 build of `fimber`
+
+* dynamic typ for `ex` paramter passed to log methods.
+
 ## 0.1.5 parity update with `fimber`
 
 ## 0.1.4 iOS update

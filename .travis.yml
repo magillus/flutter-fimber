@@ -1,4 +1,6 @@
 language: dart
+script:
+  - cd fimber
 dart:
   # Install the latest stable release
   - stable
