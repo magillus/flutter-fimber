@@ -3,6 +3,6 @@ dart:
   # Install the latest stable release
   - stable
 
-  - dartfmt
+  #- dartfmt
   # Warnings are fatal, but we only analyze the lib/ directory.
-  - dartanalyzer: --fatal-warnings lib
+  #- dartanalyzer: --fatal-warnings lib
