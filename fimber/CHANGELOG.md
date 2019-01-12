@@ -1,4 +1,4 @@
-## [0.1.8] - Changed the `ex` class
+## [0.1.8] - Support for stacktrace optional parameter
 
 - Stacktrace optional parameter after adding `ex` can be provided from `try catch` block's second parameter 
 ```dart
