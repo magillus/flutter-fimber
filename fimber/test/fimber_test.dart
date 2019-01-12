@@ -251,6 +251,32 @@ void main() {
         .contains("Invalid argument(s) (testValue): Must not be null"));
     assert(assertTree.allLines[3].contains("TestClass.instance"));
   });
+
+  test('Test Stacktrace', () {
+    Fimber.clearAll();
+    var assertTree = AssertTree(["I", "W"]);
+    Fimber.plantTree(assertTree);
+    Fimber.plantTree(DebugTree.elapsed());
+    Fimber.i("Test log statement");
+    var testClass = TestClass();
+    try {
+      testClass.throwSomeError();
+    } catch (e, s) {
+      Fimber.w("Eror caught", ex: e, stacktrace: s);
+    }
+    try {
+      testClass.throwSomeError();
+    } catch (e) {
+      Fimber.w("Eror caught", ex: e);
+    }
+    // with stacktrace provided
+    assert(assertTree.allLines[2].contains("Eror caught"));
+    assert(assertTree.allLines[2].contains("Test exception from TestClass"));
+    assert(assertTree.allLines[2].contains("TestClass.throwSomeError"));
+    // without stacktrace provided
+    assert(assertTree.allLines[3].contains("Test exception from TestClass"));
+    assert(!assertTree.allLines[3].contains("TestClass.throwSomeError"));
+  });
 }
 
 class TestClass {
@@ -261,6 +287,10 @@ class TestClass {
   factory TestClass.factory1() {
     Fimber.i("Logging from factory method");
     return TestClass();
+  }
+
+  throwSomeError() {
+    throw Exception("Test exception from TestClass");
   }
 
   @override
@@ -282,9 +312,11 @@ class AssertTree extends LogTree {
   }
 
   @override
-  log(String level, String msg, {String tag, dynamic ex}) {
+  log(String level, String msg,
+      {String tag, dynamic ex, StackTrace stacktrace}) {
     tag = (tag ?? LogTree.getTag());
-    lastLogLine = "$level:$tag\t$msg\t$ex}";
+    lastLogLine =
+    "$level:$tag\t$msg\t$ex\n${stacktrace?.toString()?.split('\n') ?? ""}";
     allLines.add(lastLogLine);
   }
 }
