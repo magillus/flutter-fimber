@@ -11,13 +11,16 @@ class FimberTree extends LogTree {
   FimberTree({this.logLevels = DEFAULT});
 
   @override
-  log(String level, String msg, {String tag, dynamic ex}) {
+  log(String level, String msg,
+      {String tag, dynamic ex, StackTrace stacktrace}) {
     var logTag = tag ?? LogTree.getTag();
     var exDump;
     if (ex != null) {
-      var stackTrace =
-      LogTree.getStacktrace().map((stackLine) => "\t$stackLine").join("\n");
-      exDump = "${ex.toString()} \n$stackTrace";
+      var tmpStacktrace =
+          stacktrace?.toString()?.split('\n') ?? LogTree.getStacktrace();
+      var stackTraceMessage =
+      tmpStacktrace.map((stackLine) => "\t$stackLine").join("\n");
+      exDump = "${ex.toString()} \n$stackTraceMessage";
     }
     var logLine = LogLine(level, logTag, msg, exceptionDump: exDump);
     var invokeMsg = logLine.toMsg();

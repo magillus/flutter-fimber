@@ -1,3 +1,14 @@
+## [0.1.8] - Support for stacktrace optional parameter
+
+- Stacktrace optional parameter after adding `ex` can be provided from `try catch` block's second parameter 
+```dart
+try {
+  ...
+} catch (ex, stacktrace) {
+  Fimber.e("log message", ex:ex, stacktrace: stacktrace);  
+}
+
+```
 ## [0.1.7] - Changed the `ex` class
 
 - Accepting dynamic (any class) on `ex` property of Logger. 

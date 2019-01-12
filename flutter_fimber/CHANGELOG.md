@@ -1,3 +1,7 @@
+## 0.1.8 Support for stacktrace
+
+- Support for stacktrace form `try catch` block from 0.1.8 `fimber` package
+
 ## 0.1.7 Following 0.1.7 build of `fimber`
 
 * dynamic typ for `ex` paramter passed to log methods.

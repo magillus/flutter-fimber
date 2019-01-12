@@ -12,6 +12,12 @@ void main() {
   logger.d("Test message", ex: Exception("test error"));
   logger.w("Test message with parameter: $parameter");
 
+  try {
+    throw Exception("Exception thrown");
+  } catch (e, stacktrace) {
+    // providing stacktrace will better show where issue was thrown
+    Fimber.i("Error caught.", ex: e, stacktrace: stacktrace);
+  }
   // save auto tag generation on each call in call block.
   Fimber.withTag("TEST BLOCK", (log) {
     log.d("Started block");
@@ -20,6 +26,4 @@ void main() {
     }
     log.i("End of block");
   });
-
-
 }
