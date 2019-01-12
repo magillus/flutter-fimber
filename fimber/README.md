@@ -12,7 +12,7 @@ To start add using it:
 ### Add `fimber` to `pubspec.yaml` 
 ```yaml
 dependencies:
-  fimber: ^0.1.7
+  fimber: ^0.1.8
   ```
 - remember about import in file you plan to use Fimber
 ```dart
@@ -53,6 +53,13 @@ void main() {
   Fimber.v("VERBOSE");
   Fimber.w("WARN");
   
+  try {
+    throw Exception("Exception thrown");
+  } catch (e, stacktrace) {
+    // providing `stacktrace` will better show where issue was thrown
+    // if not provided will use log line location.
+    Fimber.i("Error caught.", ex: e, stacktrace: stacktrace);
+  }
 }
 
 ```

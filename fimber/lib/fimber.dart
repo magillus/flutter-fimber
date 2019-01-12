@@ -2,29 +2,30 @@ library fimber;
 
 /// Main static Fimber logging.
 class Fimber {
-  static v(String msg, {dynamic ex}) {
-    log("V", msg, ex: ex);
+  static v(String msg, {dynamic ex, StackTrace stacktrace}) {
+    log("V", msg, ex: ex, stacktrace: stacktrace);
   }
 
-  static d(String msg, {dynamic ex}) {
-    log("D", msg, ex: ex);
+  static d(String msg, {dynamic ex, StackTrace stacktrace}) {
+    log("D", msg, ex: ex, stacktrace: stacktrace);
   }
 
-  static i(String msg, {dynamic ex}) {
-    log("I", msg, ex: ex);
+  static i(String msg, {dynamic ex, StackTrace stacktrace}) {
+    log("I", msg, ex: ex, stacktrace: stacktrace);
   }
 
-  static w(String msg, {dynamic ex}) {
-    log("W", msg, ex: ex);
+  static w(String msg, {dynamic ex, StackTrace stacktrace}) {
+    log("W", msg, ex: ex, stacktrace: stacktrace);
   }
 
-  static e(String msg, {dynamic ex}) {
-    log("E", msg, ex: ex);
+  static e(String msg, {dynamic ex, StackTrace stacktrace}) {
+    log("E", msg, ex: ex, stacktrace: stacktrace);
   }
 
-  static log(String level, String msg, {String tag, dynamic ex}) {
-    _trees[level]
-        ?.forEach((logger) => logger.log(level, msg, tag: tag, ex: ex));
+  static log(String level, String msg,
+      {String tag, dynamic ex, StackTrace stacktrace}) {
+    _trees[level]?.forEach((logger) =>
+        logger.log(level, msg, tag: tag, ex: ex, stacktrace: stacktrace));
   }
 
   /// Plant a tree - the source that will receive log messages.
@@ -89,12 +90,16 @@ class DebugTree extends LogTree {
   }
 
   @override
-  log(String level, String msg, {String tag, dynamic ex}) {
+  log(String level, String msg,
+      {String tag, dynamic ex, StackTrace stacktrace}) {
     var logTag = tag ?? LogTree.getTag();
     if (ex != null) {
-      var stackTrace =
-      LogTree.getStacktrace().map((stackLine) => "\t$stackLine").join("\n");
-      printLog("$level\t$logTag:\t $msg \n${ex.toString()}\n$stackTrace");
+      var tmpStacktrace =
+          stacktrace?.toString()?.split('\n') ?? LogTree.getStacktrace();
+      var stackTraceMessage =
+      tmpStacktrace.map((stackLine) => "\t$stackLine").join("\n");
+      printLog(
+          "$level\t$logTag:\t $msg \n${ex.toString()}\n$stackTraceMessage");
     } else {
       printLog("$level\t$logTag:\t $msg");
     }
@@ -125,7 +130,8 @@ class DebugTree extends LogTree {
 abstract class LogTree {
   static const String _defaultTag = "Flutter";
 
-  log(String level, String msg, {String tag, dynamic ex});
+  log(String level, String msg,
+      {String tag, dynamic ex, StackTrace stacktrace});
 
   List<String> getLevels();
 
@@ -165,27 +171,28 @@ class FimberLog {
   /// Creates FimberLog for a tag.
   FimberLog(this.tag);
 
-  v(String msg, {dynamic ex}) {
-    _log("V", tag, msg, ex: ex);
+  v(String msg, {dynamic ex, StackTrace stacktrace}) {
+    _log("V", tag, msg, ex: ex, stacktrace: stacktrace);
   }
 
-  d(String msg, {dynamic ex}) {
-    _log("D", tag, msg, ex: ex);
+  d(String msg, {dynamic ex, StackTrace stacktrace}) {
+    _log("D", tag, msg, ex: ex, stacktrace: stacktrace);
   }
 
-  i(String msg, {dynamic ex}) {
-    _log("I", tag, msg, ex: ex);
+  i(String msg, {dynamic ex, StackTrace stacktrace}) {
+    _log("I", tag, msg, ex: ex, stacktrace: stacktrace);
   }
 
-  w(String msg, {dynamic ex}) {
-    _log("W", tag, msg, ex: ex);
+  w(String msg, {dynamic ex, StackTrace stacktrace}) {
+    _log("W", tag, msg, ex: ex, stacktrace: stacktrace);
   }
 
-  e(String msg, {dynamic ex}) {
-    _log("E", tag, msg, ex: ex);
+  e(String msg, {dynamic ex, StackTrace stacktrace}) {
+    _log("E", tag, msg, ex: ex, stacktrace: stacktrace);
   }
 
-  _log(String level, String tag, String msg, {dynamic ex}) {
-    Fimber.log(level, msg, tag: tag, ex: ex);
+  _log(String level, String tag, String msg,
+      {dynamic ex, StackTrace stacktrace}) {
+    Fimber.log(level, msg, tag: tag, ex: ex, stacktrace: stacktrace);
   }
 }
