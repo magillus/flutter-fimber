@@ -73,12 +73,13 @@ class _MyAppState extends State<MyApp> {
                 },
               ),
               FlatButton(
-                child: Text("LOG - WARNING with Error"),
+                child: Text("LOG - WARNING with Error and stacktrace"),
                 onPressed: () {
                   try {
                     throw AssertionError();
-                  } catch (e) {
-                    Fimber.w("Warning message test ${DateTime.now()}", ex: e);
+                  } catch (e, s) {
+                    Fimber.w("Warning message test ${DateTime.now()}", ex: e,
+                        stacktrace: s);
                   }
                 },
               ),
