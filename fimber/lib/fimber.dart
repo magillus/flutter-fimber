@@ -1,5 +1,8 @@
 library fimber;
 
+
+export 'package:fimber/file_log.dart';
+
 /// Main static Fimber logging.
 class Fimber {
   static v(String msg, {dynamic ex, StackTrace stacktrace}) {

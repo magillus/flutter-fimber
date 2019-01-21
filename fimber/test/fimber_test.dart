@@ -319,4 +319,5 @@ class AssertTree extends LogTree {
     "$level:$tag\t$msg\t$ex\n${stacktrace?.toString()?.split('\n') ?? ""}";
     allLines.add(lastLogLine);
   }
+
 }
