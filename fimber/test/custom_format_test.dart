@@ -12,7 +12,8 @@ void main() {
 
     var elapsedMsg = AssertFormattedTree.elapsed(
         logFormat:
-            "${CustomFormatTree.TIME_ELAPSED_TOKEN} ${CustomFormatTree.MESSAGE_TOKEN}");
+        "${CustomFormatTree.TIME_ELAPSED_TOKEN} ${CustomFormatTree
+            .MESSAGE_TOKEN}");
     Fimber.plantTree(defaultFormat);
     Fimber.plantTree(elapsedMsg);
 
@@ -49,16 +50,37 @@ void main() {
 
     file.delete();
   });
+
+  test('Time format detection', () async {
+    var filePath = "test.log.txt";
+    Fimber.clearAll();
+    Fimber.plantTree(FimberFileTree(filePath,
+        logFormat: "${CustomFormatTree.TIME_ELAPSED_TOKEN} ${CustomFormatTree
+            .MESSAGE_TOKEN} ${CustomFormatTree.TIME_STAMP_TOKEN}"
+    ));
+
+    Fimber.i("Test log");
+
+    await Future.delayed(Duration(seconds: 1));
+    var file = File(filePath);
+    var lines = file.readAsLinesSync();
+    print("File: ${file.absolute}");
+    assert(lines.length == 1);
+    expect(lines[0].substring("0:00:00.008303".length + 1,
+        lines[0].length - " 2019-01-22T06:51:58.062997".length), "Test log");
+
+    file.delete();
+  });
 }
 
 class AssertFormattedTree extends CustomFormatTree {
   AssertFormattedTree(
       {String logFormat, int printTimeType = CustomFormatTree.TIME_CLOCK})
-      : super(logFormat: logFormat, printTimeType: printTimeType);
+      : super(logFormat: logFormat);
 
   factory AssertFormattedTree.elapsed({String logFormat}) {
     return AssertFormattedTree(
-        logFormat: logFormat, printTimeType: CustomFormatTree.TIME_ELAPSED);
+        logFormat: logFormat);
   }
 
   List<String> logLineHistory = [];

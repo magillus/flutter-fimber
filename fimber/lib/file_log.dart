@@ -2,57 +2,86 @@ import 'dart:io';
 
 import 'package:fimber/fimber.dart';
 
+/// File based logging output tree.
+/// This tree if planted will post short formatted (elapsed time and message) output into file specified in constructor.
+/// Note: Mostly for testing right now
 class FimberFileTree extends CustomFormatTree {
   String outputFileName;
 
-  FimberFileTree(
-    this.outputFileName, {
-    logLevels = CustomFormatTree.DEFAULT,
-    printTimeType = CustomFormatTree.TIME_ELAPSED,
-  }) : super(
-            logLevels: logLevels,
-            printTimeType: printTimeType,
-            logFormat:
-                "${CustomFormatTree.TIME_ELAPSED_TOKEN}\t${CustomFormatTree.MESSAGE_TOKEN}");
+  FimberFileTree(this.outputFileName,
+      {logLevels = CustomFormatTree.DEFAULT,
+        logFormat =
+        "${CustomFormatTree.TIME_STAMP_TOKEN}\t${CustomFormatTree
+            .MESSAGE_TOKEN}"})
+      : super(logLevels: logLevels, logFormat: logFormat);
 
   factory FimberFileTree.elapsed(String fileName,
       {List<String> logLevels = CustomFormatTree.DEFAULT}) {
     return FimberFileTree(fileName,
-        printTimeType: CustomFormatTree.TIME_ELAPSED);
+        logFormat:
+        "${CustomFormatTree.TIME_ELAPSED_TOKEN}\t${CustomFormatTree
+            .MESSAGE_TOKEN}");
   }
 
   @override
   void printLine(String line) {
-    File(outputFileName).writeAsString(line);
+    try {
+      File(outputFileName).writeAsString(line);
+    } catch (eio) {
+      print("Error writing log line to file: $eio");
+    }
   }
 }
 
 /// Debug log tree. Tag generation included
+///
 class CustomFormatTree extends LogTree {
   static const List<String> DEFAULT = ["D", "I", "W", "E"];
+
+  /// Format token for time stamp
   static const String TIME_STAMP_TOKEN = "{TIME_STAMP}";
+
+  /// Format token for time elapsed
   static const String TIME_ELAPSED_TOKEN = "{TIME_ELAPSED}";
+
+  /// Format token for log level character
   static const String LEVEL_TOKEN = "{LEVEL}";
+
+  /// Format token for log tag
   static const String TAG_TOKEN = "{TAG}";
+
+  /// Format token for main log message
   static const String MESSAGE_TOKEN = "{MESSAGE}";
+
+  /// Format token for exception message
   static const String EXCEPTION_MSG_TOKEN = "{EX_MSG}";
+
+  /// Format token for exception's stackstrace
   static const String EXCEPTION_STACK_TOKEN = "{EX_STACK}";
 
   static const String DEFAULT_FORMAT =
       "$TIME_STAMP_TOKEN\t$LEVEL_TOKEN\t$TAG_TOKEN:\t $MESSAGE_TOKEN";
 
-  static const int TIME_ELAPSED = 0;
-  static const int TIME_CLOCK = 1;
+  /// Flag elapsed time in format
+  static const int TIME_ELAPSED = 1;
+
+  /// Flag clodk time in format
+  static const int TIME_CLOCK = 2;
   List<String> logLevels;
-  final int printTimeType;
+  int printTimeFlag;
   Stopwatch _elapsedTimeStopwatch;
   String logFormat;
 
   CustomFormatTree(
-      {this.logFormat = DEFAULT_FORMAT,
-      this.printTimeType = TIME_CLOCK,
-      this.logLevels = DEFAULT}) {
-    if (printTimeType == TIME_ELAPSED) {
+      {this.logFormat = DEFAULT_FORMAT, this.logLevels = DEFAULT}) {
+    printTimeFlag = 0;
+    if (logFormat.contains(TIME_STAMP_TOKEN)) {
+      printTimeFlag |= TIME_CLOCK;
+    }
+    if (logFormat.contains(TIME_ELAPSED_TOKEN)) {
+      printTimeFlag |= TIME_ELAPSED;
+    }
+    if (printTimeFlag & TIME_ELAPSED > 0) {
       _elapsedTimeStopwatch = Stopwatch();
       _elapsedTimeStopwatch.start();
     }
@@ -121,8 +150,8 @@ class CustomFormatTree extends LogTree {
   /// Method to overload printing to output stream the formatted logline
   /// Adds handing of time
   printLog(String logLine) {
-    if (printTimeType != null) {
-      if (printTimeType == TIME_ELAPSED) {
+    if (printTimeFlag != null) {
+      if (printTimeFlag & TIME_ELAPSED > 0) {
         var timeElapsed = _elapsedTimeStopwatch.elapsed.toString();
         printLine("$timeElapsed\t$logLine");
       } else {

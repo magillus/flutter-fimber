@@ -112,7 +112,8 @@ Due to nature of auto-tag generation from stacktrace this block only does it onc
 
 ## TODO - road map
 
-- allow line format configuration from dart code 
+- See  [Issues on Github](https://github.com/magillus/flutter-fimber/issues)
+- File rotation, etc.
 - Add Crashlytics plugin (maybe other remote logger tools) with [flutter_crashlytics](https://pub.dartlang.org/packages/flutter_crashlytics)
 
 ## Licence
