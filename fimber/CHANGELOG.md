@@ -1,3 +1,7 @@
+## [0.1.9] - CustomFormatTree and FileLogTree 
+
+- Custom format tree and File logging tree based on custom format. This will allow DartVM apps to output to defined file.
+
 ## [0.1.8] - Support for stacktrace optional parameter
 
 - Stacktrace optional parameter after adding `ex` can be provided from `try catch` block's second parameter 
