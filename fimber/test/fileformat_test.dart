@@ -50,4 +50,77 @@ void main() async {
     File(firstFile).deleteSync();
     File(secondFile).deleteSync();
   });
+
+  test("Old file detection test", () async {
+    Fimber.clearAll();
+
+    // roll file every 20 bytes (in reality every log line)
+
+    var logTree = SizeRollingFileTree(DataSize.bytes(20));
+    // detection tests
+    expect(logTree.isLogFile("path/test/log_1.txt"), true);
+    expect(logTree.getLogIndex("path/test/log_nothing.txt"), null);
+    expect(logTree.getLogIndex("path/test/log_1.txt"), 1);
+
+    Fimber.plantTree(logTree);
+
+    await Future.delayed(Duration(milliseconds: 200));
+    Fimber.i("Log single line - A");
+
+    await Future.delayed(Duration(milliseconds: 200));
+    var logFile1 = logTree.outputFileName;
+    print(logFile1);
+    expect(logFile1, "log_1.txt");
+    Fimber.i("Log single line - B");
+
+    await Future.delayed(Duration(milliseconds: 200));
+    var logFile2 = logTree.outputFileName;
+    print(logFile2);
+    expect(logFile2, "log_2.txt");
+    await Future.delayed(Duration(milliseconds: 200));
+
+    logTree = SizeRollingFileTree(DataSize.bytes(20));
+
+    Fimber.clearAll();
+    Fimber.plantTree(logTree);
+    await Future.delayed(Duration(milliseconds: 200));
+    Fimber.i("Log single line - C");
+
+    var logFile3 = logTree.outputFileName;
+    print(logFile3);
+    expect(logFile3, "log_3.txt");
+
+    await Future.delayed(Duration(milliseconds: 200));
+
+    File(logFile2).deleteSync();
+    File(logFile1).deleteSync();
+    File(logFile3).deleteSync();
+  });
+
+  test("File size rolling test", () async {
+    Fimber.clearAll();
+    // roll file every 20 bytes (in reality every log line)
+    var logTree = SizeRollingFileTree(DataSize.bytes(20));
+
+    //logTree.detectFileIndex();
+
+    await Future.delayed(Duration(milliseconds: 100));
+    Fimber.plantTree(logTree);
+
+    Fimber.i("Test log for more then limit.");
+    await Future.delayed(Duration(milliseconds: 100));
+    var firstFile = logTree.outputFileName;
+    Fimber.i("Test log for second file");
+    var secondFile = logTree.outputFileName;
+
+    assert(firstFile != secondFile);
+    print(firstFile);
+    print(secondFile);
+    assert(File(firstFile).existsSync());
+    assert(File(secondFile).existsSync());
+    await Future.delayed(Duration(seconds: 1));
+    File(firstFile).deleteSync();
+    File(secondFile).deleteSync();
+  });
+
 }

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:core';
 import 'dart:io';
 
@@ -43,7 +44,7 @@ class SizeRollingFileTree extends RollingFileTree {
 
   String filenamePrefix;
   String filenamePostfix;
-  int fileIndex = 0;
+  FutureOr<int> fileIndex = 0;
 
   SizeRollingFileTree(this.maxDataSize,
       {logFormat = CustomFormatTree.DEFAULT_FORMAT,
@@ -51,23 +52,91 @@ class SizeRollingFileTree extends RollingFileTree {
         this.filenamePostfix = ".txt",
         logLevels = CustomFormatTree.DEFAULT})
       : super(logFormat: logFormat, logLevels: logLevels) {
-    //Directory.current.list(false, false).map((f)=>f.path.allMatches(string))
-    outputFileName = _currentFile();
+    detectFileIndex();
   }
 
-  String _currentFile() {
-    return "${filenamePrefix}_${fileIndex}_$filenamePostfix";
+  detectFileIndex() async {
+    var logListIndexes = await Directory.current
+        .list()
+        .map((fe) => getLogIndex(fe.path))
+        .where((i) => i != null)
+        .toList();
+    logListIndexes.sort();
+    print("log list indexes: $logListIndexes");
+    if (logListIndexes.length > 0) {
+      var max = logListIndexes.last;
+      fileIndex = max;
+      if (_isFileOverSize(_logFile(max))) {
+        rollToNextFile();
+      }
+    } else {
+      fileIndex = 0;
+      rollToNextFile();
+    }
+  }
+
+  FutureOr<String> _currentFile() async {
+    return _logFile(await fileIndex);
+  }
+
+  String _logFile(int index) {
+    return "${filenamePrefix}${index}$filenamePostfix";
   }
 
   @override
   void rollToNextFile() async {
-    fileIndex += 1;
-    outputFileName = _currentFile();
+    fileIndex = Future.sync(() async {
+      return (await fileIndex) + 1;
+    });
+    outputFileName = await _currentFile();
+    if (File(outputFileName).existsSync()) {
+      File(outputFileName).deleteSync();
+    }
+  }
+
+  bool _isFileOverSize(String path) {
+    var file = File(path);
+    if (file.existsSync()) {
+      return File(path).lengthSync() > maxDataSize.realSize;
+    } else {
+      return false;
+    }
   }
 
   @override
-  bool shouldRollNextFile() {
-    return File(_currentFile()).lengthSync() > maxDataSize.realSize;
+  Future<bool> shouldRollNextFile() async {
+    var file = File(await _currentFile());
+    if (file.existsSync()) {
+      return file.lengthSync() > maxDataSize.realSize;
+    } else
+      return false;
+  }
+
+  RegExp get fileRegExp =>
+      RegExp("${filenamePrefix}([0-9]+)?${filenamePostfix}");
+
+  int getLogIndex(String filePath) {
+    if (isLogFile(filePath)) {
+      return fileRegExp.allMatches(filePath).map((match) {
+        if (match != null && match.groupCount > 0) {
+          return int.parse(match.group(1));
+        } else {
+          return null;
+        }
+      }).firstWhere((i) => i != null, orElse: () => null);
+    } else {
+      return null;
+    }
+  }
+
+  bool isLogFile(String filePath) {
+    return fileRegExp.allMatches(filePath).map((match) {
+      if (match != null && match.groupCount > 0) {
+        return true;
+      } else {
+        return false;
+      }
+    }).lastWhere((e) => e != null, orElse: () => false);
   }
 }
 
@@ -130,14 +199,14 @@ abstract class RollingFileTree extends FimberFileTree {
     logLevels = CustomFormatTree.DEFAULT})
       : super(null, logFormat: logFormat, logLevels: logLevels) {}
 
-  bool shouldRollNextFile();
+  FutureOr<bool> shouldRollNextFile();
 
-  void rollToNextFile();
+  rollToNextFile();
 
   @override
-  void printLine(String line) {
-    if (shouldRollNextFile()) {
-      rollToNextFile();
+  void printLine(String line) async {
+    if (await shouldRollNextFile()) {
+      await rollToNextFile();
     }
     super.printLine(line);
   }
@@ -182,7 +251,8 @@ class CustomFormatTree extends LogTree {
   Stopwatch _elapsedTimeStopwatch;
   String logFormat;
 
-  CustomFormatTree({this.logFormat = DEFAULT_FORMAT, this.logLevels = DEFAULT}) {
+  CustomFormatTree(
+      {this.logFormat = DEFAULT_FORMAT, this.logLevels = DEFAULT}) {
     printTimeFlag = 0;
     if (logFormat.contains(TIME_STAMP_TOKEN)) {
       printTimeFlag |= TIME_CLOCK;
@@ -221,7 +291,8 @@ class CustomFormatTree extends LogTree {
     print(line);
   }
 
-  void _printFormattedLog(String level, String msg, String tag, ex, StackTrace stacktrace) {
+  void _printFormattedLog(String level, String msg, String tag, ex,
+      StackTrace stacktrace) {
     if (ex != null) {
       var tmpStacktrace =
           stacktrace?.toString()?.split('\n') ?? LogTree.getStacktrace();
