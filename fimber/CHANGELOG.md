@@ -1,3 +1,12 @@
+## [0.1.10] - FileLog append fix, mute levels
+
+- bug fix for file log bug where new lines were overriding file not append lines.
+- Added log level muting from `Fimber.mute` and `Fimber.unmute`  
+
+## [0.1.9] - CustomFormatTree and FileLogTree 
+
+- Custom format tree and File logging tree based on custom format. This will allow DartVM apps to output to defined file.
+
 ## [0.1.8] - Support for stacktrace optional parameter
 
 - Stacktrace optional parameter after adding `ex` can be provided from `try catch` block's second parameter 
