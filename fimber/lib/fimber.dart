@@ -1,12 +1,13 @@
 library fimber;
 
-
 export 'package:fimber/data_size.dart';
 export 'package:fimber/file_log.dart';
 export 'package:fimber/file_log.dart';
 
 /// Main static Fimber logging.
 class Fimber {
+  static List<String> _muteLevels = [];
+
   static v(String msg, {dynamic ex, StackTrace stacktrace}) {
     log("V", msg, ex: ex, stacktrace: stacktrace);
   }
@@ -27,8 +28,20 @@ class Fimber {
     log("E", msg, ex: ex, stacktrace: stacktrace);
   }
 
+  static mute(String level) {
+    _muteLevels.add(level);
+  }
+
+  static unmute(String level) {
+    _muteLevels.remove(level);
+  }
+
   static log(String level, String msg,
       {String tag, dynamic ex, StackTrace stacktrace}) {
+    if (_muteLevels.contains(level)) {
+      return; // skip logging if muted.
+    }
+
     _trees[level]?.forEach((logger) =>
         logger.log(level, msg, tag: tag, ex: ex, stacktrace: stacktrace));
   }

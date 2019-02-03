@@ -277,6 +277,21 @@ void main() {
     assert(assertTree.allLines[3].contains("Test exception from TestClass"));
     assert(!assertTree.allLines[3].contains("TestClass.throwSomeError"));
   });
+
+  test('Test mute/unmute', () {
+    Fimber.clearAll();
+    var assertTree = AssertTree(["V", "I", "D", "W"]);
+    Fimber.plantTree(assertTree);
+    Fimber.i("Test INFO log.");
+    Fimber.mute("I");
+    Fimber.i("Test INFO mute log.");
+    Fimber.unmute("I");
+    Fimber.i("Test INFO unmute log.");
+
+    expect(2, assertTree.allLines.length);
+    assert(assertTree.allLines[0].contains("Test INFO log."));
+    assert(assertTree.allLines[1].contains("Test INFO unmute log."));
+  });
 }
 
 class TestClass {

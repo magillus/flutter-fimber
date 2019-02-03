@@ -244,7 +244,7 @@ class CustomFormatTree extends LogTree {
   static const String EXCEPTION_STACK_TOKEN = "{EX_STACK}";
 
   static const String DEFAULT_FORMAT =
-      "$TIME_STAMP_TOKEN\t$LEVEL_TOKEN\t$TAG_TOKEN:\t $MESSAGE_TOKEN";
+      "$TIME_STAMP_TOKEN\t$LEVEL_TOKEN $TAG_TOKEN: $MESSAGE_TOKEN";
 
   /// Flag elapsed time in format
   static const int TIME_ELAPSED = 1;
@@ -277,7 +277,7 @@ class CustomFormatTree extends LogTree {
     var logTag = tag ?? LogTree.getTag();
 
     if (logFormat != null) {
-      _printFormattedLog(level, msg, tag, ex, stacktrace);
+      _printFormattedLog(level, msg, logTag, ex, stacktrace);
       return;
     }
     if (ex != null) {
@@ -317,6 +317,7 @@ class CustomFormatTree extends LogTree {
 
     var logLine = _replaceAllSafe(logFormat, TIME_STAMP_TOKEN, date);
     logLine = _replaceAllSafe(logLine, TIME_ELAPSED_TOKEN, elapsed);
+    logLine = _replaceAllSafe(logLine, LEVEL_TOKEN, level);
     logLine = _replaceAllSafe(logLine, MESSAGE_TOKEN, msg);
     logLine = _replaceAllSafe(logLine, EXCEPTION_MSG_TOKEN, exMsg);
     logLine = _replaceAllSafe(logLine, EXCEPTION_STACK_TOKEN, stacktrace);

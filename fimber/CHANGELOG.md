@@ -1,6 +1,7 @@
-## [0.1.10] - FileLog append fix
+## [0.1.10] - FileLog append fix, mute levels
 
-- bug fix for file log bug where new lines were overriding file not append lines. 
+- bug fix for file log bug where new lines were overriding file not append lines.
+- Added log level muting from `Fimber.mute` and `Fimber.unmute`  
 
 ## [0.1.9] - CustomFormatTree and FileLogTree 
 
