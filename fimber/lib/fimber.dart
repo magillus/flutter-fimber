@@ -1,6 +1,8 @@
 library fimber;
 
 
+export 'package:fimber/data_size.dart';
+export 'package:fimber/file_log.dart';
 export 'package:fimber/file_log.dart';
 
 /// Main static Fimber logging.

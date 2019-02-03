@@ -110,10 +110,26 @@ Due to nature of auto-tag generation from stacktrace this block only does it onc
     });
 ```
 
+### Custom line formatters 
+
+Use custom line formatters to define your logging format.
+
+```dart
+    Fimber.plantTree(FimberFileTree("my-Log-File.txt",
+        logFormat: "${CustomFormatTree.TIME_ELAPSED_TOKEN} ${CustomFormatTree
+            .MESSAGE_TOKEN} ${CustomFormatTree.TIME_STAMP_TOKEN}"
+    ));
+```
+
+Use file log tree - the logs will go to a log file (Useful in DartVM apps).
+There are log rolling with size and time/date interval, so it is possible to setup log output per hour/day or any other time.
+
+see: `SizeRollingFileTree` or `TimedRollingFileTree` or use abstract class `RollingFileTree` to create your own version of rolling log file.
+
+
 ## TODO - road map
 
 - See  [Issues on Github](https://github.com/magillus/flutter-fimber/issues)
-- File rotation, etc.
 - Add Crashlytics plugin (maybe other remote logger tools) with [flutter_crashlytics](https://pub.dartlang.org/packages/flutter_crashlytics)
 
 ## Licence

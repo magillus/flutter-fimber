@@ -1,3 +1,7 @@
+## [0.1.10] - FileLog append fix
+
+- bug fix for file log bug where new lines were overriding file not append lines. 
+
 ## [0.1.9] - CustomFormatTree and FileLogTree 
 
 - Custom format tree and File logging tree based on custom format. This will allow DartVM apps to output to defined file.
