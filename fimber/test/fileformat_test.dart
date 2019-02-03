@@ -28,22 +28,26 @@ void main() async {
 
   test("File date rolling test", () async {
     Fimber.clearAll();
-    var logTree = TimedRollingFileTree(timeSpan: 1);
+    var logTree = TimedRollingFileTree(
+        timeSpan: 1, filenamePrefix: "log_test_rolling_");
     Fimber.plantTree(logTree);
     Fimber.i("First log entry");
     var firstFile = logTree.outputFileName;
-    await Future.delayed(Duration(seconds: 2))
+    await Future.delayed(Duration(seconds: 3))
         .then((i) => Fimber.i("Delayed log"));
+
+    await Future.delayed(Duration(milliseconds: 100));
 
     var secondFile = logTree.outputFileName;
 
-    await Future.delayed(Duration(seconds: 1));
+    await Future.delayed(Duration(milliseconds: 100));
 
     print("First: $firstFile");
     print(File(firstFile).readAsStringSync());
     print("Second: $secondFile");
     print(File(secondFile).readAsStringSync());
 
+    assert(firstFile != secondFile);
     assert(File(firstFile).existsSync());
     assert(File(secondFile).existsSync());
 
@@ -111,6 +115,7 @@ void main() async {
     await Future.delayed(Duration(milliseconds: 100));
     var firstFile = logTree.outputFileName;
     Fimber.i("Test log for second file");
+    await Future.delayed(Duration(milliseconds: 100));
     var secondFile = logTree.outputFileName;
 
     assert(firstFile != secondFile);
@@ -118,9 +123,32 @@ void main() async {
     print(secondFile);
     assert(File(firstFile).existsSync());
     assert(File(secondFile).existsSync());
+
     await Future.delayed(Duration(seconds: 1));
+
     File(firstFile).deleteSync();
     File(secondFile).deleteSync();
+  });
+
+  test("File append test", () async {
+    Fimber.clearAll();
+    var logFile = "test.multilog.txt";
+    Fimber.plantTree(FimberFileTree.elapsed(logFile));
+
+    await Future.delayed(Duration(milliseconds: 100));
+
+    Fimber.i("Test log line 1.");
+    await Future.delayed(Duration(milliseconds: 100));
+    Fimber.i("Test log line 2.");
+
+    await Future.delayed(Duration(milliseconds: 100));
+
+    var logLines = await File(logFile).readAsLines();
+    expect(logLines.length, 2);
+    assert(logLines[0].endsWith("Test log line 1."));
+    assert(logLines[1].endsWith("Test log line 2."));
+
+    File(logFile).deleteSync();
   });
 
 }

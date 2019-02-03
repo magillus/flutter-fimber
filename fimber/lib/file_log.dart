@@ -28,12 +28,17 @@ class FimberFileTree extends CustomFormatTree {
 
   @override
   void printLine(String line) {
+    IOSink fileSink;
     try {
       if (outputFileName != null) {
-        File(outputFileName).writeAsString(line);
+        fileSink =
+            File(outputFileName).openWrite(mode: FileMode.writeOnlyAppend);
+        fileSink.writeln(line);
       }
     } catch (eio) {
       print("Error writing log line to file: $eio");
+    } finally {
+      fileSink?.close();
     }
   }
 }
