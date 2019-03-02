@@ -1,3 +1,9 @@
+
+## 0.1.9 Kotlin and Gradle plugin version bump
+
+- Kotlin version: `1.3.21`
+- Gradle plugin version `3.3.1`
+
 ## 0.1.8 Support for stacktrace
 
 - Support for stacktrace form `try catch` block from 0.1.8 `fimber` package

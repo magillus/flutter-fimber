@@ -11,7 +11,7 @@ To start add using it:
 ### Add `fimber` to `pubspec.yaml` 
 ```yaml
 dependencies:
-  fimber: ^0.1.4
+  fimber: ^0.1.10
   ```
 - remember about import in file you plan to use Fimber
 ```dart
