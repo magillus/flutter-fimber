@@ -18,7 +18,7 @@ void main() {
     // providing stacktrace will better show where issue was thrown
     Fimber.i("Error caught.", ex: e, stacktrace: stacktrace);
   }
-  // save auto tag generation on each call in call block.
+  // save time without auto tag generation on each call in call block.
   Fimber.withTag("TEST BLOCK", (log) {
     log.d("Started block");
     for (var i = 0; i >= 1; i++) {
