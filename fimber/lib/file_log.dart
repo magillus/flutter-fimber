@@ -76,9 +76,10 @@ class SizeRollingFileTree extends RollingFileTree {
 
   detectFileIndex() async {
     var rootDir = Directory(filenamePrefix);
-    if (filenamePrefix.contains("/")) {
+    if (filenamePrefix.contains(Platform.pathSeparator)) {
       rootDir = Directory(
-          filenamePrefix.substring(0, filenamePrefix.lastIndexOf("/")));
+          filenamePrefix.substring(
+              0, filenamePrefix.lastIndexOf(Platform.pathSeparator)));
     }
     var logListIndexes = await rootDir
         .list()
@@ -137,7 +138,8 @@ class SizeRollingFileTree extends RollingFileTree {
   }
 
   RegExp get fileRegExp =>
-      RegExp("${filenamePrefix}([0-9]+)?${filenamePostfix}");
+      RegExp("${filenamePrefix.replaceAll(
+          "\\", "\\\\")}([0-9]+)?${filenamePostfix}");
 
   int getLogIndex(String filePath) {
     if (isLogFile(filePath)) {
