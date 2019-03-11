@@ -10,13 +10,38 @@ import 'package:fimber/fimber.dart';
 /// Note: Mostly for testing right now
 class FimberFileTree extends CustomFormatTree {
   String outputFileName;
+  DateTime lastLogTimestamp = DateTime.fromMicrosecondsSinceEpoch(1);
+
+  /// Time after file is closed if not written to.
+  static const FILE_SLEEP_TIMOUT_MS = 500;
+
+  List<String> _logBuffer = [];
 
   FimberFileTree(this.outputFileName,
       {logLevels = CustomFormatTree.DEFAULT,
         logFormat =
         "${CustomFormatTree.TIME_STAMP_TOKEN}\t${CustomFormatTree
             .MESSAGE_TOKEN}"})
-      : super(logLevels: logLevels, logFormat: logFormat);
+      : super(logLevels: logLevels, logFormat: logFormat) {
+    Stream.periodic(Duration(milliseconds: FILE_SLEEP_TIMOUT_MS), (i) {
+      // group calls
+      var dumpBuffer = _logBuffer;
+      _logBuffer = [];
+      return dumpBuffer;
+    }).listen((newLines) async {
+      IOSink logSink;
+      try {
+        if (outputFileName != null) {
+          logSink =
+              File(outputFileName).openWrite(mode: FileMode.writeOnlyAppend);
+          newLines.forEach((newLine) => logSink.writeln(newLine));
+          await logSink.flush();
+        }
+      } finally {
+        logSink?.close();
+      }
+    });
+  }
 
   factory FimberFileTree.elapsed(String fileName,
       {List<String> logLevels = CustomFormatTree.DEFAULT}) {
@@ -28,18 +53,7 @@ class FimberFileTree extends CustomFormatTree {
 
   @override
   void printLine(String line) {
-    IOSink fileSink;
-    try {
-      if (outputFileName != null) {
-        fileSink =
-            File(outputFileName).openWrite(mode: FileMode.writeOnlyAppend);
-        fileSink.writeln(line);
-      }
-    } catch (eio) {
-      print("Error writing log line to file: $eio");
-    } finally {
-      fileSink?.close();
-    }
+    _logBuffer.add(line);
   }
 }
 
@@ -61,7 +75,12 @@ class SizeRollingFileTree extends RollingFileTree {
   }
 
   detectFileIndex() async {
-    var logListIndexes = await Directory.current
+    var rootDir = Directory(filenamePrefix);
+    if (filenamePrefix.contains("/")) {
+      rootDir = Directory(
+          filenamePrefix.substring(0, filenamePrefix.lastIndexOf("/")));
+    }
+    var logListIndexes = await rootDir
         .list()
         .map((fe) => getLogIndex(fe.path))
         .where((i) => i != null)
@@ -170,12 +189,13 @@ class TimedRollingFileTree extends RollingFileTree {
 
   @override
   void rollToNextFile() {
+    var localNow = DateTime.now();
     if (_currentFileDate == null) {
-      _currentFileDate = DateTime.now();
+      _currentFileDate = localNow;
     }
     if (fileNameFormatter == null) {
       var diffSeconds = _currentFileDate
-          .difference(DateTime.now())
+          .difference(localNow)
           .inSeconds;
       if (diffSeconds > timeSpan) {
         fileNameFormatter = LogFileNameFormatter.full(
