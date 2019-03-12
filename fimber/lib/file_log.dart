@@ -12,38 +12,44 @@ class FimberFileTree extends CustomFormatTree with CloseableTree {
   String outputFileName;
 
   /// Interval for buffer write to file.
-  static const FILE_SLEEP_TIMOUT_MS = 500;
+  static const FILE_BUFFER_FLUSH_INTERVAL = 500;
 
   /// Size limit (bytes) in temporary buffer.
   static const BUFFER_SIZE_LIMIT = 1024; //1kB
 
-  int bufferSize = 0;
+  int _bufferSize = 0;
   List<String> _logBuffer = [];
   StreamSubscription<List<String>> _bufferWriteInterval;
+  int _maxBufferSize = BUFFER_SIZE_LIMIT;
 
+  /// Creates Instance of FimberFileTree with optional [logFormat] from [CustomFormatTree] predicates.
+  /// Takes optional [maxBufferSize] (default 1kB) and optional [bufferWriteInterval] in milliseconds.
   FimberFileTree(this.outputFileName,
       {logLevels = CustomFormatTree.DEFAULT,
         logFormat =
         "${CustomFormatTree.TIME_STAMP_TOKEN}\t${CustomFormatTree
-            .MESSAGE_TOKEN}"})
+            .MESSAGE_TOKEN}",
+        int maxBufferSize = BUFFER_SIZE_LIMIT,
+        int bufferWriteInterval = FILE_BUFFER_FLUSH_INTERVAL})
       : super(logLevels: logLevels, logFormat: logFormat) {
-    _bufferWriteInterval =
-        Stream.periodic(Duration(milliseconds: FILE_SLEEP_TIMOUT_MS), (i) {
+    _maxBufferSize = maxBufferSize;
+    _bufferWriteInterval = Stream.periodic(
+        Duration(milliseconds: bufferWriteInterval), (i) {
       // group calls
       var dumpBuffer = _logBuffer;
       _logBuffer = [];
-      bufferSize = 0;
+      _bufferSize = 0;
       return dumpBuffer;
-        }).listen((newLines) async {
-          _flushBuffer(newLines);
-        });
+    }).listen((newLines) async {
+      _flushBuffer(newLines);
+    });
   }
 
   void _checkSizeForFlush() {
-    if (bufferSize > BUFFER_SIZE_LIMIT) {
+    if (_bufferSize > _maxBufferSize) {
       var dumpBuffer = _logBuffer;
       _logBuffer = [];
-      bufferSize = 0;
+      _bufferSize = 0;
       Future.microtask(() {
         _flushBuffer(dumpBuffer);
       });
@@ -77,7 +83,7 @@ class FimberFileTree extends CustomFormatTree with CloseableTree {
   @override
   void printLine(String line) {
     _logBuffer.add(line);
-    bufferSize += line.length;
+    _bufferSize += line.length;
     _checkSizeForFlush();
   }
 

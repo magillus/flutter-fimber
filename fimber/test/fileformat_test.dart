@@ -235,5 +235,5 @@ void main() async {
 
 waitForAppendBuffer() async {
   await Future.delayed(
-      Duration(milliseconds: FimberFileTree.FILE_SLEEP_TIMOUT_MS));
+      Duration(milliseconds: FimberFileTree.FILE_BUFFER_FLUSH_INTERVAL));
 }

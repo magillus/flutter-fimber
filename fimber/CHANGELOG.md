@@ -1,3 +1,10 @@
+## [0.1.11] - FileLog bugfix
+
+- FileLog bug fix for conflicts on file append. 
+- FileLog uses flush buffer as temporary storage and writes to disk in 2 cases: 1 every 500ms and when ever buffer size exceeds 1kB.
+- Added unit tests for new bug.
+- docs update
+
 ## [0.1.10] - FileLog append fix, mute levels
 
 - bug fix for file log bug where new lines were overriding file not append lines.
