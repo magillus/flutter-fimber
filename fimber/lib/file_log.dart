@@ -14,6 +14,10 @@ class FimberFileTree extends CustomFormatTree with CloseableTree {
   /// Interval for buffer write to file.
   static const FILE_SLEEP_TIMOUT_MS = 500;
 
+  /// Size limit (bytes) in temporary buffer.
+  static const BUFFER_SIZE_LIMIT = 1024; //1kB
+
+  int bufferSize = 0;
   List<String> _logBuffer = [];
   StreamSubscription<List<String>> _bufferWriteInterval;
 
@@ -28,20 +32,38 @@ class FimberFileTree extends CustomFormatTree with CloseableTree {
       // group calls
       var dumpBuffer = _logBuffer;
       _logBuffer = [];
+      bufferSize = 0;
       return dumpBuffer;
-        }).where((lines) => lines.length > 0).listen((newLines) async {
+        }).listen((newLines) async {
+          _flushBuffer(newLines);
+        });
+  }
+
+  void _checkSizeForFlush() {
+    if (bufferSize > BUFFER_SIZE_LIMIT) {
+      var dumpBuffer = _logBuffer;
+      _logBuffer = [];
+      bufferSize = 0;
+      Future.microtask(() {
+        _flushBuffer(dumpBuffer);
+      });
+    }
+  }
+
+  _flushBuffer(List<String> buffer) async {
+    if (buffer.length > 0) {
       IOSink logSink;
       try {
         if (outputFileName != null) {
           logSink =
               File(outputFileName).openWrite(mode: FileMode.writeOnlyAppend);
-          newLines.forEach((newLine) => logSink.writeln(newLine));
+          buffer.forEach((newLine) => logSink.writeln(newLine));
           await logSink.flush();
         }
       } finally {
         logSink?.close();
       }
-    });
+    }
   }
 
   factory FimberFileTree.elapsed(String fileName,
@@ -55,6 +77,8 @@ class FimberFileTree extends CustomFormatTree with CloseableTree {
   @override
   void printLine(String line) {
     _logBuffer.add(line);
+    bufferSize += line.length;
+    _checkSizeForFlush();
   }
 
   @override

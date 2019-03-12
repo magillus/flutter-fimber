@@ -19,6 +19,30 @@ void main() async {
       logDir.deleteSync(recursive: true);
     });
 
+    test("File log with buffer overflow", () async {
+      var fileTree = FimberFileTree(
+          "${testDirName}${dirSeparator}log_buffer_overflow${DateTime
+              .now()
+              .millisecondsSinceEpoch}.log");
+      Fimber.plantTree(fileTree);
+      String text500B = List.filled(50, "1234567890").join();
+      Fimber.i("Test log: $text500B");
+      Fimber.i("Test log: $text500B");
+      await Future.delayed(Duration(milliseconds: 50));
+      Fimber.i("Test log: $text500B");
+      Fimber.i("Test log: $text500B");
+      await Future.delayed(Duration(milliseconds: 50));
+      Fimber.i("Test log: $text500B");
+      Fimber.i("Test log: $text500B");
+      fileTree.close(); // cut the file buffer flush every 500ms
+      var fileSize = File(fileTree.outputFileName).lengthSync();
+      assert(fileSize > 2 * 1038); // more then 1 line 1000chars + log tag/date
+      assert(fileSize <
+          3 *
+              1038); // less then 3 kb - last log entry in buffer wasn't flushed to disk yet
+      await Future.delayed(Duration(milliseconds: 50));
+    });
+
     test("File date rolling test", () async {
       var logTree = TimedRollingFileTree(
           timeSpan: 1,
