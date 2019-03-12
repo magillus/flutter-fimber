@@ -1,5 +1,7 @@
 library fimber;
 
+import 'package:fimber/file_log.dart';
+
 export 'package:fimber/data_size.dart';
 export 'package:fimber/file_log.dart';
 export 'package:fimber/file_log.dart';
@@ -59,6 +61,9 @@ class Fimber {
   }
 
   static unplantTree(LogTree tree) {
+    if (tree != null && tree is CloseableTree) {
+      (tree as CloseableTree).close();
+    }
     _trees.forEach((level, levelTrees) {
       levelTrees.remove(tree);
     });
@@ -66,6 +71,15 @@ class Fimber {
 
   /// Clear all trees from Fimber.
   static clearAll() {
+    // unplant each tree
+    _trees.values
+        .toSet()
+        .fold<List<LogTree>>(<LogTree>[], (buildList, newList) {
+      buildList.addAll(newList);
+      return buildList;
+    })
+        .toSet()
+        .forEach(unplantTree);
     _trees.clear();
   }
 
@@ -157,8 +171,8 @@ abstract class LogTree {
   static String getTag({int stackIndex = 6}) {
     var stackTraceList = StackTrace.current.toString().split('\n');
     if (stackTraceList.length > stackIndex) {
-      var lineChunks = stackTraceList[stackIndex]
-          .replaceFirst("<anonymous closure>", "<ac>");
+      var lineChunks =
+      stackTraceList[stackIndex].replaceAll("<anonymous closure>", "<ac>");
       if (lineChunks.length > 6) {
         var lineParts = lineChunks.split(' ');
         if (lineParts.length > 8 && lineParts[6] == 'new') {

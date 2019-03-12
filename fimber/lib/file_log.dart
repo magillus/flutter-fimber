@@ -8,14 +8,14 @@ import 'package:fimber/fimber.dart';
 /// File based logging output tree.
 /// This tree if planted will post short formatted (elapsed time and message) output into file specified in constructor.
 /// Note: Mostly for testing right now
-class FimberFileTree extends CustomFormatTree {
+class FimberFileTree extends CustomFormatTree with CloseableTree {
   String outputFileName;
-  DateTime lastLogTimestamp = DateTime.fromMicrosecondsSinceEpoch(1);
 
-  /// Time after file is closed if not written to.
+  /// Interval for buffer write to file.
   static const FILE_SLEEP_TIMOUT_MS = 500;
 
   List<String> _logBuffer = [];
+  StreamSubscription<List<String>> _bufferWriteInterval;
 
   FimberFileTree(this.outputFileName,
       {logLevels = CustomFormatTree.DEFAULT,
@@ -23,12 +23,13 @@ class FimberFileTree extends CustomFormatTree {
         "${CustomFormatTree.TIME_STAMP_TOKEN}\t${CustomFormatTree
             .MESSAGE_TOKEN}"})
       : super(logLevels: logLevels, logFormat: logFormat) {
-    Stream.periodic(Duration(milliseconds: FILE_SLEEP_TIMOUT_MS), (i) {
+    _bufferWriteInterval =
+        Stream.periodic(Duration(milliseconds: FILE_SLEEP_TIMOUT_MS), (i) {
       // group calls
       var dumpBuffer = _logBuffer;
       _logBuffer = [];
       return dumpBuffer;
-    }).listen((newLines) async {
+        }).where((lines) => lines.length > 0).listen((newLines) async {
       IOSink logSink;
       try {
         if (outputFileName != null) {
@@ -55,6 +56,12 @@ class FimberFileTree extends CustomFormatTree {
   void printLine(String line) {
     _logBuffer.add(line);
   }
+
+  @override
+  void close() {
+    _bufferWriteInterval?.cancel();
+    _bufferWriteInterval = null;
+  }
 }
 
 /// SizeRolling file tree
@@ -77,9 +84,8 @@ class SizeRollingFileTree extends RollingFileTree {
   detectFileIndex() async {
     var rootDir = Directory(filenamePrefix);
     if (filenamePrefix.contains(Platform.pathSeparator)) {
-      rootDir = Directory(
-          filenamePrefix.substring(
-              0, filenamePrefix.lastIndexOf(Platform.pathSeparator)));
+      rootDir = Directory(filenamePrefix.substring(
+          0, filenamePrefix.lastIndexOf(Platform.pathSeparator)));
     }
     var logListIndexes = await rootDir
         .list()
@@ -138,8 +144,9 @@ class SizeRollingFileTree extends RollingFileTree {
   }
 
   RegExp get fileRegExp =>
-      RegExp("${filenamePrefix.replaceAll(
-          "\\", "\\\\")}([0-9]+)?${filenamePostfix}");
+      RegExp(
+          "${filenamePrefix.replaceAll(
+              "\\", "\\\\")}([0-9]+)?${filenamePostfix}");
 
   int getLogIndex(String filePath) {
     if (isLogFile(filePath)) {
@@ -373,4 +380,8 @@ class CustomFormatTree extends LogTree {
   List<String> getLevels() {
     return logLevels;
   }
+}
+
+abstract class CloseableTree {
+  void close();
 }

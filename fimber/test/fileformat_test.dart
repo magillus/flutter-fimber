@@ -12,6 +12,7 @@ void main() async {
     var logDir = Directory(testDirName);
 
     setUp(() {
+      Fimber.clearAll();
       logDir.createSync(recursive: true);
     });
     tearDown(() {
@@ -19,7 +20,6 @@ void main() async {
     });
 
     test("File date rolling test", () async {
-      Fimber.clearAll();
       var logTree = TimedRollingFileTree(
           timeSpan: 1,
           filenamePrefix: "${testDirName}${dirSeparator}log_test_rolling_");
@@ -43,11 +43,11 @@ void main() async {
       await Future.delayed(Duration(milliseconds: 100));
       // wait until buffer dumps to file
       await waitForAppendBuffer();
-
-      print("First: $firstFile");
-      print(File(firstFile).readAsStringSync());
-      print("Second: $secondFile");
-      print(File(secondFile).readAsStringSync());
+//
+//      print("First: $firstFile");
+//      print(File(firstFile).readAsStringSync());
+//      print("Second: $secondFile");
+//      print(File(secondFile).readAsStringSync());
 
       assert(firstFile != secondFile);
       assert(File(firstFile).existsSync());
@@ -79,7 +79,6 @@ void main() async {
     });
 
     test("Old file detection test", () async {
-      Fimber.clearAll();
       // roll file every 20 bytes (in reality every log line)
       var logTree = SizeRollingFileTree(DataSize.bytes(20),
           filenamePrefix: "${testDirName}${dirSeparator}log_");
@@ -132,7 +131,6 @@ void main() async {
     });
 
     test("File size rolling test", () async {
-      Fimber.clearAll();
       // roll file every 20 bytes (in reality every log line)
       var logTree = SizeRollingFileTree(DataSize.bytes(20),
           filenamePrefix: "${testDirName}${dirSeparator}");
@@ -166,56 +164,47 @@ void main() async {
     });
 
     test("File Tree - append test", () async {
-      Fimber.clearAll();
       var logFile = "${testDirName}${dirSeparator}test.multilog.txt";
-      try {
-        Fimber.plantTree(FimberFileTree.elapsed(logFile));
 
-        await Future.delayed(Duration(milliseconds: 100));
+      Fimber.plantTree(FimberFileTree.elapsed(logFile));
 
-        Fimber.i("Test log line 1.");
-        Fimber.i("Test log line 2.");
-        await Future.delayed(Duration(milliseconds: 100));
-        Fimber.i("Test log line 3.");
-        // wait until buffer dumps to file
-        await waitForAppendBuffer();
+      await Future.delayed(Duration(milliseconds: 100));
 
-        var logLines = await File(logFile).readAsLines();
-        expect(logLines.length, 3);
-        assert(logLines[0].endsWith("Test log line 1."));
-        assert(logLines[1].endsWith("Test log line 2."));
-        assert(logLines[2].endsWith("Test log line 3."));
-      } finally {
-        File(logFile).deleteSync();
-      }
+      Fimber.i("Test log line 1.");
+      Fimber.i("Test log line 2.");
+      await Future.delayed(Duration(milliseconds: 100));
+      Fimber.i("Test log line 3.");
+      // wait until buffer dumps to file
+      await waitForAppendBuffer();
+
+      var logLines = await File(logFile).readAsLines();
+      expect(logLines.length, 3);
+      assert(logLines[0].endsWith("Test log line 1."));
+      assert(logLines[1].endsWith("Test log line 2."));
+      assert(logLines[2].endsWith("Test log line 3."));
     });
 
     test("File Tree - Rolling time append test", () async {
-      Fimber.clearAll();
-
       var tree = TimedRollingFileTree(
           filenamePrefix: "${testDirName}${dirSeparator}mul_tree_time_append");
       var logFile = tree.outputFileName;
-      try {
-        Fimber.plantTree(tree);
 
-        await Future.delayed(Duration(milliseconds: 100));
+      Fimber.plantTree(tree);
 
-        Fimber.i("Test log line 1.");
-        Fimber.i("Test log line 2.");
-        await Future.delayed(Duration(milliseconds: 100));
-        Fimber.i("Test log line 3.");
-        // wait until buffer dumps to file
-        await waitForAppendBuffer();
+      await Future.delayed(Duration(milliseconds: 100));
 
-        var logLines = await File(logFile).readAsLines();
-        expect(logLines.length, 3);
-        assert(logLines[0].endsWith("Test log line 1."));
-        assert(logLines[1].endsWith("Test log line 2."));
-        assert(logLines[2].endsWith("Test log line 3."));
-      } finally {
-        File(logFile).deleteSync();
-      }
+      Fimber.i("Test log line 1.");
+      Fimber.i("Test log line 2.");
+      await Future.delayed(Duration(milliseconds: 100));
+      Fimber.i("Test log line 3.");
+      // wait until buffer dumps to file
+      await waitForAppendBuffer();
+
+      var logLines = await File(logFile).readAsLines();
+      expect(logLines.length, 3);
+      assert(logLines[0].endsWith("Test log line 1."));
+      assert(logLines[1].endsWith("Test log line 2."));
+      assert(logLines[2].endsWith("Test log line 3."));
     });
   });
 }
