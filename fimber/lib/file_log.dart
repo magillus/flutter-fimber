@@ -8,15 +8,69 @@ import 'package:fimber/fimber.dart';
 /// File based logging output tree.
 /// This tree if planted will post short formatted (elapsed time and message) output into file specified in constructor.
 /// Note: Mostly for testing right now
-class FimberFileTree extends CustomFormatTree {
+class FimberFileTree extends CustomFormatTree with CloseableTree {
   String outputFileName;
 
+  /// Interval for buffer write to file.
+  static const FILE_BUFFER_FLUSH_INTERVAL = 500;
+
+  /// Size limit (bytes) in temporary buffer.
+  static const BUFFER_SIZE_LIMIT = 1024; //1kB
+
+  int _bufferSize = 0;
+  List<String> _logBuffer = [];
+  StreamSubscription<List<String>> _bufferWriteInterval;
+  int _maxBufferSize = BUFFER_SIZE_LIMIT;
+
+  /// Creates Instance of FimberFileTree with optional [logFormat] from [CustomFormatTree] predicates.
+  /// Takes optional [maxBufferSize] (default 1kB) and optional [bufferWriteInterval] in milliseconds.
   FimberFileTree(this.outputFileName,
       {logLevels = CustomFormatTree.DEFAULT,
         logFormat =
         "${CustomFormatTree.TIME_STAMP_TOKEN}\t${CustomFormatTree
-            .MESSAGE_TOKEN}"})
-      : super(logLevels: logLevels, logFormat: logFormat);
+            .MESSAGE_TOKEN}",
+        int maxBufferSize = BUFFER_SIZE_LIMIT,
+        int bufferWriteInterval = FILE_BUFFER_FLUSH_INTERVAL})
+      : super(logLevels: logLevels, logFormat: logFormat) {
+    _maxBufferSize = maxBufferSize;
+    _bufferWriteInterval = Stream.periodic(
+        Duration(milliseconds: bufferWriteInterval), (i) {
+      // group calls
+      var dumpBuffer = _logBuffer;
+      _logBuffer = [];
+      _bufferSize = 0;
+      return dumpBuffer;
+    }).listen((newLines) async {
+      _flushBuffer(newLines);
+    });
+  }
+
+  void _checkSizeForFlush() {
+    if (_bufferSize > _maxBufferSize) {
+      var dumpBuffer = _logBuffer;
+      _logBuffer = [];
+      _bufferSize = 0;
+      Future.microtask(() {
+        _flushBuffer(dumpBuffer);
+      });
+    }
+  }
+
+  _flushBuffer(List<String> buffer) async {
+    if (buffer.length > 0) {
+      IOSink logSink;
+      try {
+        if (outputFileName != null) {
+          logSink =
+              File(outputFileName).openWrite(mode: FileMode.writeOnlyAppend);
+          buffer.forEach((newLine) => logSink.writeln(newLine));
+          await logSink.flush();
+        }
+      } finally {
+        logSink?.close();
+      }
+    }
+  }
 
   factory FimberFileTree.elapsed(String fileName,
       {List<String> logLevels = CustomFormatTree.DEFAULT}) {
@@ -28,18 +82,15 @@ class FimberFileTree extends CustomFormatTree {
 
   @override
   void printLine(String line) {
-    IOSink fileSink;
-    try {
-      if (outputFileName != null) {
-        fileSink =
-            File(outputFileName).openWrite(mode: FileMode.writeOnlyAppend);
-        fileSink.writeln(line);
-      }
-    } catch (eio) {
-      print("Error writing log line to file: $eio");
-    } finally {
-      fileSink?.close();
-    }
+    _logBuffer.add(line);
+    _bufferSize += line.length;
+    _checkSizeForFlush();
+  }
+
+  @override
+  void close() {
+    _bufferWriteInterval?.cancel();
+    _bufferWriteInterval = null;
   }
 }
 
@@ -61,7 +112,12 @@ class SizeRollingFileTree extends RollingFileTree {
   }
 
   detectFileIndex() async {
-    var logListIndexes = await Directory.current
+    var rootDir = Directory(filenamePrefix);
+    if (filenamePrefix.contains(Platform.pathSeparator)) {
+      rootDir = Directory(filenamePrefix.substring(
+          0, filenamePrefix.lastIndexOf(Platform.pathSeparator)));
+    }
+    var logListIndexes = await rootDir
         .list()
         .map((fe) => getLogIndex(fe.path))
         .where((i) => i != null)
@@ -118,7 +174,9 @@ class SizeRollingFileTree extends RollingFileTree {
   }
 
   RegExp get fileRegExp =>
-      RegExp("${filenamePrefix}([0-9]+)?${filenamePostfix}");
+      RegExp(
+          "${filenamePrefix.replaceAll(
+              "\\", "\\\\")}([0-9]+)?${filenamePostfix}");
 
   int getLogIndex(String filePath) {
     if (isLogFile(filePath)) {
@@ -170,12 +228,13 @@ class TimedRollingFileTree extends RollingFileTree {
 
   @override
   void rollToNextFile() {
+    var localNow = DateTime.now();
     if (_currentFileDate == null) {
-      _currentFileDate = DateTime.now();
+      _currentFileDate = localNow;
     }
     if (fileNameFormatter == null) {
       var diffSeconds = _currentFileDate
-          .difference(DateTime.now())
+          .difference(localNow)
           .inSeconds;
       if (diffSeconds > timeSpan) {
         fileNameFormatter = LogFileNameFormatter.full(
@@ -351,4 +410,8 @@ class CustomFormatTree extends LogTree {
   List<String> getLevels() {
     return logLevels;
   }
+}
+
+abstract class CloseableTree {
+  void close();
 }
