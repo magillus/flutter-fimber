@@ -1,30 +1,91 @@
-enum AnsiColor { BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE, NA }
-enum AnsiSelection { FOREGROUND, BACKGROUND, REVERSED, BRIGHT }
+enum AnsiColor { BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE, BIT8 }
+enum AnsiSelection { FOREGROUND, BACKGROUND, REVERSED, BRIGHT, UNDERLINE }
+
+class AnsiStyle {
+  AnsiColor color;
+  AnsiSelection selection;
+  int bit9Pallete = null; // support for 8bit https://en.wikipedia.org/wiki/ANSI_escape_code#24-bit
+
+  AnsiStyle(this.selection, {this.color, this.bit9Pallete});
+
+  String _selectionCode() {
+    if (selection != null) {
+      switch (selection) {
+        case AnsiSelection.BACKGROUND:
+          return "4";
+        case AnsiSelection.FOREGROUND:
+          return "3";
+        case AnsiSelection.REVERSED:
+          return "7";
+        case AnsiSelection.BRIGHT:
+          return "9";
+        case AnsiSelection.UNDERLINE:
+          return "4";
+      }
+    }
+    return "";
+  }
+
+  String _colorCode() {
+    if (bit9Pallete != null && color == AnsiColor.BIT8) {
+      return "8;5;$bit9Pallete";
+    } else
+      return color?.index?.toString() ?? "";
+  }
+
+  String apply(String retString) {
+    return Colorize.wrapAnsi(retString, _selectionCode() + _colorCode());
+  }
+
+  factory AnsiStyle.bright(AnsiColor color) {
+    return AnsiStyle(AnsiSelection.BRIGHT, color: color);
+  }
+
+  factory AnsiStyle.reversed() {
+    return AnsiStyle(AnsiSelection.REVERSED);
+  }
+
+  factory AnsiStyle.underline() {
+    return AnsiStyle(AnsiSelection.UNDERLINE);
+  }
+
+  factory AnsiStyle.foreground(AnsiColor color) {
+    return AnsiStyle(AnsiSelection.FOREGROUND, color: color);
+  }
+
+  factory AnsiStyle.background(AnsiColor color) {
+    return AnsiStyle(AnsiSelection.BACKGROUND, color: color);
+  }
+}
+
+/// Usage by style pickers from enums and list of style applied in order.
+class ColorizeStyled {
+  final List<AnsiStyle> _styles = [];
+
+  ColorizeStyled(List<AnsiStyle> styles) {
+    this._styles.addAll(styles);
+  }
+
+  String wrap(String text, {List<AnsiStyle> additionalStyles}) {
+    List<AnsiStyle> styles = List.from(_styles)
+      ..addAll(additionalStyles ?? []);
+    var retString = text;
+    styles.forEach((style) {
+      retString = style.apply(retString);
+    });
+    return retString;
+  }
+}
 
 class Colorize {
   static const _cmdCode = "\x1b[";
 
   static const _resetCode = "\x1b[0m";
 
-//  static const Bright = "\x1b[1m";
-//  static const Dim = "\x1b[2m";
-//  static const Underscore = "\x1b[4m";
-//  static const Blink = "\x1b[5m";
-//  static const Reverse = "\x1b[7m";
-//  static const Hidden = "\x1b[8m";
-
-  static const _black = "0";
-  static const _Red = "1";
-  static const _green = "2";
-  static const _yellow = "3";
-  static const _blue = "4";
-  static const _magenta = "5";
-  static const _cyan = "6";
-  static const _white = "7";
-
   static const _underlineType = "4";
   static const _reverseType = "7";
   static const _brightType = "9";
+  static const _blinkType = "5";
   static const _foregroundType = "3";
   static const _backgroundType = "4";
 
@@ -124,26 +185,7 @@ class Colorize {
   }
 
   static String _colorCode(AnsiColor color) {
-    switch (color) {
-      case AnsiColor.BLACK:
-        return _black;
-      case AnsiColor.BLUE:
-        return _blue;
-      case AnsiColor.CYAN:
-        return _cyan;
-      case AnsiColor.GREEN:
-        return _green;
-      case AnsiColor.MAGENTA:
-        return _magenta;
-      case AnsiColor.RED:
-        return _Red;
-      case AnsiColor.WHITE:
-        return _white;
-      case AnsiColor.YELLOW:
-        return _yellow;
-      default:
-        return "";
-    }
+    return color.index.toString();
   }
 
   static String wrapAnsi(String text, String ansiCode) {

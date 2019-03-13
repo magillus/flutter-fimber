@@ -44,8 +44,29 @@ void main() async {
       print(Colorize.wrapWith("Some text", foreground: AnsiColor.MAGENTA));
       print("");
 
-      print(Colorize.wrapAnsi("Some text 4", "4"));
-      print(Colorize.wrapAnsi("Some text 7", "7"));
+    });
+
+    test("Test stylize", () {
+      var style = ColorizeStyled([
+        AnsiStyle(AnsiSelection.FOREGROUND, color: AnsiColor.GREEN),
+        AnsiStyle(AnsiSelection.BACKGROUND, color: AnsiColor.BLUE)
+      ]);
+      print(style.wrap("TEST GREEN ON blue"));
+
+      var styleB = ColorizeStyled([
+        AnsiStyle.background(AnsiColor.YELLOW),
+        AnsiStyle.foreground(AnsiColor.BLACK)
+      ]);
+      print(styleB.wrap("Test black on yellow background"));
+
+      var styleGray30 = ColorizeStyled([AnsiStyle.foreground(AnsiColor.BIT8)
+        ..bit9Pallete = 240
+      ]);
+      print(styleGray30.wrap("Test with gray 30"));
+      var styleGray60 = ColorizeStyled([AnsiStyle.foreground(AnsiColor.BIT8)
+        ..bit9Pallete = 249
+      ]);
+      print(styleGray60.wrap("Test with gray 60"));
     });
   });
 }
