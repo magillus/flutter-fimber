@@ -22,6 +22,8 @@ class FlutterFimberPlugin : MethodCallHandler {
             val tag = call.argument<String>("tag")
             val msg = call.argument<String>("message")
             val exDump = call.argument<String>("ex")
+            val preFix = call.argument<String?>("preFix") ?: ""
+            val postFix = call.argument<String?>("postFix") ?: ""
             val priority = when (logLevel) {
                 "D" -> Log.DEBUG
                 "I" -> Log.INFO
@@ -33,7 +35,7 @@ class FlutterFimberPlugin : MethodCallHandler {
             val msgWithException = msg + if (exDump?.isNotBlank() == true) {
                 '\n'.toString() + exDump
             } else ""
-            Log.println(priority, tag, msgWithException);
+            Log.println(priority, tag, preFix + msgWithException + postFix);
             result.success(0)
         } else {
             result.notImplemented()

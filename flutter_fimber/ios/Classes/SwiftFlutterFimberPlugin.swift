@@ -19,12 +19,15 @@ public class SwiftFlutterFimberPlugin: NSObject, FlutterPlugin {
             let tag = (data["tag"] as? String) ?? "flutter"
             let level = (data["level"] as? String) ?? "D"
             let exDump = (data["ex"] as? String)
+            let preFix = (data["preFix"] as? String) ?? ""
+            let postFix = (data["postFix"] as? String) ?? ""
+
             var logOutput = "\(Date()) \(tag)/\(level):\t\(message!!))"
             if (exDump != nil) {
                 logOutput = "\(logOutput)\n\(String(describing: exDump!))"
             }
             // iOS devs help me to make it look better ;-)
-            print(logOutput);
+            print(preFix+logOutput+postFix);
         }
         result(0)
   }
