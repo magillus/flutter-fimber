@@ -315,14 +315,14 @@ class CustomFormatTree extends LogTree {
 
   /// Flag clodk time in format
   static const int TIME_CLOCK = 2;
-  static final Map<String, ColorizeStyled> _defaultColorizeMap = {
-    "V": ColorizeStyled([AnsiStyle.foreground(AnsiColor.BLUE)]),
-    "D": ColorizeStyled([AnsiStyle.foreground(AnsiColor.GREEN)]),
-    "W": ColorizeStyled([
+  static final Map<String, ColorizeStyle> _defaultColorizeMap = {
+    "V": ColorizeStyle([AnsiStyle.foreground(AnsiColor.BLUE)]),
+    "D": ColorizeStyle([AnsiStyle.foreground(AnsiColor.GREEN)]),
+    "W": ColorizeStyle([
       AnsiStyle.foreground(AnsiColor.YELLOW),
       AnsiStyle.background(AnsiColor.BLACK)
     ]),
-    "E": ColorizeStyled([
+    "E": ColorizeStyle([
       AnsiStyle.bright(AnsiColor.WHITE),
       AnsiStyle.background(AnsiColor.RED)
     ])
@@ -333,7 +333,7 @@ class CustomFormatTree extends LogTree {
   Stopwatch _elapsedTimeStopwatch;
   String logFormat;
   bool useColors;
-  Map<String, ColorizeStyled> _colorizeMap = {};
+  Map<String, ColorizeStyle> _colorizeMap = {};
 
   CustomFormatTree({this.logFormat = DEFAULT_FORMAT,
     this.logLevels = DEFAULT,

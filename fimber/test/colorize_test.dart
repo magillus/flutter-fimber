@@ -47,23 +47,23 @@ void main() async {
     });
 
     test("Test stylize", () {
-      var style = ColorizeStyled([
+      var style = ColorizeStyle([
         AnsiStyle(AnsiSelection.FOREGROUND, color: AnsiColor.GREEN),
         AnsiStyle(AnsiSelection.BACKGROUND, color: AnsiColor.BLUE)
       ]);
       print(style.wrap("TEST GREEN ON blue"));
 
-      var styleB = ColorizeStyled([
+      var styleB = ColorizeStyle([
         AnsiStyle.background(AnsiColor.YELLOW),
         AnsiStyle.foreground(AnsiColor.BLACK)
       ]);
       print(styleB.wrap("Test black on yellow background"));
 
-      var styleGray30 = ColorizeStyled([AnsiStyle.foreground(AnsiColor.BIT8)
+      var styleGray30 = ColorizeStyle([AnsiStyle.foreground(AnsiColor.BIT8)
         ..bit9Pallete = 240
       ]);
       print(styleGray30.wrap("Test with gray 30"));
-      var styleGray60 = ColorizeStyled([AnsiStyle.foreground(AnsiColor.BIT8)
+      var styleGray60 = ColorizeStyle([AnsiStyle.foreground(AnsiColor.BIT8)
         ..bit9Pallete = 249
       ]);
       print(styleGray60.wrap("Test with gray 60"));

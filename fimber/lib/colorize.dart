@@ -61,10 +61,10 @@ class AnsiStyle {
 }
 
 /// Usage by style pickers from enums and list of style applied in order.
-class ColorizeStyled {
+class ColorizeStyle {
   final List<AnsiStyle> _styles = [];
 
-  ColorizeStyled(List<AnsiStyle> styles) {
+  ColorizeStyle(List<AnsiStyle> styles) {
     this._styles.addAll(styles);
   }
 

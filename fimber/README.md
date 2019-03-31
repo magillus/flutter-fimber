@@ -12,7 +12,7 @@ To start add using it:
 ### Add `fimber` to `pubspec.yaml` 
 ```yaml
 dependencies:
-  fimber: ^0.1.11
+  fimber: ^0.2.0
   ```
 - remember about import in file you plan to use Fimber
 ```dart
@@ -21,6 +21,7 @@ import 'package:fimber/fimber.dart';
 ```
 
 ### Initialize logging tree on start of your application
+
 ```dart
 
 void main() {
@@ -65,6 +66,20 @@ void main() {
 ```
 
 This will log the value and grab a TAG from stacktrace - that is little costly and if more logs will be done per second.
+
+### Colorize logs - `ColorizeStyle`
+
+`useColors` property set to true will use default colors of the logos, you can change the mapping with in `colorizeMap` for `DebugTree` and `CustomFormatTree`
+The `useColors` by default is disabled.
+
+`ColorizeStyle` Aggregates list of `AnsiStyle` so you can combine styles together.
+
+`AnsiStyle` is combination of [`AnsiColor`](lib/colorize.dart) and [`AnsiSelection`](lib/colorize.dart) values
+
+Here is output of test output.
+
+![Colorize Test Output](doc/colorize_fimber_test.PNG "Colorize Test Output")
+
 
 ### Create tagged version of Fimber 
 
