@@ -1,10 +1,12 @@
 enum AnsiColor { BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE, BIT8 }
 enum AnsiSelection { FOREGROUND, BACKGROUND, REVERSED, BRIGHT, UNDERLINE }
 
+/// Console style definition with color and type of "selection"
+///
 class AnsiStyle {
   AnsiColor color;
   AnsiSelection selection;
-  int bit9Pallete = null; // support for 8bit https://en.wikipedia.org/wiki/ANSI_escape_code#24-bit
+  int bit9Pallete = null; // todo add support for 8bit https://en.wikipedia.org/wiki/ANSI_escape_code#24-bit
 
   AnsiStyle(this.selection, {this.color, this.bit9Pallete});
 
@@ -77,6 +79,7 @@ class ColorizeStyled {
   }
 }
 
+/// Colorize class that wraps text with defined values.
 class Colorize {
   static const _cmdCode = "\x1b[";
 
