@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:core';
 import 'dart:io';
 
+import 'package:fimber/colorize.dart';
 import 'package:fimber/filename_format.dart';
 import 'package:fimber/fimber.dart';
 
@@ -33,8 +34,8 @@ class FimberFileTree extends CustomFormatTree with CloseableTree {
         int bufferWriteInterval = FILE_BUFFER_FLUSH_INTERVAL})
       : super(logLevels: logLevels, logFormat: logFormat) {
     _maxBufferSize = maxBufferSize;
-    _bufferWriteInterval = Stream.periodic(
-        Duration(milliseconds: bufferWriteInterval), (i) {
+    _bufferWriteInterval =
+        Stream.periodic(Duration(milliseconds: bufferWriteInterval), (i) {
       // group calls
       var dumpBuffer = _logBuffer;
       _logBuffer = [];
@@ -81,8 +82,12 @@ class FimberFileTree extends CustomFormatTree with CloseableTree {
   }
 
   @override
-  void printLine(String line) {
-    _logBuffer.add(line);
+  void printLine(String line, {String level}) {
+    if (_colorizeMap[level] != null) {
+      _logBuffer.add(_colorizeMap[level].wrap(line));
+    } else {
+      _logBuffer.add(line);
+    }
     _bufferSize += line.length;
     _checkSizeForFlush();
   }
@@ -268,11 +273,11 @@ abstract class RollingFileTree extends FimberFileTree {
   rollToNextFile();
 
   @override
-  void printLine(String line) async {
+  void printLine(String line, {String level}) async {
     if (await shouldRollNextFile()) {
       await rollToNextFile();
     }
-    super.printLine(line);
+    super.printLine(line, level: level);
   }
 }
 
@@ -310,13 +315,32 @@ class CustomFormatTree extends LogTree {
 
   /// Flag clodk time in format
   static const int TIME_CLOCK = 2;
+  static final Map<String, ColorizeStyle> _defaultColorizeMap = {
+    "V": ColorizeStyle([AnsiStyle.foreground(AnsiColor.BLUE)]),
+    "D": ColorizeStyle([AnsiStyle.foreground(AnsiColor.GREEN)]),
+    "W": ColorizeStyle([
+      AnsiStyle.foreground(AnsiColor.YELLOW),
+      AnsiStyle.background(AnsiColor.BLACK)
+    ]),
+    "E": ColorizeStyle([
+      AnsiStyle.bright(AnsiColor.WHITE),
+      AnsiStyle.background(AnsiColor.RED)
+    ])
+  };
+
   List<String> logLevels;
   int printTimeFlag;
   Stopwatch _elapsedTimeStopwatch;
   String logFormat;
+  bool useColors;
+  Map<String, ColorizeStyle> _colorizeMap = {};
 
-  CustomFormatTree(
-      {this.logFormat = DEFAULT_FORMAT, this.logLevels = DEFAULT}) {
+  CustomFormatTree({this.logFormat = DEFAULT_FORMAT,
+    this.logLevels = DEFAULT,
+    this.useColors = false}) {
+    if (useColors) {
+      _colorizeMap = _defaultColorizeMap;
+    }
     printTimeFlag = 0;
     if (logFormat.contains(TIME_STAMP_TOKEN)) {
       printTimeFlag |= TIME_CLOCK;
@@ -351,8 +375,12 @@ class CustomFormatTree extends LogTree {
     }
   }
 
-  void printLine(String line) {
-    print(line);
+  void printLine(String line, {String level}) {
+    if (_colorizeMap[level] != null) {
+      print(_colorizeMap[level].wrap(line));
+    } else {
+      print(line);
+    }
   }
 
   void _printFormattedLog(String level, String msg, String tag, ex,
@@ -393,17 +421,17 @@ class CustomFormatTree extends LogTree {
 
   /// Method to overload printing to output stream the formatted logline
   /// Adds handing of time
-  printLog(String logLine) {
+  printLog(String logLine, {String level}) {
     if (printTimeFlag != null) {
       if (printTimeFlag & TIME_ELAPSED > 0) {
         var timeElapsed = _elapsedTimeStopwatch.elapsed.toString();
-        printLine("$timeElapsed\t$logLine");
+        printLine("$timeElapsed\t$logLine", level: level);
       } else {
         var date = DateTime.now().toIso8601String();
-        printLine("$date\t$logLine");
+        printLine("$date\t$logLine", level: level);
       }
     } else
-      printLine(logLine);
+      printLine(logLine, level: level);
   }
 
   @override

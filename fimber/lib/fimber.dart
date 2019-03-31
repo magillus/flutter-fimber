@@ -1,5 +1,6 @@
 library fimber;
 
+import 'package:fimber/colorize.dart';
 import 'package:fimber/file_log.dart';
 
 export 'package:fimber/data_size.dart';
@@ -106,19 +107,39 @@ class DebugTree extends LogTree {
   static const List<String> DEFAULT = ["D", "I", "W", "E"];
   static const int TIME_ELAPSED = 0;
   static const int TIME_CLOCK = 1;
+  static final Map<String, ColorizeStyle> _defaultColorizeMap = {
+    "V": ColorizeStyle([AnsiStyle.foreground(AnsiColor.BLUE)]),
+    "D": ColorizeStyle([AnsiStyle.foreground(AnsiColor.GREEN)]),
+    "W": ColorizeStyle([
+      AnsiStyle.foreground(AnsiColor.YELLOW),
+      AnsiStyle.background(AnsiColor.BLACK)
+    ]),
+    "E": ColorizeStyle([
+      AnsiStyle.bright(AnsiColor.WHITE),
+      AnsiStyle.background(AnsiColor.RED)
+    ])
+  };
   List<String> logLevels;
   final int printTimeType;
   Stopwatch _elapsedTimeStopwatch;
+  Map<String, ColorizeStyle> colorizeMap = {};
 
-  DebugTree({this.printTimeType = TIME_CLOCK, this.logLevels = DEFAULT}) {
+  DebugTree(
+      {this.printTimeType = TIME_CLOCK, this.logLevels = DEFAULT, bool useColors = false}) {
     if (printTimeType == TIME_ELAPSED) {
       _elapsedTimeStopwatch = Stopwatch();
       _elapsedTimeStopwatch.start();
     }
+    if (useColors) {
+      colorizeMap = _defaultColorizeMap;
+    }
   }
 
-  factory DebugTree.elapsed({List<String> logLevels = DEFAULT}) {
-    return DebugTree(logLevels: logLevels, printTimeType: TIME_ELAPSED);
+  factory DebugTree.elapsed(
+      {List<String> logLevels = DEFAULT, bool useColors = false}) {
+    return DebugTree(logLevels: logLevels,
+        printTimeType: TIME_ELAPSED,
+        useColors: useColors);
   }
 
   @override
@@ -130,26 +151,31 @@ class DebugTree extends LogTree {
           stacktrace?.toString()?.split('\n') ?? LogTree.getStacktrace();
       var stackTraceMessage =
       tmpStacktrace.map((stackLine) => "\t$stackLine").join("\n");
-      printLog(
-          "$level\t$logTag:\t $msg \n${ex.toString()}\n$stackTraceMessage");
+      printLog("$level\t$logTag:\t $msg \n${ex.toString()}\n$stackTraceMessage",
+          level: level);
     } else {
-      printLog("$level\t$logTag:\t $msg");
+      printLog("$level\t$logTag:\t $msg", level: level);
     }
   }
 
   /// Method to overload printing to output stream the formatted logline
   /// Adds handing of time
-  printLog(String logLine) {
+  printLog(String logLine, {String level}) {
+    String printableLine = logLine;
     if (printTimeType != null) {
       if (printTimeType == TIME_ELAPSED) {
         var timeElapsed = _elapsedTimeStopwatch.elapsed.toString();
-        print("$timeElapsed\t$logLine");
+        printableLine = "$timeElapsed\t$logLine";
       } else {
         var date = DateTime.now().toIso8601String();
-        print("$date\t$logLine");
+        printableLine = "$date\t$logLine";
       }
-    } else
-      print(logLine);
+    }
+    if (colorizeMap[level] != null) {
+      print(colorizeMap[level].wrap(printableLine));
+    } else {
+      print(printableLine);
+    }
   }
 
   @override

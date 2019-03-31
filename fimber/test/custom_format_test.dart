@@ -99,8 +99,8 @@ class AssertFormattedTree extends CustomFormatTree {
   List<String> logLineHistory = [];
 
   @override
-  void printLine(String line) {
+  void printLine(String line, {String level}) {
     logLineHistory.add(line);
-    super.printLine(line);
+    super.printLine(line, level: level);
   }
 }
