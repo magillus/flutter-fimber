@@ -107,7 +107,7 @@ class DebugTree extends LogTree {
   static const List<String> DEFAULT = ["D", "I", "W", "E"];
   static const int TIME_ELAPSED = 0;
   static const int TIME_CLOCK = 1;
-  Map<String, ColorizeStyled> _defaultColorizeMap = {
+  static final Map<String, ColorizeStyled> _defaultColorizeMap = {
     "V": ColorizeStyled([AnsiStyle.foreground(AnsiColor.BLUE)]),
     "D": ColorizeStyled([AnsiStyle.foreground(AnsiColor.GREEN)]),
     "W": ColorizeStyled([
