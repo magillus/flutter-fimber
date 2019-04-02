@@ -1,3 +1,4 @@
+import 'package:fimber/colorize.dart';
 import 'package:fimber/fimber.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -6,9 +7,29 @@ export 'package:fimber/fimber.dart';
 
 class FimberTree extends LogTree {
   static const List<String> DEFAULT = ["D", "I", "W", "E"];
-  List<String> logLevels;
+  static final Map<String, ColorizeStyle> _defaultColorizeMap = {
+    "V": ColorizeStyle([AnsiStyle.foreground(AnsiColor.BLUE)]),
+    "D": ColorizeStyle([AnsiStyle.foreground(AnsiColor.GREEN)]),
+    "W": ColorizeStyle([
+      AnsiStyle.foreground(AnsiColor.YELLOW),
+      AnsiStyle.background(AnsiColor.BLACK)
+    ]),
+    "E": ColorizeStyle([
+      AnsiStyle.bright(AnsiColor.WHITE),
+      AnsiStyle.background(AnsiColor.RED)
+    ])
+  };
 
-  FimberTree({this.logLevels = DEFAULT});
+  List<String> logLevels;
+  bool useColors = false;
+
+  Map<String, ColorizeStyle> colorizeMap = {};
+
+  FimberTree({this.logLevels = DEFAULT, this.useColors = false}) {
+    if (useColors) {
+      colorizeMap = _defaultColorizeMap;
+    }
+  }
 
   @override
   log(String level, String msg,
@@ -22,7 +43,21 @@ class FimberTree extends LogTree {
       tmpStacktrace.map((stackLine) => "\t$stackLine").join("\n");
       exDump = "${ex.toString()} \n$stackTraceMessage";
     }
-    var logLine = LogLine(level, logTag, msg, exceptionDump: exDump);
+    String postFix, preFix;
+    if (useColors) {
+      if (_defaultColorizeMap[level] != null) {
+        var postPrefix = _defaultColorizeMap[level]
+            .wrap("PREFIX_SPLITTER")
+            .split("PREFIX_SPLITTER");
+        if (postPrefix.length == 2) {
+          preFix = postPrefix[0];
+          postFix = postPrefix[1];
+        }
+      }
+    }
+    var logLine = LogLine(level, logTag, msg, exceptionDump: exDump,
+        postFix: postFix,
+        preFix: preFix);
     var invokeMsg = logLine.toMsg();
     _channel.invokeMethod("log", invokeMsg);
   }
@@ -41,8 +76,11 @@ class LogLine {
   String tag;
   String message;
   String exceptionDump;
+  String preFix;
+  String postFix;
 
-  LogLine(this.level, this.tag, this.message, {this.exceptionDump});
+  LogLine(this.level, this.tag, this.message,
+      {this.exceptionDump, this.preFix, this.postFix});
 
   // to use with message event
   ByteData serialize() {
@@ -51,6 +89,8 @@ class LogLine {
     _putString(buffer, tag);
     _putString(buffer, message);
     _putString(buffer, exceptionDump);
+    _putString(buffer, preFix ?? "");
+    _putString(buffer, postFix ?? "");
     return buffer.done();
   }
 
@@ -68,7 +108,9 @@ class LogLine {
       "level": level,
       "tag": tag,
       "message": message,
-      "ex": exceptionDump
+      "ex": exceptionDump,
+      "preFix": preFix,
+      "postFix": postFix
     };
   }
 }
@@ -80,14 +122,13 @@ class DebugBufferTree extends DebugTree {
     List<String> logLevels = DebugTree.DEFAULT})
       : super(printTimeType: printTimeType, logLevels: logLevels);
 
-  factory DebugBufferTree.elapsed(
-      {List<String> logLevels = DebugTree.DEFAULT}) {
+  factory DebugBufferTree.elapsed({List<String> logLevels = DebugTree.DEFAULT}) {
     return DebugBufferTree(
         logLevels: logLevels, printTimeType: DebugTree.TIME_ELAPSED);
   }
 
   @override
-  printLog(String logLine) {
+  printLog(String logLine, {String level}) {
     debugPrint(logLine);
   }
 }
