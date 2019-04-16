@@ -62,6 +62,11 @@ class FimberFileTree extends CustomFormatTree with CloseableTree {
       IOSink logSink;
       try {
         if (outputFileName != null) {
+          // check if file's directory exists
+          final parentDir = File(this.outputFileName).parent;
+          if (!parentDir.existsSync()) {
+            parentDir.createSync(recursive: true);
+          }
           logSink =
               File(outputFileName).openWrite(mode: FileMode.writeOnlyAppend);
           buffer.forEach((newLine) => logSink.writeln(newLine));
@@ -266,7 +271,7 @@ abstract class RollingFileTree extends FimberFileTree {
 
   RollingFileTree({logFormat = CustomFormatTree.DEFAULT_FORMAT,
     logLevels = CustomFormatTree.DEFAULT})
-      : super(null, logFormat: logFormat, logLevels: logLevels) {}
+      : super(".", logFormat: logFormat, logLevels: logLevels) {}
 
   FutureOr<bool> shouldRollNextFile();
 

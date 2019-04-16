@@ -13,10 +13,12 @@ void main() async {
 
     setUp(() {
       Fimber.clearAll();
-      logDir.createSync(recursive: true);
+      //logDir.createSync(recursive: true);
     });
     tearDown(() {
-      logDir.deleteSync(recursive: true);
+      if (logDir.existsSync()) {
+        logDir.deleteSync(recursive: true);
+      }
     });
 
     test("File log with buffer overflow", () async {
