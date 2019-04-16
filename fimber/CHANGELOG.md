@@ -1,3 +1,5 @@
+## [0.2.1] - Auto create directory for log files
+
 ## [0.2.0] - Colorize logs  
 
 - Added ANSI colorized option for `DebugTree` and `CustomFormatTree` (by default it is disabled)
