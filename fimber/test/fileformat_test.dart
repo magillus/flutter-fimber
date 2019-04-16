@@ -16,7 +16,20 @@ void main() async {
       logDir.createSync(recursive: true);
     });
     tearDown(() {
-      logDir.deleteSync(recursive: true);
+      if (logDir.existsSync()) {
+        logDir.deleteSync(recursive: true);
+      }
+    });
+
+    test("Directory autocreate.", () async {
+      var logTreeDir = Directory("${testDirName}${dirSeparator}_2");
+      expect(logTreeDir.existsSync(), false);
+      var fileTree = FimberFileTree(
+          "${logTreeDir.path}${dirSeparator}log_test.log");
+      Fimber.plantTree(fileTree);
+      Fimber.i("Test log entry");
+      await Future.delayed(Duration(milliseconds: 2000));
+      expect(logTreeDir.existsSync(), true);
     });
 
     test("File log with buffer overflow", () async {

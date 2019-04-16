@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_fimber/flutter_fimber.dart';
 
 void main() {
-  Fimber.plantTree(FimberTree());
+  Fimber.plantTree(FimberTree(useColors: true));
   Fimber.plantTree(DebugBufferTree.elapsed());
   runApp(MyApp());
 }

@@ -1,3 +1,6 @@
+## 0.2.0 Colorize logs
+
+- Based on fimber 0.2.0 added colorized logs.
 
 ## 0.1.9 Kotlin and Gradle plugin version bump
 

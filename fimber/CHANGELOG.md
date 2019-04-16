@@ -1,3 +1,8 @@
+## [0.2.0] - Colorize logs  
+
+- Added ANSI colorized option for `DebugTree` and `CustomFormatTree` (by default it is disabled)
+- `AnsiStyle` classes as extra for adding any colorful output for console.
+
 ## [0.1.11] - FileLog bugfix
 
 - FileLog bug fix for conflicts on file append. 
