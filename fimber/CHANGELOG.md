@@ -1,3 +1,8 @@
+## [0.3.0] - Code styles updates and bug fixes
+
+- Code styles updates based on pedantic lint rules.
+- bug fix for TAG generation taking from correct stacktrace location = index 4.
+
 ## [0.2.1] - Auto create directory for log files
 
 ## [0.2.0] - Colorize logs  

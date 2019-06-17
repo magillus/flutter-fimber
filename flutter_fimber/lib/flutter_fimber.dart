@@ -5,37 +5,48 @@ import 'package:flutter/services.dart';
 
 export 'package:fimber/fimber.dart';
 
+/// Fimber logging tree for specific platform.
+/// For Android it uses Android Log with corresponding levels and formatting
 class FimberTree extends LogTree {
-  static const List<String> DEFAULT = ["D", "I", "W", "E"];
+  /// Default log levels.
+  static const List<String> defaultLevels = ["D", "I", "W", "E"];
   static final Map<String, ColorizeStyle> _defaultColorizeMap = {
-    "V": ColorizeStyle([AnsiStyle.foreground(AnsiColor.BLUE)]),
-    "D": ColorizeStyle([AnsiStyle.foreground(AnsiColor.GREEN)]),
+    "V": ColorizeStyle([AnsiStyle.foreground(AnsiColor.blue)]),
+    "D": ColorizeStyle([AnsiStyle.foreground(AnsiColor.green)]),
     "W": ColorizeStyle([
-      AnsiStyle.foreground(AnsiColor.YELLOW),
-      AnsiStyle.background(AnsiColor.BLACK)
+      AnsiStyle.foreground(AnsiColor.yellow),
+      AnsiStyle.background(AnsiColor.black)
     ]),
     "E": ColorizeStyle([
-      AnsiStyle.bright(AnsiColor.WHITE),
-      AnsiStyle.background(AnsiColor.RED)
+      AnsiStyle.bright(AnsiColor.white),
+      AnsiStyle.background(AnsiColor.red)
     ])
   };
 
+  /// Log levels for this Log Tree
   List<String> logLevels;
+
+  /// Toggle to use colors scheme for ANSI style.
   bool useColors = false;
 
+  /// Optional list of Color style per each level.
   Map<String, ColorizeStyle> colorizeMap = {};
 
-  FimberTree({this.logLevels = DEFAULT, this.useColors = false}) {
+  /// Creates instance of FimberTree
+  /// with optional allowed [logLevels] and [useColors] flag.
+  FimberTree({this.logLevels = defaultLevels, this.useColors = false}) {
     if (useColors) {
       colorizeMap = _defaultColorizeMap;
     }
   }
 
+  /// Logs [message] with log [level]
+  /// and optional [tag], [ex] (exception) and [stacktrace]
   @override
-  log(String level, String msg,
+  void log(String level, String message,
       {String tag, dynamic ex, StackTrace stacktrace}) {
     var logTag = tag ?? LogTree.getTag();
-    var exDump;
+    String exDump;
     if (ex != null) {
       var tmpStacktrace =
           stacktrace?.toString()?.split('\n') ?? LogTree.getStacktrace();
@@ -55,9 +66,8 @@ class FimberTree extends LogTree {
         }
       }
     }
-    var logLine = LogLine(level, logTag, msg, exceptionDump: exDump,
-        postFix: postFix,
-        preFix: preFix);
+    var logLine = LogLine(level, logTag, message,
+        exceptionDump: exDump, postFix: postFix, preFix: preFix);
     var invokeMsg = logLine.toMsg();
     _channel.invokeMethod("log", invokeMsg);
   }
@@ -67,24 +77,37 @@ class FimberTree extends LogTree {
     return logLevels;
   }
 
-  static const MethodChannel _channel = const MethodChannel('flutter_fimber');
+  /// Method channel to send log information to native OS to handle.
+  static const MethodChannel _channel = MethodChannel('flutter_fimber');
 }
 
 /// Transport object to native value
 class LogLine {
+  /// Log level
   String level;
+
+  /// Log tag
   String tag;
+
+  /// Log message
   String message;
+
+  /// Exception dump if attached to log line.
   String exceptionDump;
+
+  /// Log line prefix.
   String preFix;
+
+  /// Log line postfix.
   String postFix;
 
+  /// Creates instance of [LogLine] with optional fields.
   LogLine(this.level, this.tag, this.message,
       {this.exceptionDump, this.preFix, this.postFix});
 
-  // to use with message event
+  /// Serializes the [LogLine] to Byte array
   ByteData serialize() {
-    WriteBuffer buffer = WriteBuffer();
+    var buffer = WriteBuffer();
     _putString(buffer, level);
     _putString(buffer, tag);
     _putString(buffer, message);
@@ -97,12 +120,12 @@ class LogLine {
   _putString(WriteBuffer buffer, String value) {
     buffer.putUint8(0xfe);
     buffer.putInt32(value.length);
-    value.runes.map((int rune) {
+    value.runes.map((rune) {
       buffer.putInt32(rune);
     });
   }
 
-  // to use with method call
+  /// to use with method call
   dynamic toMsg() {
     return {
       "level": level,
@@ -115,20 +138,25 @@ class LogLine {
   }
 }
 
-/// Logging tree that uses `debugPrint` which is not skipping log lines printed on Android
+/// Logging tree that uses `debugPrint`
+/// which is not skipping log lines printed on Android
 /// https://flutter.io/docs/testing/debugging#print-and-debugprint-with-flutter-logs
 class DebugBufferTree extends DebugTree {
-  DebugBufferTree({int printTimeType = DebugTree.TIME_CLOCK,
-    List<String> logLevels = DebugTree.DEFAULT})
+  /// Creates Debug Tree compatible with Android.
+  DebugBufferTree({int printTimeType = DebugTree.timeClockType,
+    List<String> logLevels = DebugTree.defaultLevels})
       : super(printTimeType: printTimeType, logLevels: logLevels);
 
-  factory DebugBufferTree.elapsed({List<String> logLevels = DebugTree.DEFAULT}) {
+  /// Creates elapsed time Debug Tree compatible with Android.
+  factory DebugBufferTree.elapsed(
+      {List<String> logLevels = DebugTree.defaultLevels}) {
     return DebugBufferTree(
-        logLevels: logLevels, printTimeType: DebugTree.TIME_ELAPSED);
+        logLevels: logLevels, printTimeType: DebugTree.timeElapsedType);
   }
 
+  /// prints log line with `debugPrint`.
   @override
-  printLog(String logLine, {String level}) {
+  void printLog(String logLine, {String level}) {
     debugPrint(logLine);
   }
 }

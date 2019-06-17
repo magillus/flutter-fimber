@@ -1,0 +1,2 @@
+#include: package:pedantic/analysis_options.yaml
+include: effective-dart.yaml
