@@ -61,7 +61,8 @@ class Fimber {
     if (_muteLevels.contains(level)) {
       return; // skip logging if muted.
     }
-    for (var logger in _trees[level]) {
+    var loggersForTree = _trees[level];
+    for (var logger in loggersForTree) {
       logger.log(level, message, tag: tag, ex: ex, stacktrace: stacktrace);
     }
   }
@@ -241,7 +242,7 @@ abstract class LogTree {
 
   /// Gets tag with [stackIndex],
   /// how many steps in stacktrace should be taken to grab log call.
-  static String getTag({int stackIndex = 6}) {
+  static String getTag({int stackIndex = 4}) {
     var stackTraceList = StackTrace.current.toString().split('\n');
     if (stackTraceList.length > stackIndex) {
       var lineChunks =
@@ -251,8 +252,10 @@ abstract class LogTree {
         if (lineParts.length > 8 && lineParts[6] == 'new') {
           // constructor logging
           return "${lineParts[6]} ${lineParts[7]}";
-        } else {
+        } else if (lineParts.length > 6) {
           return lineParts[6] ?? _defaultTag; // need better error handling
+        } else {
+          return _defaultTag;
         }
       } else {
         return _defaultTag;
