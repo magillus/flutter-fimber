@@ -62,7 +62,7 @@ class Fimber {
       return; // skip logging if muted.
     }
     var loggersForTree = _trees[level];
-    for (var logger in loggersForTree) {
+    for (var logger in loggersForTree ?? []) {
       logger.log(level, message, tag: tag, ex: ex, stacktrace: stacktrace);
     }
   }

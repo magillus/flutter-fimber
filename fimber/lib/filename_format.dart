@@ -22,9 +22,7 @@ class LogFileNameFormatter {
   String filenameFormat = "log_YYMMDD-HH.txt";
 
   /// Creates LogFileNameFormatter with given format or by default
-  LogFileNameFormatter({String format = "log_YYMMDD-HH.txt"}) {
-    filenameFormat = format;
-  }
+  LogFileNameFormatter({this.filenameFormat = "log_YYMMDD-HH.txt"});
 
   /// Factory method to create date and time filename formatter with
   /// prefix and postfix.
