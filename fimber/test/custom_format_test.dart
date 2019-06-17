@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:fimber/fimber.dart';
@@ -24,8 +25,8 @@ void main() {
 
       var elapsedMsg = AssertFormattedTree.elapsed(
           logFormat:
-          "${CustomFormatTree.TIME_ELAPSED_TOKEN} ${CustomFormatTree
-              .MESSAGE_TOKEN}");
+          "${CustomFormatTree.timeElapsedToken} ${CustomFormatTree
+              .messageToken}");
       Fimber.plantTree(defaultFormat);
       Fimber.plantTree(elapsedMsg);
 
@@ -47,7 +48,7 @@ void main() {
     });
 
     test('File output logger', () async {
-      var filePath = "${testDirName}${dirSeparator}test-output.logger.log.txt";
+      var filePath = "$testDirName${dirSeparator}test-output.logger.log.txt";
       var file = File(filePath);
       Fimber.clearAll();
       Fimber.plantTree(FimberFileTree(filePath));
@@ -64,12 +65,12 @@ void main() {
     });
 
     test('Time format detection', () async {
-      var filePath = "${testDirName}${dirSeparator}test-format-detection.log.txt";
+      var filePath = "$testDirName${dirSeparator}test-format-detection.log.txt";
       Fimber.clearAll();
       Fimber.plantTree(FimberFileTree(filePath,
           logFormat:
-          "${CustomFormatTree.TIME_ELAPSED_TOKEN} ${CustomFormatTree
-              .MESSAGE_TOKEN} ${CustomFormatTree.TIME_STAMP_TOKEN}"));
+          "${CustomFormatTree.timeElapsedToken} ${CustomFormatTree
+              .messageToken} ${CustomFormatTree.timeStampToken}"));
 
       Fimber.i("Test log");
 
@@ -87,12 +88,12 @@ void main() {
 }
 
 class AssertFormattedTree extends CustomFormatTree {
-  AssertFormattedTree({String logFormat = CustomFormatTree.DEFAULT_FORMAT,
-    int printTimeType = CustomFormatTree.TIME_CLOCK})
+  AssertFormattedTree({String logFormat = CustomFormatTree.defaultFormat,
+    int printTimeType = CustomFormatTree.timeClockFlag})
       : super(logFormat: logFormat);
 
   factory AssertFormattedTree.elapsed(
-      {String logFormat = CustomFormatTree.DEFAULT_FORMAT}) {
+      {String logFormat = CustomFormatTree.defaultFormat}) {
     return AssertFormattedTree(logFormat: logFormat);
   }
 

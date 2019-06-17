@@ -14,6 +14,7 @@ void main() {
 
   try {
     throw Exception("Exception thrown");
+    // ignore: avoid_catches_without_on_clauses
   } catch (e, stacktrace) {
     // providing stacktrace will better show where issue was thrown
     Fimber.i("Error caught.", ex: e, stacktrace: stacktrace);

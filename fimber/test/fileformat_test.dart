@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:fimber/filename_format.dart';
@@ -16,16 +17,30 @@ void main() async {
       logDir.createSync(recursive: true);
     });
     tearDown(() {
-      logDir.deleteSync(recursive: true);
+      if (logDir.existsSync()) {
+        logDir.deleteSync(recursive: true);
+      }
+    });
+
+    test("Directory autocreate.", () async {
+      var logTreeDir = Directory("$testDirName${dirSeparator}_2");
+      expect(logTreeDir.existsSync(), false);
+      var fileTree =
+      FimberFileTree("${logTreeDir.path}${dirSeparator}log_test.log");
+      Fimber.plantTree(fileTree);
+      Fimber.i("Test log entry");
+      await Future.delayed(Duration(milliseconds: 2000));
+      expect(logTreeDir.existsSync(), true);
     });
 
     test("File log with buffer overflow", () async {
-      var fileTree = FimberFileTree(
-          "${testDirName}${dirSeparator}log_buffer_overflow${DateTime
-              .now()
-              .millisecondsSinceEpoch}.log");
+      var fileTree =
+      FimberFileTree("$testDirName${dirSeparator}log_buffer_overflow"
+          "${DateTime
+          .now()
+          .millisecondsSinceEpoch}.log");
       Fimber.plantTree(fileTree);
-      String text500B = List.filled(50, "1234567890").join();
+      var text500B = List.filled(50, "1234567890").join();
       Fimber.i("Test log: $text500B");
       Fimber.i("Test log: $text500B");
       await Future.delayed(Duration(milliseconds: 50));
@@ -37,16 +52,15 @@ void main() async {
       fileTree.close(); // cut the file buffer flush every 500ms
       var fileSize = File(fileTree.outputFileName).lengthSync();
       assert(fileSize > 2 * 1038); // more then 1 line 1000chars + log tag/date
-      assert(fileSize <
-          3 *
-              1038); // less then 3 kb - last log entry in buffer wasn't flushed to disk yet
+      assert(fileSize < 3 * 1038); // less then 3 kb
+      // - last log entry in buffer wasn't flushed to disk yet
       await Future.delayed(Duration(milliseconds: 50));
     });
 
     test("File date rolling test", () async {
       var logTree = TimedRollingFileTree(
           timeSpan: 1,
-          filenamePrefix: "${testDirName}${dirSeparator}log_test_rolling_");
+          filenamePrefix: "$testDirName${dirSeparator}log_test_rolling_");
       Fimber.plantTree(logTree);
       Fimber.i("First log entry");
       Fimber.i("First log entry #2");
@@ -81,18 +95,19 @@ void main() async {
       File(secondFile).deleteSync();
     });
     test("Format file name with date", () {
-      var fileFormat = LogFileNameFormatter(format: "log_YYMMDD-HH.txt");
+      var fileFormat =
+      LogFileNameFormatter(filenameFormat: "log_YYMMDD-HH.txt");
 
       expect(fileFormat.format(DateTime(2019, 01, 22, 17, 00, 00)),
           "log_190122-17.txt");
 
       expect(
-          LogFileNameFormatter(format: "log_YY-MMMM-DD-hhaa.txt")
+          LogFileNameFormatter(filenameFormat: "log_YY-MMMM-DD-hhaa.txt")
               .format(DateTime(2019, 12, 22, 17, 00, 00)),
           "log_19-December-22-05pm.txt");
 
       expect(
-          LogFileNameFormatter(format: "log_YYMMDD-ddd-HH.txt")
+          LogFileNameFormatter(filenameFormat: "log_YYMMDD-ddd-HH.txt")
               .format(DateTime(2019, 11, 1, 1, 00, 00)),
           "log_191101-Fri-01.txt");
 
@@ -105,14 +120,13 @@ void main() async {
     test("Old file detection test", () async {
       // roll file every 20 bytes (in reality every log line)
       var logTree = SizeRollingFileTree(DataSize.bytes(20),
-          filenamePrefix: "${testDirName}${dirSeparator}log_");
+          filenamePrefix: "$testDirName${dirSeparator}log_");
       // detection tests - todo fix
-      expect(logTree.isLogFile("${testDirName}${dirSeparator}log_1.txt"), true);
-      expect(
-          logTree.getLogIndex("${testDirName}${dirSeparator}log_nothing.txt"),
-          null);
-      expect(logTree.getLogIndex("${testDirName}${dirSeparator}log_1.txt"), 1);
-      expect(logTree.getLogIndex("${testDirName}${dirSeparator}log_3.txt"), 3);
+      expect(logTree.isLogFile("$testDirName${dirSeparator}log_1.txt"), true);
+      expect(logTree.getLogIndex("$testDirName${dirSeparator}log_nothing.txt"),
+          -1);
+      expect(logTree.getLogIndex("$testDirName${dirSeparator}log_1.txt"), 1);
+      expect(logTree.getLogIndex("$testDirName${dirSeparator}log_3.txt"), 3);
 
       Fimber.plantTree(logTree);
 
@@ -124,18 +138,18 @@ void main() async {
       var logFile1 = logTree.outputFileName;
 
       print(logFile1);
-      expect(logFile1, "${testDirName}${dirSeparator}log_1.txt");
+      expect(logFile1, "$testDirName${dirSeparator}log_1.txt");
       Fimber.i("Log single line - B");
       await waitForAppendBuffer();
       await Future.delayed(Duration(milliseconds: 200));
       var logFile2 = logTree.outputFileName;
 
       print(logFile2);
-      expect(logFile2, "${testDirName}${dirSeparator}log_2.txt");
+      expect(logFile2, "$testDirName${dirSeparator}log_2.txt");
       await Future.delayed(Duration(milliseconds: 200));
 
       logTree = SizeRollingFileTree(DataSize.bytes(20),
-          filenamePrefix: "${testDirName}${dirSeparator}log_");
+          filenamePrefix: "$testDirName${dirSeparator}log_");
 
       Fimber.clearAll();
       Fimber.plantTree(logTree);
@@ -145,7 +159,7 @@ void main() async {
 
       var logFile3 = logTree.outputFileName;
       print(logFile3);
-      expect(logFile3, "${testDirName}${dirSeparator}log_3.txt");
+      expect(logFile3, "$testDirName${dirSeparator}log_3.txt");
 
       await Future.delayed(Duration(milliseconds: 200));
 
@@ -157,7 +171,7 @@ void main() async {
     test("File size rolling test", () async {
       // roll file every 20 bytes (in reality every log line)
       var logTree = SizeRollingFileTree(DataSize.bytes(20),
-          filenamePrefix: "${testDirName}${dirSeparator}");
+          filenamePrefix: "$testDirName$dirSeparator");
 
       //logTree.detectFileIndex();
 
@@ -188,7 +202,7 @@ void main() async {
     });
 
     test("File Tree - append test", () async {
-      var logFile = "${testDirName}${dirSeparator}test.multilog.txt";
+      var logFile = "$testDirName${dirSeparator}test.multilog.txt";
 
       Fimber.plantTree(FimberFileTree.elapsed(logFile));
 
@@ -210,7 +224,7 @@ void main() async {
 
     test("File Tree - Rolling time append test", () async {
       var tree = TimedRollingFileTree(
-          filenamePrefix: "${testDirName}${dirSeparator}mul_tree_time_append");
+          filenamePrefix: "$testDirName${dirSeparator}mul_tree_time_append");
       var logFile = tree.outputFileName;
 
       Fimber.plantTree(tree);
@@ -233,7 +247,8 @@ void main() async {
   });
 }
 
-waitForAppendBuffer() async {
+/// Waits for append buffer method.
+Future waitForAppendBuffer() async {
   await Future.delayed(
-      Duration(milliseconds: FimberFileTree.FILE_BUFFER_FLUSH_INTERVAL));
+      Duration(milliseconds: FimberFileTree.fileBufferFlushInterval));
 }
