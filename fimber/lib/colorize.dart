@@ -1,62 +1,122 @@
-enum AnsiColor { BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE, BIT8 }
-enum AnsiSelection { FOREGROUND, BACKGROUND, REVERSED, BRIGHT, UNDERLINE }
+/// Color types for ANSI console standard
+enum AnsiColor {
+  /// Black color type
+  black,
+
+  /// Red color type
+  red,
+
+  /// Green color type
+  green,
+
+  /// Yellow color type
+  yellow,
+
+  /// Blue color type
+  blue,
+
+  /// Magenta color type
+  magenta,
+
+  /// Cyan color type
+  cyan,
+
+  /// White color type
+  white,
+
+  /// Custom color type with Bit 8 (not supported)
+  bits
+}
+
+/// Type of Selection for the Ansi style/color
+enum AnsiSelection {
+  /// Foreground color style selection
+  foreground,
+
+  /// Background color style selection
+  background,
+
+  /// Reversed style selection - toggle
+  reversed,
+
+  /// Bright style selection - enables bright
+  bright,
+
+  /// Underline style selection - enables
+  underline
+}
 
 /// Console style definition with color and type of "selection"
 ///
 class AnsiStyle {
+  /// Color part of the style
   AnsiColor color;
-  AnsiSelection selection;
-  int bit9Pallete = null; // todo add support for 8bit https://en.wikipedia.org/wiki/ANSI_escape_code#24-bit
 
+  /// Style's selection
+  AnsiSelection selection;
+
+  /// If supported bit9 palette
+  int bit9Pallete; // todo add support for 8bit https://en.wikipedia.org/wiki/ANSI_escape_code#24-bit
+
+  /// Creates style by its selection and optional color details
   AnsiStyle(this.selection, {this.color, this.bit9Pallete});
 
+  /// Returns section code for ANSI style entry.
   String _selectionCode() {
     if (selection != null) {
       switch (selection) {
-        case AnsiSelection.BACKGROUND:
+        case AnsiSelection.background:
           return "4";
-        case AnsiSelection.FOREGROUND:
+        case AnsiSelection.foreground:
           return "3";
-        case AnsiSelection.REVERSED:
+        case AnsiSelection.reversed:
           return "7";
-        case AnsiSelection.BRIGHT:
+        case AnsiSelection.bright:
           return "9";
-        case AnsiSelection.UNDERLINE:
+        case AnsiSelection.underline:
           return "4";
       }
     }
     return "";
   }
 
+  /// returns color code for ANSI style entry.
   String _colorCode() {
-    if (bit9Pallete != null && color == AnsiColor.BIT8) {
+    if (bit9Pallete != null && color == AnsiColor.bits) {
       return "8;5;$bit9Pallete";
-    } else
-      return color?.index?.toString() ?? "";
+    } else {
+      return (color?.index?.toString()) ?? "";
+    }
   }
 
-  String apply(String retString) {
-    return Colorize.wrapAnsi(retString, _selectionCode() + _colorCode());
+  /// Applies defined style into the text.
+  String apply(String text) {
+    return Colorize._wrapAnsi(text, _selectionCode() + _colorCode());
   }
 
+  /// Creates Bright style with color
   factory AnsiStyle.bright(AnsiColor color) {
-    return AnsiStyle(AnsiSelection.BRIGHT, color: color);
+    return AnsiStyle(AnsiSelection.bright, color: color);
   }
 
+  /// Creates Reversed style.
   factory AnsiStyle.reversed() {
-    return AnsiStyle(AnsiSelection.REVERSED);
+    return AnsiStyle(AnsiSelection.reversed);
   }
 
+  /// Creates underline style.
   factory AnsiStyle.underline() {
-    return AnsiStyle(AnsiSelection.UNDERLINE);
+    return AnsiStyle(AnsiSelection.underline);
   }
 
+  /// Creates foreground style with color
   factory AnsiStyle.foreground(AnsiColor color) {
-    return AnsiStyle(AnsiSelection.FOREGROUND, color: color);
+    return AnsiStyle(AnsiSelection.foreground, color: color);
   }
 
+  /// Creates background style with color.
   factory AnsiStyle.background(AnsiColor color) {
-    return AnsiStyle(AnsiSelection.BACKGROUND, color: color);
+    return AnsiStyle(AnsiSelection.background, color: color);
   }
 }
 
@@ -64,17 +124,19 @@ class AnsiStyle {
 class ColorizeStyle {
   final List<AnsiStyle> _styles = [];
 
+  /// Creates colorize Style from list of AnsiStyles.
   ColorizeStyle(List<AnsiStyle> styles) {
-    this._styles.addAll(styles);
+    _styles.addAll(styles);
   }
 
+  /// Wraps a text with list of AnsiStyles.
   String wrap(String text, {List<AnsiStyle> additionalStyles}) {
-    List<AnsiStyle> styles = List.from(_styles)
+    var styles = List.from(_styles)
       ..addAll(additionalStyles ?? []);
     var retString = text;
-    styles.forEach((style) {
+    for (var style in styles) {
       retString = style.apply(retString);
-    });
+    }
     return retString;
   }
 }
@@ -92,12 +154,22 @@ class Colorize {
   static const _foregroundType = "3";
   static const _backgroundType = "4";
 
-  AnsiColor foreground = null;
-  AnsiColor background = null;
-  AnsiColor bright = null;
+  /// Colorize will apply foreground color of style if provided
+  AnsiColor foreground;
+
+  /// Colorize will apply background color of style if provided
+  AnsiColor background;
+
+  /// Colorize will apply bright style if provided
+  AnsiColor bright;
+
+  /// Colorize will apply reverse style if provided
   bool reverse = false;
+
+  /// Colorize will apply underline style if provided
   bool underline = false;
 
+  /// Creates Colorize class with defined styles.
   Colorize(
       {this.foreground,
       this.background,
@@ -105,10 +177,11 @@ class Colorize {
       this.reverse,
       this.underline});
 
+  /// Wraps text into the defined styles with option to override a style.
   String wrap(String text,
-      {AnsiColor foreground = null,
-      AnsiColor background = null,
-      AnsiColor bright = null,
+      {AnsiColor foreground,
+        AnsiColor background,
+        AnsiColor bright,
       bool reverse = false,
       bool underline = false}) {
     var underlineStyle = (underline ?? false)
@@ -136,13 +209,14 @@ class Colorize {
         underline: underlineStyle);
   }
 
+  /// Wraps text with provided styles.
   static String wrapWith(String text,
       {AnsiColor background,
       AnsiColor foreground,
       AnsiColor bright,
       bool reverse = false,
       bool underline = false}) {
-    String retString = text;
+    var retString = text;
     if (reverse) {
       // if reverse and background/foreground are specified we should reverse their colors
       if (background != null || foreground != null || bright != null) {
@@ -150,11 +224,11 @@ class Colorize {
         background = foreground ?? bright;
         foreground = tmp;
       } else {
-        retString = wrapAnsi(retString, _reverseType);
+        retString = _wrapAnsi(retString, _reverseType);
       }
     }
     if (underline) {
-      retString = wrapAnsi(retString, _underlineType);
+      retString = _wrapAnsi(retString, _underlineType);
     }
     if (foreground != null) {
       retString = _wrapSingle(retString, foreground: foreground);
@@ -169,19 +243,24 @@ class Colorize {
   }
 
   static String _wrapSingle(String text,
-      {AnsiColor foreground, AnsiColor background, AnsiColor bright}) {
+      {AnsiColor foreground,
+        AnsiColor background,
+        AnsiColor bright,
+        bool blink}) {
     var style = _foregroundType;
     var color = foreground;
-    if (bright != null) {
+    if (blink ?? false) {
+      style = _blinkType;
+      color = background;
+    } else if (bright != null) {
       style = _brightType;
       color = bright;
-    }
-    if (background != null) {
+    } else if (background != null) {
       style = _backgroundType;
       color = background;
     }
     if (style != null) {
-      return wrapAnsi(text, style + _colorCode(color));
+      return _wrapAnsi(text, style + _colorCode(color));
     } else {
       return text;
     }
@@ -191,7 +270,7 @@ class Colorize {
     return color.index.toString();
   }
 
-  static String wrapAnsi(String text, String ansiCode) {
+  static String _wrapAnsi(String text, String ansiCode) {
     return "$_cmdCode${ansiCode}m$text$_resetCode";
   }
 }

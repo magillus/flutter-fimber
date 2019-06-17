@@ -148,15 +148,17 @@ void main() {
     });
     expect(10, output);
     expect(12, assertTree.allLines.length);
-    assertTree.allLines.forEach((line) {
+    for (var line in assertTree.allLines) {
       // test tag
       assert(line.contains("TEST BLOCK"));
-    });
+    }
+    ;
     //inside lines contain external value
-    assertTree.allLines.sublist(1, 11).forEach((line) {
+    for (var line in assertTree.allLines.sublist(1, 11)) {
       assert(line.contains(someMessage));
       assert(line.contains("D:TEST BLOCK"));
-    });
+    }
+    ;
   });
 
   test('Test with block autotag', () {
@@ -176,15 +178,16 @@ void main() {
     });
     expect(10, output);
     expect(12, assertTree.allLines.length); // 10 + start and end line
-    assertTree.allLines.forEach((line) {
+    for (var line in assertTree.allLines) {
       // test tag
       assert(line.contains("main"));
-    });
+    }
+    ;
     //inside lines contain external value
-    assertTree.allLines.sublist(1, 11).forEach((line) {
+    for (var line in assertTree.allLines.sublist(1, 11)) {
       assert(line.contains(someMessage));
       assert(line.contains("D:main"));
-    });
+    }
   });
 
   test('Unplant trees test', () {
@@ -193,7 +196,7 @@ void main() {
     var assertTreeB = AssertTree(["I", "W", "E"]);
     Fimber.plantTree(assertTreeA);
     Fimber.plantTree(assertTreeB);
-    Fimber.plantTree(DebugTree(printTimeType: DebugTree.TIME_ELAPSED));
+    Fimber.plantTree(DebugTree(printTimeType: DebugTree.timeElapsedType));
 
     Fimber.e("Test Error");
     Fimber.w("Test Warning");
@@ -265,11 +268,13 @@ void main() {
     var testClass = TestClass();
     try {
       testClass.throwSomeError();
+      // ignore: avoid_catches_without_on_clauses
     } catch (e, s) {
       Fimber.w("Eror caught", ex: e, stacktrace: s);
     }
     try {
       testClass.throwSomeError();
+      // ignore: avoid_catches_without_on_clauses
     } catch (e) {
       Fimber.w("Eror caught", ex: e);
     }
@@ -297,7 +302,6 @@ void main() {
     assert(assertTree.allLines[1].contains("Test INFO unmute log."));
   });
 
-
   group("COLORIZE", () {
     test("Debug colors - visual test only", () {
       Fimber.clearAll();
@@ -322,7 +326,8 @@ class TestClass {
     return TestClass();
   }
 
-  throwSomeError() {
+  /// Throws some error
+  void throwSomeError() {
     throw Exception("Test exception from TestClass");
   }
 
@@ -331,7 +336,6 @@ class TestClass {
     return "TestClass.instance";
   }
 }
-
 
 class AssertTree extends LogTree {
   List<String> logLevels;
@@ -346,7 +350,7 @@ class AssertTree extends LogTree {
   }
 
   @override
-  log(String level, String msg,
+  void log(String level, String msg,
       {String tag, dynamic ex, StackTrace stacktrace}) {
     tag = (tag ?? LogTree.getTag());
     lastLogLine =

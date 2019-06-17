@@ -1,70 +1,82 @@
-/// File formatting with dates for rotation date logging with TimedRollingFileTree.
+/// File formatting with dates for rotation date logging
+/// with TimedRollingFileTree.
 ///
 class LogFileNameFormatter {
-  static const _YEAR2_TOKEN = "YY";
-  static const _YEAR4_TOKEN = "YYYY";
-  static const _MONTH2_TOKEN = "MM";
-  static const _MONTH3_TOKEN = "MMM";
-  static const _MONTH_TOKEN = "MMMM";
-  static const _DAY_TOKEN = "DD";
-  static const _DAY_OF_WEEK_TOKEN = "ddd";
-  static const _HOUR12_TOKEN = "hh";
-  static const _HOUR24_TOKEN = "HH";
-  static const _HOURAMPM_TOKEN = "aa";
-  static const _MINUTES_TOKEN = "mm";
-  static const _SECONDS_TOKEN = "SS";
+  static const _year2charToken = "YY";
+  static const _fullYearToken = "YYYY";
+  static const _month2charToken = "MM";
+  static const _month3charToken = "MMM";
+  static const _monthToken = "MMMM";
+  static const _dayToken = "DD";
+  static const _dayOfWeekToken = "ddd";
+  static const _hour12Token = "hh";
+  static const _hour24Token = "HH";
+  static const _hourPmAmToken = "aa";
+  static const _minutesToken = "mm";
+  static const _secondsToken = "SS";
 
-  static const _DAY_FORMAT = "$_YEAR4_TOKEN$_MONTH2_TOKEN$_DAY_TOKEN";
-  static const _TIME_FORMAT = "$_HOUR24_TOKEN$_MINUTES_TOKEN$_SECONDS_TOKEN";
+  static const _dayFormat = "$_fullYearToken$_month2charToken$_dayToken";
+  static const _timeFormat = "$_hour24Token$_minutesToken$_secondsToken";
 
+  /// Filename format for files created with this formatter.
   String filenameFormat = "log_YYMMDD-HH.txt";
 
+  /// Creates LogFileNameFormatter with given format or by default
   LogFileNameFormatter({String format = "log_YYMMDD-HH.txt"}) {
-    this.filenameFormat = format;
+    filenameFormat = format;
   }
 
+  /// Factory method to create date and time filename formatter with
+  /// prefix and postfix.
   factory LogFileNameFormatter.full(
       {String prefix = "log_", String postfix = ".txt"}) {
     return LogFileNameFormatter(
-        format: "$prefix${_DAY_FORMAT}_${_TIME_FORMAT}$postfix");
+        format: "$prefix${_dayFormat}_$_timeFormat$postfix");
   }
 
+  /// Factory method to create hourly filename formatter with
+  /// prefix and postifx.
   factory LogFileNameFormatter.hourly(
       {String prefix = "log_", String postfix = ".txt"}) {
     return LogFileNameFormatter(
-        format: "$prefix${_DAY_FORMAT}_$_DAY_TOKEN$postfix");
+        format: "$prefix${_dayFormat}_$_dayToken$postfix");
   }
 
+  /// Factory method to create daily filename formatter with
+  /// prefix and postfix
   factory LogFileNameFormatter.daily(
       {String prefix = "log_", String postfix = ".txt"}) {
     return LogFileNameFormatter(
-        format: "$prefix${_DAY_FORMAT}_$_DAY_TOKEN$postfix");
+        format: "$prefix${_dayFormat}_$_dayToken$postfix");
   }
 
+  /// Factory method to create weekly filename formatter with
+  /// prefix and postfix
   factory LogFileNameFormatter.weekly(
       {String prefix = "log_", String postfix = ".txt"}) {
-    return LogFileNameFormatter(format: "$prefix$_DAY_FORMAT$postfix");
+    return LogFileNameFormatter(format: "$prefix$_dayFormat$postfix");
   }
 
+  /// Formats date time based on defined formatter
   String format(DateTime dateTime) {
-    String name = filenameFormat;
+    var name = filenameFormat;
     return name
-        .replaceAll(_YEAR4_TOKEN, dateTime.year.toString().padLeft(4, '0'))
+        .replaceAll(_fullYearToken, dateTime.year.toString().padLeft(4, '0'))
         .replaceAll(
-            _YEAR2_TOKEN, (dateTime.year % 1000).toString().padLeft(2, '0'))
-        .replaceAll(_MONTH_TOKEN, _month(dateTime.month))
-        .replaceAll(_MONTH3_TOKEN, _month3(dateTime.month))
-        .replaceAll(_MONTH2_TOKEN, dateTime.month.toString().padLeft(2, '0'))
-        .replaceAll(_DAY_TOKEN, dateTime.day.toString().padLeft(2, '0'))
-        .replaceAll(_DAY_OF_WEEK_TOKEN, _dayOfWeek(dateTime.weekday))
+        _year2charToken, (dateTime.year % 1000).toString().padLeft(2, '0'))
+        .replaceAll(_monthToken, _month(dateTime.month))
+        .replaceAll(_month3charToken, _month3(dateTime.month))
+        .replaceAll(_month2charToken, dateTime.month.toString().padLeft(2, '0'))
+        .replaceAll(_dayToken, dateTime.day.toString().padLeft(2, '0'))
+        .replaceAll(_dayOfWeekToken, _dayOfWeek(dateTime.weekday))
         .replaceAll(
-            _HOUR12_TOKEN, (dateTime.hour % 12).toString().padLeft(2, '0'))
-        .replaceAll(_HOUR24_TOKEN, dateTime.hour.toString().padLeft(2, '0'))
-        .replaceAll(_HOURAMPM_TOKEN, _amPmHour(dateTime.hour))
-        .replaceAll(_HOURAMPM_TOKEN.toUpperCase(),
+        _hour12Token, (dateTime.hour % 12).toString().padLeft(2, '0'))
+        .replaceAll(_hour24Token, dateTime.hour.toString().padLeft(2, '0'))
+        .replaceAll(_hourPmAmToken, _amPmHour(dateTime.hour))
+        .replaceAll(_hourPmAmToken.toUpperCase(),
             _amPmHour(dateTime.hour).toUpperCase())
-        .replaceAll(_SECONDS_TOKEN, dateTime.second.toString().padLeft(2, '0'))
-        .replaceAll(_MINUTES_TOKEN, dateTime.minute.toString().padLeft(2, '0'));
+        .replaceAll(_secondsToken, dateTime.second.toString().padLeft(2, '0'))
+        .replaceAll(_minutesToken, dateTime.minute.toString().padLeft(2, '0'));
   }
 
   String _amPmHour(int hour) {

@@ -7,31 +7,34 @@ import 'package:fimber/filename_format.dart';
 import 'package:fimber/fimber.dart';
 
 /// File based logging output tree.
-/// This tree if planted will post short formatted (elapsed time and message) output into file specified in constructor.
+/// This tree if planted will post short formatted (elapsed time and message)
+/// output into file specified in constructor.
 /// Note: Mostly for testing right now
 class FimberFileTree extends CustomFormatTree with CloseableTree {
+  /// Output current log file name.
   String outputFileName;
 
-  /// Interval for buffer write to file.
-  static const FILE_BUFFER_FLUSH_INTERVAL = 500;
+  /// Interval for buffer write to file. In milliseconds
+  static const fileBufferFlushInterval = 500;
 
   /// Size limit (bytes) in temporary buffer.
-  static const BUFFER_SIZE_LIMIT = 1024; //1kB
+  static const bufferSizeLimit = 1024; //1kB
 
   int _bufferSize = 0;
   List<String> _logBuffer = [];
   StreamSubscription<List<String>> _bufferWriteInterval;
-  int _maxBufferSize = BUFFER_SIZE_LIMIT;
+  int _maxBufferSize = bufferSizeLimit;
 
-  /// Creates Instance of FimberFileTree with optional [logFormat] from [CustomFormatTree] predicates.
-  /// Takes optional [maxBufferSize] (default 1kB) and optional [bufferWriteInterval] in milliseconds.
+  /// Creates Instance of FimberFileTree
+  /// with optional [logFormat] from [CustomFormatTree] predicates.
+  /// Takes optional [maxBufferSize] (default 1kB) and
+  /// optional [bufferWriteInterval] in milliseconds.
   FimberFileTree(this.outputFileName,
-      {logLevels = CustomFormatTree.DEFAULT,
-        logFormat =
-        "${CustomFormatTree.TIME_STAMP_TOKEN}\t${CustomFormatTree
-            .MESSAGE_TOKEN}",
-        int maxBufferSize = BUFFER_SIZE_LIMIT,
-        int bufferWriteInterval = FILE_BUFFER_FLUSH_INTERVAL})
+      {logLevels = CustomFormatTree.defaultLevels,
+        logFormat = "${CustomFormatTree.timeStampToken}"
+            "\t${CustomFormatTree.messageToken}",
+        int maxBufferSize = bufferSizeLimit,
+        int bufferWriteInterval = fileBufferFlushInterval})
       : super(logLevels: logLevels, logFormat: logFormat) {
     _maxBufferSize = maxBufferSize;
     _bufferWriteInterval =
@@ -63,13 +66,15 @@ class FimberFileTree extends CustomFormatTree with CloseableTree {
       try {
         if (outputFileName != null) {
           // check if file's directory exists
-          final parentDir = File(this.outputFileName).parent;
+          final parentDir = File(outputFileName).parent;
           if (!parentDir.existsSync()) {
             parentDir.createSync(recursive: true);
           }
           logSink =
               File(outputFileName).openWrite(mode: FileMode.writeOnlyAppend);
-          buffer.forEach((newLine) => logSink.writeln(newLine));
+          for (var newLine in buffer) {
+            logSink.writeln(newLine);
+          }
           await logSink.flush();
         }
       } finally {
@@ -78,12 +83,13 @@ class FimberFileTree extends CustomFormatTree with CloseableTree {
     }
   }
 
+  /// Creates Fimber File tree with time tracking as elapsed
+  /// from start of the process.
   factory FimberFileTree.elapsed(String fileName,
-      {List<String> logLevels = CustomFormatTree.DEFAULT}) {
+      {List<String> logLevels = CustomFormatTree.defaultLevels}) {
     return FimberFileTree(fileName,
-        logFormat:
-        "${CustomFormatTree.TIME_ELAPSED_TOKEN}\t${CustomFormatTree
-            .MESSAGE_TOKEN}");
+        logFormat: "${CustomFormatTree.timeElapsedToken}"
+            "\t${CustomFormatTree.messageToken}");
   }
 
   @override
@@ -104,24 +110,37 @@ class FimberFileTree extends CustomFormatTree with CloseableTree {
   }
 }
 
-/// SizeRolling file tree
+/// SizeRolling file tree.
+/// It will create new log file with an index every time current
+/// one reach [maxDataSize]
 class SizeRollingFileTree extends RollingFileTree {
+  /// Maximum size allowed for the log file before rolls to new.
   DataSize maxDataSize;
 
+  /// Filename prefix - can contain path to directory where logs would be saved.
+  /// by default "log_"
   String filenamePrefix;
-  String filenamePostfix;
-  FutureOr<int> fileIndex = 0;
 
+  /// Filename postfix, by default ".txt".
+  String filenamePostfix;
+
+  FutureOr<int> _fileIndex = 0;
+
+  /// Creates instance of SizeRollingFileTree,
+  /// which based on defined [maxDataSize] size of current log file
+  /// will create new log file.
   SizeRollingFileTree(this.maxDataSize,
-      {logFormat = CustomFormatTree.DEFAULT_FORMAT,
+      {logFormat = CustomFormatTree.defaultFormat,
         this.filenamePrefix = "log_",
         this.filenamePostfix = ".txt",
-        logLevels = CustomFormatTree.DEFAULT})
+        logLevels = CustomFormatTree.defaultLevels})
       : super(logFormat: logFormat, logLevels: logLevels) {
     detectFileIndex();
   }
 
-  detectFileIndex() async {
+  /// Detects file index based on same [filenamePrefix] and [filenamePostfix]
+  /// and based on current files in the log directory.
+  void detectFileIndex() async {
     var rootDir = Directory(filenamePrefix);
     if (filenamePrefix.contains(Platform.pathSeparator)) {
       rootDir = Directory(filenamePrefix.substring(
@@ -130,34 +149,34 @@ class SizeRollingFileTree extends RollingFileTree {
     var logListIndexes = await rootDir
         .list()
         .map((fe) => getLogIndex(fe.path))
-        .where((i) => i != null)
+        .where((i) => i >= 0)
         .toList();
     logListIndexes.sort();
     print("log list indexes: $logListIndexes");
     if (logListIndexes.length > 0) {
       var max = logListIndexes.last;
-      fileIndex = max;
+      _fileIndex = max;
       if (_isFileOverSize(_logFile(max))) {
         rollToNextFile();
       }
     } else {
-      fileIndex = 0;
+      _fileIndex = 0;
       rollToNextFile();
     }
   }
 
   FutureOr<String> _currentFile() async {
-    return _logFile(await fileIndex);
+    return _logFile(await _fileIndex);
   }
 
   String _logFile(int index) {
-    return "${filenamePrefix}${index}$filenamePostfix";
+    return filenamePrefix + index.toString() + filenamePostfix;
   }
 
   @override
   void rollToNextFile() async {
-    fileIndex = Future.sync(() async {
-      return (await fileIndex) + 1;
+    _fileIndex = Future.sync(() async {
+      return (await _fileIndex) + 1;
     });
     outputFileName = await _currentFile();
     if (File(outputFileName).existsSync()) {
@@ -179,31 +198,34 @@ class SizeRollingFileTree extends RollingFileTree {
     var file = File(await _currentFile());
     if (file.existsSync()) {
       return file.lengthSync() > maxDataSize.realSize;
-    } else
-      return false;
-  }
-
-  RegExp get fileRegExp =>
-      RegExp(
-          "${filenamePrefix.replaceAll(
-              "\\", "\\\\")}([0-9]+)?${filenamePostfix}");
-
-  int getLogIndex(String filePath) {
-    if (isLogFile(filePath)) {
-      return fileRegExp.allMatches(filePath).map((match) {
-        if (match != null && match.groupCount > 0) {
-          return int.parse(match.group(1));
-        } else {
-          return null;
-        }
-      }).firstWhere((i) => i != null, orElse: () => null);
     } else {
-      return null;
+      return false;
     }
   }
 
+  RegExp get _fileRegExp =>
+      RegExp(
+          "${filenamePrefix.replaceAll(
+              "\\", "\\\\")}([0-9]+)?$filenamePostfix");
+
+  /// Gets log index from a file path.
+  int getLogIndex(String filePath) {
+    if (isLogFile(filePath)) {
+      return _fileRegExp.allMatches(filePath).map((match) {
+        if (match != null && match.groupCount > 0) {
+          return int.parse(match.group(1));
+        } else {
+          return -1;
+        }
+      }).firstWhere((i) => i != null, orElse: () => null);
+    } else {
+      return -1;
+    }
+  }
+
+  /// Checks if this is matching log file.
   bool isLogFile(String filePath) {
-    return fileRegExp.allMatches(filePath).map((match) {
+    return _fileRegExp.allMatches(filePath).map((match) {
       if (match != null && match.groupCount > 0) {
         return true;
       } else {
@@ -213,24 +235,41 @@ class SizeRollingFileTree extends RollingFileTree {
   }
 }
 
+/// Time base rolling file tree.
+/// It will use time span to roll logging to next file.
 class TimedRollingFileTree extends RollingFileTree {
-  static const int HOURLY_TIME = 60 * 60;
-  static const int DAILY_TIME = 24 * HOURLY_TIME;
-  static const int WEEKLY_TIME = 7 * DAILY_TIME;
+  /// Number of seconds in an hour
+  static const int hourlyTime = 60 * 60;
 
-  int timeSpan = HOURLY_TIME;
+  /// Number of seconds in a day
+  static const int dailyTime = 24 * hourlyTime;
+
+  /// Number of seconds in a week
+  static const int weeklyTime = 7 * dailyTime;
+
+  /// File rolling based on this time span. Default 1h
+  int timeSpan = hourlyTime;
+
+  /// Maximum of number of files in history.
   int maxHistoryFiles;
   DateTime _currentFileDate;
+
+  /// Generated filename prefix, supports path to the file.
   String filenamePrefix;
+
+  /// Generated filename postfix
   String filenamePostfix;
 
+  /// Log filename formatter see: [LogFileNameFormatter]
   LogFileNameFormatter fileNameFormatter;
 
-  TimedRollingFileTree({this.timeSpan = TimedRollingFileTree.DAILY_TIME,
-    logFormat = CustomFormatTree.DEFAULT_FORMAT,
+  /// Creates Time based rolling file tree.
+  /// It allows to define time span when this
+  TimedRollingFileTree({this.timeSpan = TimedRollingFileTree.dailyTime,
+    logFormat = CustomFormatTree.defaultFormat,
     this.filenamePrefix = "log_",
     this.filenamePostfix = ".txt",
-    logLevels = CustomFormatTree.DEFAULT}) {
+    logLevels = CustomFormatTree.defaultLevels}) {
     fileNameFormatter = LogFileNameFormatter.full(
         prefix: filenamePrefix, postfix: filenamePostfix);
     rollToNextFile();
@@ -266,16 +305,23 @@ class TimedRollingFileTree extends RollingFileTree {
   }
 }
 
+/// Class for defining rolling file tree.
+/// This class handles file logging and printing lines,
+/// also provides abstract methods to check if the file should rotate.
 abstract class RollingFileTree extends FimberFileTree {
+  /// Path format for log file.
   String pathFormat;
 
-  RollingFileTree({logFormat = CustomFormatTree.DEFAULT_FORMAT,
-    logLevels = CustomFormatTree.DEFAULT})
-      : super(".", logFormat: logFormat, logLevels: logLevels) {}
+  /// Creates RollingFileTree with log format and levels as optional parameters.
+  RollingFileTree({logFormat = CustomFormatTree.defaultFormat,
+    logLevels = CustomFormatTree.defaultLevels})
+      : super(".", logFormat: logFormat, logLevels: logLevels);
 
+  /// Return true if log file should rotate to new.
   FutureOr<bool> shouldRollNextFile();
 
-  rollToNextFile();
+  /// Roll to new file
+  void rollToNextFile();
 
   @override
   void printLine(String line, {String level}) async {
@@ -287,80 +333,91 @@ abstract class RollingFileTree extends FimberFileTree {
 }
 
 /// Custom format tree. Tag generation included
-/// allows to define tokens in format, which will be replaced with a value for each log line.
+/// allows to define tokens in format,
+/// which will be replaced with a value for each log line.
 class CustomFormatTree extends LogTree {
-  static const List<String> DEFAULT = ["D", "I", "W", "E"];
+  /// List of default levels for debug logging
+  static const List<String> defaultLevels = ["D", "I", "W", "E"];
 
   /// Format token for time stamp
-  static const String TIME_STAMP_TOKEN = "{TIME_STAMP}";
+  static const String timeStampToken = "{TIME_STAMP}";
 
   /// Format token for time elapsed
-  static const String TIME_ELAPSED_TOKEN = "{TIME_ELAPSED}";
+  static const String timeElapsedToken = "{TIME_ELAPSED}";
 
   /// Format token for log level character
-  static const String LEVEL_TOKEN = "{LEVEL}";
+  static const String levelToke = "{LEVEL}";
 
   /// Format token for log tag
-  static const String TAG_TOKEN = "{TAG}";
+  static const String tagToken = "{TAG}";
 
   /// Format token for main log message
-  static const String MESSAGE_TOKEN = "{MESSAGE}";
+  static const String messageToken = "{MESSAGE}";
 
   /// Format token for exception message
-  static const String EXCEPTION_MSG_TOKEN = "{EX_MSG}";
+  static const String exceptionMsgToken = "{EX_MSG}";
 
-  /// Format token for exception's stackstrace
-  static const String EXCEPTION_STACK_TOKEN = "{EX_STACK}";
+  /// Format token for exception's stacktrace
+  static const String exceptionStackToken = "{EX_STACK}";
 
-  static const String DEFAULT_FORMAT =
-      "$TIME_STAMP_TOKEN\t$LEVEL_TOKEN $TAG_TOKEN: $MESSAGE_TOKEN";
+  /// Default format for timestamp based log message.
+  static const String defaultFormat =
+      "$timeStampToken\t$levelToke $tagToken: $messageToken";
 
   /// Flag elapsed time in format
-  static const int TIME_ELAPSED = 1;
+  static const int timeElapsedFlag = 1;
 
-  /// Flag clodk time in format
-  static const int TIME_CLOCK = 2;
+  /// Flag clock time in format
+  static const int timeClockFlag = 2;
+
   static final Map<String, ColorizeStyle> _defaultColorizeMap = {
-    "V": ColorizeStyle([AnsiStyle.foreground(AnsiColor.BLUE)]),
-    "D": ColorizeStyle([AnsiStyle.foreground(AnsiColor.GREEN)]),
+    "V": ColorizeStyle([AnsiStyle.foreground(AnsiColor.blue)]),
+    "D": ColorizeStyle([AnsiStyle.foreground(AnsiColor.green)]),
     "W": ColorizeStyle([
-      AnsiStyle.foreground(AnsiColor.YELLOW),
-      AnsiStyle.background(AnsiColor.BLACK)
+      AnsiStyle.foreground(AnsiColor.yellow),
+      AnsiStyle.background(AnsiColor.black)
     ]),
     "E": ColorizeStyle([
-      AnsiStyle.bright(AnsiColor.WHITE),
-      AnsiStyle.background(AnsiColor.RED)
+      AnsiStyle.bright(AnsiColor.white),
+      AnsiStyle.background(AnsiColor.red)
     ])
   };
 
-  List<String> logLevels;
-  int printTimeFlag;
+  List<String> _logLevels;
+  int _printTimeFlag;
   Stopwatch _elapsedTimeStopwatch;
+
+  /// Log line format style.
   String logFormat;
-  bool useColors;
+  bool _useColors;
   Map<String, ColorizeStyle> _colorizeMap = {};
 
-  CustomFormatTree({this.logFormat = DEFAULT_FORMAT,
-    this.logLevels = DEFAULT,
-    this.useColors = false}) {
-    if (useColors) {
+  /// Creates custom format logging tree
+  CustomFormatTree({this.logFormat = defaultFormat,
+    List<String> logLevels = defaultLevels,
+    bool useColors = false}) {
+    _logLevels = logLevels;
+    _useColors = useColors;
+    if (_useColors) {
       _colorizeMap = _defaultColorizeMap;
     }
-    printTimeFlag = 0;
-    if (logFormat.contains(TIME_STAMP_TOKEN)) {
-      printTimeFlag |= TIME_CLOCK;
+    _printTimeFlag = 0;
+    if (logFormat.contains(timeStampToken)) {
+      _printTimeFlag |= timeClockFlag;
     }
-    if (logFormat.contains(TIME_ELAPSED_TOKEN)) {
-      printTimeFlag |= TIME_ELAPSED;
+    if (logFormat.contains(timeElapsedToken)) {
+      _printTimeFlag |= timeElapsedFlag;
     }
-    if (printTimeFlag & TIME_ELAPSED > 0) {
+    if (_printTimeFlag & timeElapsedFlag > 0) {
       _elapsedTimeStopwatch = Stopwatch();
       _elapsedTimeStopwatch.start();
     }
   }
 
   @override
-  log(String level, String msg,
+
+  /// Logs a message with level/tag and optional stacktrace or exception.
+  void log(String level, String msg,
       {String tag, dynamic ex, StackTrace stacktrace}) {
     var logTag = tag ?? LogTree.getTag();
 
@@ -380,6 +437,7 @@ class CustomFormatTree extends LogTree {
     }
   }
 
+  /// Prints log line with optional log level.
   void printLine(String line, {String level}) {
     if (_colorizeMap[level] != null) {
       print(_colorizeMap[level].wrap(line));
@@ -407,13 +465,13 @@ class CustomFormatTree extends LogTree {
     var date = DateTime.now().toIso8601String();
     var elapsed = _elapsedTimeStopwatch?.elapsed?.toString() ?? "";
 
-    var logLine = _replaceAllSafe(logFormat, TIME_STAMP_TOKEN, date);
-    logLine = _replaceAllSafe(logLine, TIME_ELAPSED_TOKEN, elapsed);
-    logLine = _replaceAllSafe(logLine, LEVEL_TOKEN, level);
-    logLine = _replaceAllSafe(logLine, MESSAGE_TOKEN, msg);
-    logLine = _replaceAllSafe(logLine, EXCEPTION_MSG_TOKEN, exMsg);
-    logLine = _replaceAllSafe(logLine, EXCEPTION_STACK_TOKEN, stacktrace);
-    logLine = _replaceAllSafe(logLine, TAG_TOKEN, tag);
+    var logLine = _replaceAllSafe(logFormat, timeStampToken, date);
+    logLine = _replaceAllSafe(logLine, timeElapsedToken, elapsed);
+    logLine = _replaceAllSafe(logLine, levelToke, level);
+    logLine = _replaceAllSafe(logLine, messageToken, msg);
+    logLine = _replaceAllSafe(logLine, exceptionMsgToken, exMsg);
+    logLine = _replaceAllSafe(logLine, exceptionStackToken, stacktrace);
+    logLine = _replaceAllSafe(logLine, tagToken, tag);
     return logLine;
   }
 
@@ -426,25 +484,30 @@ class CustomFormatTree extends LogTree {
 
   /// Method to overload printing to output stream the formatted logline
   /// Adds handing of time
-  printLog(String logLine, {String level}) {
-    if (printTimeFlag != null) {
-      if (printTimeFlag & TIME_ELAPSED > 0) {
+  void printLog(String logLine, {String level}) {
+    if (_printTimeFlag != null) {
+      if (_printTimeFlag & timeElapsedFlag > 0) {
         var timeElapsed = _elapsedTimeStopwatch.elapsed.toString();
         printLine("$timeElapsed\t$logLine", level: level);
       } else {
         var date = DateTime.now().toIso8601String();
         printLine("$date\t$logLine", level: level);
       }
-    } else
+    } else {
       printLine(logLine, level: level);
+    }
   }
 
   @override
   List<String> getLevels() {
-    return logLevels;
+    return _logLevels;
   }
 }
 
+/// Abstract class to mark implementor as Closable Tree
+// ignore: one_member_abstracts
 abstract class CloseableTree {
+  /// Closes a tree,
+  /// use it to flush buffer/caches or close any resource.
   void close();
 }
