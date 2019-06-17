@@ -1,3 +1,5 @@
+## 0.3.0 Code style updates and bug fixes
+
 ## 0.2.0 Colorize logs
 
 - Based on fimber 0.2.0 added colorized logs.
