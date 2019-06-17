@@ -95,18 +95,19 @@ void main() async {
       File(secondFile).deleteSync();
     });
     test("Format file name with date", () {
-      var fileFormat = LogFileNameFormatter(format: "log_YYMMDD-HH.txt");
+      var fileFormat =
+      LogFileNameFormatter(filenameFormat: "log_YYMMDD-HH.txt");
 
       expect(fileFormat.format(DateTime(2019, 01, 22, 17, 00, 00)),
           "log_190122-17.txt");
 
       expect(
-          LogFileNameFormatter(format: "log_YY-MMMM-DD-hhaa.txt")
+          LogFileNameFormatter(filenameFormat: "log_YY-MMMM-DD-hhaa.txt")
               .format(DateTime(2019, 12, 22, 17, 00, 00)),
           "log_19-December-22-05pm.txt");
 
       expect(
-          LogFileNameFormatter(format: "log_YYMMDD-ddd-HH.txt")
+          LogFileNameFormatter(filenameFormat: "log_YYMMDD-ddd-HH.txt")
               .format(DateTime(2019, 11, 1, 1, 00, 00)),
           "log_191101-Fri-01.txt");
 

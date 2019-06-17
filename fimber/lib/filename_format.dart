@@ -29,7 +29,7 @@ class LogFileNameFormatter {
   factory LogFileNameFormatter.full(
       {String prefix = "log_", String postfix = ".txt"}) {
     return LogFileNameFormatter(
-        format: "$prefix${_dayFormat}_$_timeFormat$postfix");
+        filenameFormat: "$prefix${_dayFormat}_$_timeFormat$postfix");
   }
 
   /// Factory method to create hourly filename formatter with
@@ -37,7 +37,7 @@ class LogFileNameFormatter {
   factory LogFileNameFormatter.hourly(
       {String prefix = "log_", String postfix = ".txt"}) {
     return LogFileNameFormatter(
-        format: "$prefix${_dayFormat}_$_dayToken$postfix");
+        filenameFormat: "$prefix${_dayFormat}_$_dayToken$postfix");
   }
 
   /// Factory method to create daily filename formatter with
@@ -45,14 +45,14 @@ class LogFileNameFormatter {
   factory LogFileNameFormatter.daily(
       {String prefix = "log_", String postfix = ".txt"}) {
     return LogFileNameFormatter(
-        format: "$prefix${_dayFormat}_$_dayToken$postfix");
+        filenameFormat: "$prefix${_dayFormat}_$_dayToken$postfix");
   }
 
   /// Factory method to create weekly filename formatter with
   /// prefix and postfix
   factory LogFileNameFormatter.weekly(
       {String prefix = "log_", String postfix = ".txt"}) {
-    return LogFileNameFormatter(format: "$prefix$_dayFormat$postfix");
+    return LogFileNameFormatter(filenameFormat: "$prefix$_dayFormat$postfix");
   }
 
   /// Formats date time based on defined formatter
