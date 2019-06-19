@@ -31,7 +31,7 @@ void main() {
   // DebugTree options for time elapsed
   // by default DebugTree will output timestamp of the VM/Flutter app
   // to enable elapsed time since planting the tree log
-  Fimber.plantTree(DebugTree(printTimeType: DebugTree.TIME_ELAPSED));
+  Fimber.plantTree(DebugTree.elapsed());
   
 }
  
