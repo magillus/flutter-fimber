@@ -6,9 +6,13 @@ import 'package:flutter_fimber/flutter_fimber.dart';
 void main() {
   Fimber.plantTree(FimberTree(useColors: true));
   Fimber.plantTree(DebugBufferTree.elapsed());
+  Fimber.plantTree(SizeRollingFileTree(DataSize.mega(3),
+      filenamePrefix: "/data/user/0/com.perlak.flutterfimberexample/app_flutter/log_"));
+
   runApp(MyApp());
 }
 
+/// Example app for showing usage of Fimber
 class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
@@ -67,7 +71,7 @@ class _MyAppState extends State<MyApp> {
                 onPressed: () {
                   try {
                     throw Exception("Test exception here");
-                  } catch (e) {
+                  } on dynamic catch (e) {
                     Fimber.w("Warning message test ${DateTime.now()}", ex: e);
                   }
                 },
@@ -77,7 +81,7 @@ class _MyAppState extends State<MyApp> {
                 onPressed: () {
                   try {
                     throw AssertionError();
-                  } catch (e, s) {
+                  } on dynamic catch (e, s) {
                     Fimber.w("Warning message test ${DateTime.now()}", ex: e,
                         stacktrace: s);
                   }
