@@ -24,7 +24,7 @@ import 'package:fimber/fimber.dart';
 ```dart
 
 void main() {
-  Fimber.addTree(DebugTree());
+  Fimber.plantTree(DebugTree());
   // app code here ...
 }
  
