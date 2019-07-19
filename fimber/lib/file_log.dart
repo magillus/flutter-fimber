@@ -124,30 +124,30 @@ class SizeRollingFileTree extends RollingFileTree {
   /// Filename postfix, by default ".txt".
   String filenamePostfix;
 
-  FutureOr<int> _fileIndex = 0;
+  int _fileIndex = 0;
 
   /// Creates instance of SizeRollingFileTree,
   /// which based on defined [maxDataSize] size of current log file
   /// will create new log file.
   SizeRollingFileTree(this.maxDataSize,
       {logFormat = CustomFormatTree.defaultFormat,
-        this.filenamePrefix = "log_",
-        this.filenamePostfix = ".txt",
-        logLevels = CustomFormatTree.defaultLevels})
+      this.filenamePrefix = "log_",
+      this.filenamePostfix = ".txt",
+      logLevels = CustomFormatTree.defaultLevels})
       : super(logFormat: logFormat, logLevels: logLevels) {
     detectFileIndex();
   }
 
   /// Detects file index based on same [filenamePrefix] and [filenamePostfix]
   /// and based on current files in the log directory.
-  void detectFileIndex() async {
+  void detectFileIndex() {
     var rootDir = Directory(filenamePrefix);
     if (filenamePrefix.contains(Platform.pathSeparator)) {
       rootDir = Directory(filenamePrefix.substring(
           0, filenamePrefix.lastIndexOf(Platform.pathSeparator)));
     }
-    var logListIndexes = await rootDir
-        .list()
+    var logListIndexes = rootDir
+        .listSync()
         .map((fe) => getLogIndex(fe.path))
         .where((i) => i >= 0)
         .toList();
@@ -158,6 +158,9 @@ class SizeRollingFileTree extends RollingFileTree {
       _fileIndex = max;
       if (_isFileOverSize(_logFile(max))) {
         rollToNextFile();
+      } else {
+        outputFileName = _currentFile();
+        print("Logfile is $outputFileName");
       }
     } else {
       _fileIndex = 0;
@@ -165,8 +168,8 @@ class SizeRollingFileTree extends RollingFileTree {
     }
   }
 
-  FutureOr<String> _currentFile() async {
-    return _logFile(await _fileIndex);
+  String _currentFile() {
+    return _logFile(_fileIndex);
   }
 
   String _logFile(int index) {
@@ -174,11 +177,9 @@ class SizeRollingFileTree extends RollingFileTree {
   }
 
   @override
-  void rollToNextFile() async {
-    _fileIndex = Future.sync(() async {
-      return (await _fileIndex) + 1;
-    });
-    outputFileName = await _currentFile();
+  void rollToNextFile() {
+    _fileIndex = _fileIndex + 1;
+    outputFileName = _currentFile();
     if (File(outputFileName).existsSync()) {
       File(outputFileName).deleteSync();
     }
@@ -194,8 +195,8 @@ class SizeRollingFileTree extends RollingFileTree {
   }
 
   @override
-  Future<bool> shouldRollNextFile() async {
-    var file = File(await _currentFile());
+  FutureOr<bool> shouldRollNextFile() {
+    var file = File(_currentFile());
     if (file.existsSync()) {
       return file.lengthSync() > maxDataSize.realSize;
     } else {
@@ -203,10 +204,8 @@ class SizeRollingFileTree extends RollingFileTree {
     }
   }
 
-  RegExp get _fileRegExp =>
-      RegExp(
-          "${filenamePrefix.replaceAll(
-              "\\", "\\\\")}([0-9]+)?$filenamePostfix");
+  RegExp get _fileRegExp => RegExp(
+      "${filenamePrefix.replaceAll("\\", "\\\\")}([0-9]+)?$filenamePostfix");
 
   /// Gets log index from a file path.
   int getLogIndex(String filePath) {
