@@ -349,7 +349,7 @@ class CustomFormatTree extends LogTree {
   static const String timeElapsedToken = "{TIME_ELAPSED}";
 
   /// Format token for log level character
-  static const String levelToke = "{LEVEL}";
+  static const String levelToken = "{LEVEL}";
 
   /// Format token for log tag
   static const String tagToken = "{TAG}";
@@ -365,7 +365,7 @@ class CustomFormatTree extends LogTree {
 
   /// Default format for timestamp based log message.
   static const String defaultFormat =
-      "$timeStampToken\t$levelToke $tagToken: $messageToken";
+      "$timeStampToken\t$levelToken $tagToken: $messageToken";
 
   /// Flag elapsed time in format
   static const int timeElapsedFlag = 1;
@@ -470,7 +470,7 @@ class CustomFormatTree extends LogTree {
 
     var logLine = _replaceAllSafe(logFormat, timeStampToken, date);
     logLine = _replaceAllSafe(logLine, timeElapsedToken, elapsed);
-    logLine = _replaceAllSafe(logLine, levelToke, level);
+    logLine = _replaceAllSafe(logLine, levelToken, level);
     logLine = _replaceAllSafe(logLine, messageToken, msg);
     logLine = _replaceAllSafe(logLine, exceptionMsgToken, exMsg);
     logLine = _replaceAllSafe(logLine, exceptionStackToken, stacktrace);
