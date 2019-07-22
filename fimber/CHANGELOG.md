@@ -1,3 +1,8 @@
+## [0.3.1] - Bug fixes around File rolling tree
+
+- initialize `outputFileName` variable  by [@sceee](https://github.com/sceee)
+- removed unnecessary async that caused SizeRollingFileTree constructor to not construct the first logfile correctly before writes to the uninitialized filename could happen by [@sceee](https://github.com/sceee) 
+
 ## [0.3.0] - Code styles updates and bug fixes
 
 - Code styles updates based on pedantic lint rules.
