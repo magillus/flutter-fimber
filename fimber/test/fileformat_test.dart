@@ -14,11 +14,14 @@ void main() async {
 
     setUp(() {
       Fimber.clearAll();
+      if (logDir.existsSync()) {
+        logDir.deleteSync(recursive: true);
+      }
       logDir.createSync(recursive: true);
     });
     tearDown(() {
       if (logDir.existsSync()) {
-        logDir.deleteSync(recursive: true);
+        //  logDir.deleteSync(recursive: true);
       }
     });
 
@@ -58,14 +61,29 @@ void main() async {
     });
 
     test("File date rolling test", () async {
+      print("Detect waittime: +300 : ${DateTime.now()}");
+      var waitForRightTime = 2000 - (DateTime
+          .now()
+          .millisecondsSinceEpoch % 2000);
+      print("Waiting for start time: $waitForRightTime : ${DateTime.now()}");
+      await Future.delayed(Duration(milliseconds: waitForRightTime + 00)).then((
+          i) {});
+      print("Done waiting : ${DateTime.now()}");
       var logTree = TimedRollingFileTree(
-          timeSpan: 1,
+          timeSpan: 2,
           filenamePrefix: "$testDirName${dirSeparator}log_test_rolling_");
       Fimber.plantTree(logTree);
       Fimber.i("First log entry");
       Fimber.i("First log entry #2");
 
       var firstFile = logTree.outputFileName;
+
+      // still same file
+      await Future.delayed(Duration(milliseconds: 1200)).then((i) {
+        Fimber.i("Delayed log in one second");
+        Fimber.i("Delayed log in one second #2");
+      });
+
       await Future.delayed(Duration(seconds: 3)).then((i) {
         Fimber.i("Delayed log");
         Fimber.i("Delayed log #2");
@@ -81,18 +99,29 @@ void main() async {
       await Future.delayed(Duration(milliseconds: 100));
       // wait until buffer dumps to file
       await waitForAppendBuffer();
-//
-//      print("First: $firstFile");
-//      print(File(firstFile).readAsStringSync());
-//      print("Second: $secondFile");
-//      print(File(secondFile).readAsStringSync());
+      print(firstFile);
+      print(File(firstFile).readAsStringSync());
+      print(secondFile);
+      print(File(secondFile).readAsStringSync());
+
+      expect(File(firstFile)
+          .readAsStringSync()
+          .trim()
+          .split("\n")
+          .length, 4);
+
+      expect(File(secondFile)
+          .readAsStringSync()
+          .trim()
+          .split("\n")
+          .length, 2);
 
       assert(firstFile != secondFile);
       assert(File(firstFile).existsSync());
       assert(File(secondFile).existsSync());
 
-      File(firstFile).deleteSync();
-      File(secondFile).deleteSync();
+//      File(firstFile).deleteSync();
+//      File(secondFile).deleteSync();
     });
     test("Format file name with date", () {
       var fileFormat =
