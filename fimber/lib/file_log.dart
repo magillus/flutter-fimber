@@ -295,9 +295,13 @@ class TimedRollingFileTree extends RollingFileTree {
   @override
   bool shouldRollNextFile() {
     var now = DateTime.now();
-    if (fileNameFormatter.format(now) !=
+    // little math to get NOW time based on timespan interval.
+    var nowFlooredToTimeSpan = DateTime.fromMillisecondsSinceEpoch(
+        now.millisecondsSinceEpoch -
+            (now.millisecondsSinceEpoch % (timeSpan * 1000)).toInt());
+    if (fileNameFormatter.format(nowFlooredToTimeSpan) !=
         fileNameFormatter.format(_currentFileDate)) {
-      _currentFileDate = now;
+      _currentFileDate = nowFlooredToTimeSpan;
       return true;
     }
     return false;
