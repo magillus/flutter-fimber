@@ -81,11 +81,6 @@ void main() async {
       await Future.delayed(Duration(milliseconds: 100));
       // wait until buffer dumps to file
       await waitForAppendBuffer();
-//
-//      print("First: $firstFile");
-//      print(File(firstFile).readAsStringSync());
-//      print("Second: $secondFile");
-//      print(File(secondFile).readAsStringSync());
 
       assert(firstFile != secondFile);
       assert(File(firstFile).existsSync());
