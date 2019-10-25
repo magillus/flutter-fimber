@@ -1,3 +1,7 @@
+## [0.3.2] - Bug fix for Time rolling tree.
+
+- [\#52 issue](https://github.com/magillus/flutter-fimber/issues/52)  Fix for check of new file format based on timeSpan intervals.
+
 ## [0.3.1] - Bug fixes around File rolling tree
 
 - initialize `outputFileName` variable  by [@sceee](https://github.com/sceee)
