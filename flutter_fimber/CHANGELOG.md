@@ -1,3 +1,5 @@
+## 0.3.2 AndroidX update and versions bump (thx: g123k)
+
 ## 0.3.1 Fixes incorrect Android package structure
 
 ## 0.3.0 Code style updates and bug fixes
