@@ -1,8 +1,8 @@
 // ignore: avoid_classes_with_only_static_members
 import 'colorize.dart';
-import 'file_log.dart';
 
 /// Main static Fimber logging.
+// ignore: avoid_classes_with_only_static_members
 class Fimber {
   static final List<String> _muteLevels = [];
 
@@ -312,4 +312,185 @@ class FimberLog {
       {dynamic ex, StackTrace stacktrace}) {
     Fimber.log(level, message, tag: tag, ex: ex, stacktrace: stacktrace);
   }
+}
+
+
+/// Custom format tree. Tag generation included
+/// allows to define tokens in format,
+/// which will be replaced with a value for each log line.
+class CustomFormatTree extends LogTree {
+  /// List of default levels for debug logging
+  static const List<String> defaultLevels = ["D", "I", "W", "E"];
+
+  /// Format token for time stamp
+  static const String timeStampToken = "{TIME_STAMP}";
+
+  /// Format token for time elapsed
+  static const String timeElapsedToken = "{TIME_ELAPSED}";
+
+  /// Format token for log level character
+  static const String levelToken = "{LEVEL}";
+
+  /// Format token for log tag
+  static const String tagToken = "{TAG}";
+
+  /// Format token for main log message
+  static const String messageToken = "{MESSAGE}";
+
+  /// Format token for exception message
+  static const String exceptionMsgToken = "{EX_MSG}";
+
+  /// Format token for exception's stacktrace
+  static const String exceptionStackToken = "{EX_STACK}";
+
+  /// Default format for timestamp based log message.
+  static const String defaultFormat =
+      "$timeStampToken\t$levelToken $tagToken: $messageToken";
+
+  /// Flag elapsed time in format
+  static const int timeElapsedFlag = 1;
+
+  /// Flag clock time in format
+  static const int timeClockFlag = 2;
+
+  static final Map<String, ColorizeStyle> _defaultColorizeMap = {
+    "V": ColorizeStyle([AnsiStyle.foreground(AnsiColor.blue)]),
+    "D": ColorizeStyle([AnsiStyle.foreground(AnsiColor.green)]),
+    "W": ColorizeStyle([
+      AnsiStyle.foreground(AnsiColor.yellow),
+      AnsiStyle.background(AnsiColor.black)
+    ]),
+    "E": ColorizeStyle([
+      AnsiStyle.bright(AnsiColor.white),
+      AnsiStyle.background(AnsiColor.red)
+    ])
+  };
+
+  List<String> _logLevels;
+  int _printTimeFlag;
+  Stopwatch _elapsedTimeStopwatch;
+
+  /// Log line format style.
+  String logFormat;
+  bool _useColors;
+  Map<String, ColorizeStyle> colorizeMap = {};
+
+  /// Creates custom format logging tree
+  CustomFormatTree({this.logFormat = defaultFormat,
+    List<String> logLevels = defaultLevels,
+    bool useColors = false}) {
+    _logLevels = logLevels;
+    _useColors = useColors;
+    if (_useColors) {
+      colorizeMap = _defaultColorizeMap;
+    }
+    _printTimeFlag = 0;
+    if (logFormat.contains(timeStampToken)) {
+      _printTimeFlag |= timeClockFlag;
+    }
+    if (logFormat.contains(timeElapsedToken)) {
+      _printTimeFlag |= timeElapsedFlag;
+    }
+    if (_printTimeFlag & timeElapsedFlag > 0) {
+      _elapsedTimeStopwatch = Stopwatch();
+      _elapsedTimeStopwatch.start();
+    }
+  }
+
+  @override
+
+  /// Logs a message with level/tag and optional stacktrace or exception.
+  void log(String level, String msg,
+      {String tag, dynamic ex, StackTrace stacktrace}) {
+    var logTag = tag ?? LogTree.getTag();
+
+    if (logFormat != null) {
+      _printFormattedLog(level, msg, logTag, ex, stacktrace);
+      return;
+    }
+    if (ex != null) {
+      var tmpStacktrace =
+          stacktrace?.toString()?.split('\n') ?? LogTree.getStacktrace();
+      var stackTraceMessage =
+      tmpStacktrace.map((stackLine) => "\t$stackLine").join("\n");
+      printLog(
+          "$level\t$logTag:\t $msg \n${ex.toString()}\n$stackTraceMessage");
+    } else {
+      printLog("$level\t$logTag:\t $msg");
+    }
+  }
+
+  /// Prints log line with optional log level.
+  void printLine(String line, {String level}) {
+    if (colorizeMap[level] != null) {
+      print(colorizeMap[level].wrap(line));
+    } else {
+      print(line);
+    }
+  }
+
+  void _printFormattedLog(String level, String msg, String tag, ex,
+      StackTrace stacktrace) {
+    if (ex != null) {
+      var tmpStacktrace =
+          stacktrace?.toString()?.split('\n') ?? LogTree.getStacktrace();
+      var stackTraceMessage =
+      tmpStacktrace.map((stackLine) => "\t$stackLine").join("\n");
+      printLine(_formatLine(logFormat, level, msg, tag, "\n${ex.toString()}",
+          "\n$stackTraceMessage"));
+    } else {
+      printLine(_formatLine(logFormat, level, msg, tag, "", ""));
+    }
+  }
+
+  String _formatLine(String format, String level, String msg, String tag,
+      String exMsg, String stacktrace) {
+    var date = DateTime.now().toIso8601String();
+    var elapsed = _elapsedTimeStopwatch?.elapsed?.toString() ?? "";
+
+    var logLine = _replaceAllSafe(logFormat, timeStampToken, date);
+    logLine = _replaceAllSafe(logLine, timeElapsedToken, elapsed);
+    logLine = _replaceAllSafe(logLine, levelToken, level);
+    logLine = _replaceAllSafe(logLine, messageToken, msg);
+    logLine = _replaceAllSafe(logLine, exceptionMsgToken, exMsg);
+    logLine = _replaceAllSafe(logLine, exceptionStackToken, stacktrace);
+    logLine = _replaceAllSafe(logLine, tagToken, tag);
+    return logLine;
+  }
+
+  String _replaceAllSafe(String text, String token, String data) {
+    if (text.contains(token)) {
+      return text.replaceAll(token, data ?? "");
+    }
+    return text;
+  }
+
+  /// Method to overload printing to output stream the formatted logline
+  /// Adds handing of time
+  void printLog(String logLine, {String level}) {
+    if (_printTimeFlag != null) {
+      if (_printTimeFlag & timeElapsedFlag > 0) {
+        var timeElapsed = _elapsedTimeStopwatch.elapsed.toString();
+        printLine("$timeElapsed\t$logLine", level: level);
+      } else {
+        var date = DateTime.now().toIso8601String();
+        printLine("$date\t$logLine", level: level);
+      }
+    } else {
+      printLine(logLine, level: level);
+    }
+  }
+
+  @override
+  List<String> getLevels() {
+    return _logLevels;
+  }
+}
+
+/// Abstract class to mark implementor as Closable Tree
+// ignore: one_member_abstracts
+abstract class CloseableTree {
+  /// Closes a tree,
+  /// use it to flush buffer/caches or close any resource.
+  void close();
 }

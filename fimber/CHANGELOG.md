@@ -1,3 +1,7 @@
+## [0.4.0-dev] - Removing dependency on dart::io.
+
+- If want to use File loggers use `fimber_io` package
+
 ## [0.3.3] - Deprecating dart:io dependency
 
 - Removing FileLogging and moving it to separate package: `fimber_io`
