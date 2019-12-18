@@ -1,8 +1,0 @@
-language: dart
-dart:
-  # Install the latest stable release
-  - stable
-
-  #- dartfmt
-  # Warnings are fatal, but we only analyze the lib/ directory.
-  #- dartanalyzer: --fatal-warnings lib
