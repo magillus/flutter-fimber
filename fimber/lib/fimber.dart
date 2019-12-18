@@ -5,7 +5,6 @@ import 'package:fimber/file_log.dart';
 
 export 'package:fimber/data_size.dart';
 export 'package:fimber/file_log.dart';
-export 'package:fimber/file_log.dart';
 
 // ignore: avoid_classes_with_only_static_members
 /// Main static Fimber logging.
