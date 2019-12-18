@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:fimber/colorize.dart';
 import 'package:fimber/fimber.dart';
 import 'package:test/test.dart';
@@ -7,14 +5,12 @@ import 'package:test/test.dart';
 void main() async {
   group("Colorize", () {
     var testDirName = "test_logs";
-    var logDir = Directory(testDirName);
 
     setUp(() {
       Fimber.clearAll();
-      logDir.createSync(recursive: true);
     });
     tearDown(() {
-      logDir.deleteSync(recursive: true);
+      Fimber.clearAll();
     });
 
     test("Test colors", () async {
@@ -56,14 +52,10 @@ void main() async {
       print(styleB.wrap("Test black on yellow background"));
 
       var styleGray30 = ColorizeStyle(
-          [AnsiStyle.foreground(AnsiColor.bits)
-            ..bit9Pallete = 240
-          ]);
+          [AnsiStyle.foreground(AnsiColor.bits)..bit9Pallete = 240]);
       print(styleGray30.wrap("Test with gray 30"));
       var styleGray60 = ColorizeStyle(
-          [AnsiStyle.foreground(AnsiColor.bits)
-            ..bit9Pallete = 249
-          ]);
+          [AnsiStyle.foreground(AnsiColor.bits)..bit9Pallete = 249]);
       print(styleGray60.wrap("Test with gray 60"));
     });
   });
