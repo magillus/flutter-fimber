@@ -1,3 +1,3 @@
-## 1.0.0
+## 0.3.3 fimber_io split from fimber package
 
-- Initial version, created by Stagehand
+

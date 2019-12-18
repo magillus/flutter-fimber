@@ -125,6 +125,8 @@ Due to nature of auto-tag generation from stacktrace this block only does it onc
     });
 ```
 
+## **Deprecated** moved to `fimber_io` package
+
 ### Custom line formatters 
 
 Use custom line formatters to define your logging format.
