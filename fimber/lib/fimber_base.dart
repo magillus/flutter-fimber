@@ -314,7 +314,6 @@ class FimberLog {
   }
 }
 
-
 /// Custom format tree. Tag generation included
 /// allows to define tokens in format,
 /// which will be replaced with a value for each log line.
@@ -376,9 +375,10 @@ class CustomFormatTree extends LogTree {
   Map<String, ColorizeStyle> colorizeMap = {};
 
   /// Creates custom format logging tree
-  CustomFormatTree({this.logFormat = defaultFormat,
-    List<String> logLevels = defaultLevels,
-    bool useColors = false}) {
+  CustomFormatTree(
+      {this.logFormat = defaultFormat,
+      List<String> logLevels = defaultLevels,
+      bool useColors = false}) {
     _logLevels = logLevels;
     _useColors = useColors;
     if (_useColors) {

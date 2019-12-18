@@ -13,8 +13,7 @@ void main() {
 
       var elapsedMsg = AssertFormattedTree.elapsed(
           logFormat:
-          "${CustomFormatTree.timeElapsedToken} ${CustomFormatTree
-              .messageToken}");
+              "${CustomFormatTree.timeElapsedToken} ${CustomFormatTree.messageToken}");
       Fimber.plantTree(defaultFormat);
       Fimber.plantTree(elapsedMsg);
 
@@ -34,7 +33,6 @@ void main() {
       expect("Test message A",
           elapsedMsg.logLineHistory[0].substring("0:00:00.008303".length + 1));
     });
-
   });
 }
 

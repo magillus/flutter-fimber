@@ -125,7 +125,7 @@ Due to nature of auto-tag generation from stacktrace this block only does it onc
     });
 ```
 
-## **Deprecated** moved to `fimber_io` package
+## **Deprecated** moved to [`fimber_io`](https://pub.dev/packages/fimber_io/) package
 
 ### Custom line formatters 
 
