@@ -16,11 +16,12 @@ class DataSize {
   int realSize;
 
   /// Create DataSize object with predefined size as optional.
-  DataSize({int kilobytes = 0,
-    int megabytes = 0,
-    int gigabytes = 0,
-    int terabytes = 0,
-    int bytes = 0}) {
+  DataSize(
+      {int kilobytes = 0,
+      int megabytes = 0,
+      int gigabytes = 0,
+      int terabytes = 0,
+      int bytes = 0}) {
     if (bytes != null) {
       realSize = bytes;
     } else {

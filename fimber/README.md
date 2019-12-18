@@ -1,6 +1,6 @@
 # fimber 
 
-Extensible logging for Flutter.
+Extensible logging for Dart and Flutter.
 
 Package is based on famous Android logging library API - [Timber](https://github.com/JakeWharton/timber), this is library for simplify logging for Flutter.
 Using similar (as far as Dart lang allows) method API with same concepts for tree and planting logging tree.
@@ -12,7 +12,7 @@ To start add using it:
 ### Add `fimber` to `pubspec.yaml` 
 ```yaml
 dependencies:
-  fimber: ^0.3.2
+  fimber: ^0.4.0
   ```
 - remember about import in file you plan to use Fimber
 ```dart
@@ -125,13 +125,17 @@ Due to nature of auto-tag generation from stacktrace this block only does it onc
     });
 ```
 
-## **Deprecated** moved to `fimber_io` package
+## **Deprecated** moved to [`fimber_io`](https://pub.dev/packages/fimber_io/) package
 
 ### Custom line formatters 
 
 Use custom line formatters to define your logging format.
 
 ```dart
+import 'package:fimber_io/fimber_io.dart';
+
+...
+
     Fimber.plantTree(FimberFileTree("my-Log-File.txt",
         logFormat: "${CustomFormatTree.TIME_ELAPSED_TOKEN} ${CustomFormatTree
             .MESSAGE_TOKEN} ${CustomFormatTree.TIME_STAMP_TOKEN}"

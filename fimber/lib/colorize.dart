@@ -131,8 +131,7 @@ class ColorizeStyle {
 
   /// Wraps a text with list of AnsiStyles.
   String wrap(String text, {List<AnsiStyle> additionalStyles}) {
-    var styles = List.from(_styles)
-      ..addAll(additionalStyles ?? []);
+    var styles = List.from(_styles)..addAll(additionalStyles ?? []);
     var retString = text;
     for (var style in styles) {
       retString = style.apply(retString);
@@ -182,8 +181,8 @@ class Colorize {
       {AnsiColor foreground,
         AnsiColor background,
         AnsiColor bright,
-      bool reverse = false,
-      bool underline = false}) {
+        bool reverse = false,
+        bool underline = false}) {
     var underlineStyle = (underline ?? false)
         ? underline
         : (this.underline ?? false) ? this.underline : false;

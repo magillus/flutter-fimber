@@ -1,13 +1,13 @@
 name: fimber_io
-description: Fimber version with File logging via dart:io package
-version: 0.3.3
+description: Version of Fimber package with support for File based loggers - dependent on dart::io
+version: 0.4.0
 homepage: https://github.com/magillus/flutter-fimber/tree/master/fimber
 
 environment:
   sdk: '>=2.7.0 <3.0.0'
 
 dependencies:
-  fimber: ^0.3.3
+  fimber: ^0.4.0
 
 dev_dependencies:
   pedantic: ^1.8.0

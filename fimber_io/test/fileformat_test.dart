@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:fimber/data_size.dart';
 import 'package:fimber/filename_format.dart';
-import 'package:fimber/fimber.dart';
+import 'package:fimber_io/fimber_io.dart';
 import 'package:test/test.dart';
 
 void main() async {
@@ -20,6 +21,43 @@ void main() async {
       if (logDir.existsSync()) {
         logDir.deleteSync(recursive: true);
       }
+    });
+
+    test('File output logger', () async {
+      var filePath = "$testDirName${dirSeparator}test-output.logger.log.txt";
+      var file = File(filePath);
+      Fimber.clearAll();
+      Fimber.plantTree(FimberFileTree(filePath));
+
+      Fimber.i("Test log");
+
+      await Future.delayed(Duration(seconds: 1));
+
+      var lines = file.readAsLinesSync();
+      print("File: ${file.absolute}");
+      expect(lines.length, 1);
+      expect("Test log",
+          lines[0].substring("2019-02-03T07:19:59.417122".length + 1));
+    });
+
+    test('Time format detection', () async {
+      var filePath = "$testDirName${dirSeparator}test-format-detection.log.txt";
+      Fimber.clearAll();
+      Fimber.plantTree(FimberFileTree(filePath,
+          logFormat:
+              "${CustomFormatTree.timeElapsedToken} ${CustomFormatTree.messageToken} ${CustomFormatTree.timeStampToken}"));
+
+      Fimber.i("Test log");
+
+      await Future.delayed(Duration(seconds: 1));
+      var file = File(filePath);
+      var lines = file.readAsLinesSync();
+      print("File: ${file.absolute}");
+      assert(lines.length == 1);
+      expect(
+          lines[0].substring("0:00:00.008303".length + 1,
+              lines[0].length - " 2019-01-22T06:51:58.062997".length),
+          "Test log");
     });
 
     test("Directory autocreate.", () async {
@@ -240,20 +278,21 @@ void main() async {
     test("File Tree - Rolling time append test", () async {
       var tree = TimedRollingFileTree(
           filenamePrefix: "$testDirName${dirSeparator}mul_tree_time_append");
-      var logFile = tree.outputFileName;
-
+      // todo test file name generation
       Fimber.plantTree(tree);
-
       await Future.delayed(Duration(milliseconds: 100));
-
       Fimber.i("Test log line 1.");
+      //todo test order of adding lines - remove the delays
+      await Future.delayed(Duration(milliseconds: 10));
       Fimber.i("Test log line 2.");
       await Future.delayed(Duration(milliseconds: 100));
       Fimber.i("Test log line 3.");
       // wait until buffer dumps to file
       await waitForAppendBuffer();
 
+      var logFile = tree.outputFileName;
       var logLines = await File(logFile).readAsLines();
+
       expect(logLines.length, 3);
       assert(logLines[0].endsWith("Test log line 1."));
       assert(logLines[1].endsWith("Test log line 2."));

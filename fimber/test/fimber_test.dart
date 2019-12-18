@@ -354,7 +354,7 @@ class AssertTree extends LogTree {
       {String tag, dynamic ex, StackTrace stacktrace}) {
     tag = (tag ?? LogTree.getTag());
     lastLogLine =
-    "$level:$tag\t$msg\t$ex\n${stacktrace?.toString()?.split('\n') ?? ""}";
+        "$level:$tag\t$msg\t$ex\n${stacktrace?.toString()?.split('\n') ?? ""}";
     allLines.add(lastLogLine);
   }
 }
