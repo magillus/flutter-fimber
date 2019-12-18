@@ -61,7 +61,7 @@ class LogFileNameFormatter {
     return name
         .replaceAll(_fullYearToken, dateTime.year.toString().padLeft(4, '0'))
         .replaceAll(
-        _year2charToken, (dateTime.year % 1000).toString().padLeft(2, '0'))
+            _year2charToken, (dateTime.year % 1000).toString().padLeft(2, '0'))
         .replaceAll(_monthToken, _month(dateTime.month))
         .replaceAll(_month3charToken, _month3(dateTime.month))
         .replaceAll(_month2charToken, dateTime.month.toString().padLeft(2, '0'))
