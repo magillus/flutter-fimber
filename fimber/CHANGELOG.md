@@ -1,3 +1,8 @@
+## [0.3.3] - Deprecating dart:io dependency
+
+- Removing FileLogging and moving it to separate package: `fimber_io`
+- 0.4.0 version will remove dependency on dart::io - so that Fimber can be used in Web projects.
+
 ## [0.3.2] - Bug fix for Time rolling tree.
 
 - [\#52 issue](https://github.com/magillus/flutter-fimber/issues/52)  Fix for check of new file format based on timeSpan intervals.

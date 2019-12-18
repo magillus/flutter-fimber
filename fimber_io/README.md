@@ -1,6 +1,6 @@
-# fimber 
+# fimber_io
 
-Extensible logging for Flutter.
+Extensible logging for Flutter. Dart::IO version with File loggers.
 
 Package is based on famous Android logging library API - [Timber](https://github.com/JakeWharton/timber), this is library for simplify logging for Flutter.
 Using similar (as far as Dart lang allows) method API with same concepts for tree and planting logging tree.
@@ -9,14 +9,14 @@ Also check out `flutter_fimber` which extends `fimber` to platform specific outp
 ## Getting Started
 
 To start add using it:
-### Add `fimber` to `pubspec.yaml` 
+### Add `fimber_io` to `pubspec.yaml` 
 ```yaml
 dependencies:
-  fimber: ^0.3.2
+  fimber_io: ^0.3.3
   ```
 - remember about import in file you plan to use Fimber
 ```dart
-import 'package:fimber/fimber.dart';
+import 'package:fimber_io/fimber_io.dart';
 
 ```
 
@@ -124,8 +124,6 @@ Due to nature of auto-tag generation from stacktrace this block only does it onc
       return i;
     });
 ```
-
-## **Deprecated** moved to `fimber_io` package
 
 ### Custom line formatters 
 
