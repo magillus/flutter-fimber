@@ -1,3 +1,5 @@
+## 0.4.0 Update to match fimber io/base split.
+
 ## 0.3.2 AndroidX update and versions bump (thx: g123k)
 
 ## 0.3.1 Fixes incorrect Android package structure
