@@ -39,13 +39,13 @@ class Fimber {
   /// Mute a log [level] for logging.
   /// Any log entries with the muted log level will be not printed.
   static void mute(String level) {
-    _muteLevels.add(level);
+    if (!_muteLevels.contains(level)) _muteLevels.add(level);
   }
 
   /// UnMutes a log [level] for logging.
   /// Any log entries with the muted log level will be not printed.
   static void unmute(String level) {
-    _muteLevels.remove(level);
+    _muteLevels.removeWhere((it) => it == level);
   }
 
   /// Logs a [message] with provided [level]
@@ -412,7 +412,7 @@ class CustomFormatTree extends LogTree {
       var tmpStacktrace =
           stacktrace?.toString()?.split('\n') ?? LogTree.getStacktrace();
       var stackTraceMessage =
-      tmpStacktrace.map((stackLine) => "\t$stackLine").join("\n");
+          tmpStacktrace.map((stackLine) => "\t$stackLine").join("\n");
       printLog(
           "$level\t$logTag:\t $msg \n${ex.toString()}\n$stackTraceMessage");
     } else {
@@ -429,13 +429,13 @@ class CustomFormatTree extends LogTree {
     }
   }
 
-  void _printFormattedLog(String level, String msg, String tag, ex,
-      StackTrace stacktrace) {
+  void _printFormattedLog(
+      String level, String msg, String tag, ex, StackTrace stacktrace) {
     if (ex != null) {
       var tmpStacktrace =
           stacktrace?.toString()?.split('\n') ?? LogTree.getStacktrace();
       var stackTraceMessage =
-      tmpStacktrace.map((stackLine) => "\t$stackLine").join("\n");
+          tmpStacktrace.map((stackLine) => "\t$stackLine").join("\n");
       printLine(_formatLine(logFormat, level, msg, tag, "\n${ex.toString()}",
           "\n$stackTraceMessage"));
     } else {
