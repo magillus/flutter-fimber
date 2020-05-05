@@ -179,10 +179,10 @@ class Colorize {
   /// Wraps text into the defined styles with option to override a style.
   String wrap(String text,
       {AnsiColor foreground,
-        AnsiColor background,
-        AnsiColor bright,
-        bool reverse = false,
-        bool underline = false}) {
+      AnsiColor background,
+      AnsiColor bright,
+      bool reverse = false,
+      bool underline = false}) {
     var underlineStyle = (underline ?? false)
         ? underline
         : (this.underline ?? false) ? this.underline : false;
@@ -243,9 +243,9 @@ class Colorize {
 
   static String _wrapSingle(String text,
       {AnsiColor foreground,
-        AnsiColor background,
-        AnsiColor bright,
-        bool blink}) {
+      AnsiColor background,
+      AnsiColor bright,
+      bool blink}) {
     var style = _foregroundType;
     var color = foreground;
     if (blink ?? false) {

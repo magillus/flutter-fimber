@@ -51,7 +51,7 @@ class FimberTree extends LogTree {
       var tmpStacktrace =
           stacktrace?.toString()?.split('\n') ?? LogTree.getStacktrace();
       var stackTraceMessage =
-      tmpStacktrace.map((stackLine) => "\t$stackLine").join("\n");
+          tmpStacktrace.map((stackLine) => "\t$stackLine").join("\n");
       exDump = "${ex.toString()} \n$stackTraceMessage";
     }
     String postFix, preFix;
@@ -143,8 +143,9 @@ class LogLine {
 /// https://flutter.io/docs/testing/debugging#print-and-debugprint-with-flutter-logs
 class DebugBufferTree extends DebugTree {
   /// Creates Debug Tree compatible with Android.
-  DebugBufferTree({int printTimeType = DebugTree.timeClockType,
-    List<String> logLevels = DebugTree.defaultLevels})
+  DebugBufferTree(
+      {int printTimeType = DebugTree.timeClockType,
+      List<String> logLevels = DebugTree.defaultLevels})
       : super(printTimeType: printTimeType, logLevels: logLevels);
 
   /// Creates elapsed time Debug Tree compatible with Android.

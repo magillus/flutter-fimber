@@ -37,8 +37,9 @@ void main() {
 }
 
 class AssertFormattedTree extends CustomFormatTree {
-  AssertFormattedTree({String logFormat = CustomFormatTree.defaultFormat,
-    int printTimeType = CustomFormatTree.timeClockFlag})
+  AssertFormattedTree(
+      {String logFormat = CustomFormatTree.defaultFormat,
+      int printTimeType = CustomFormatTree.timeClockFlag})
       : super(logFormat: logFormat);
 
   factory AssertFormattedTree.elapsed(
