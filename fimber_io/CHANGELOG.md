@@ -1,3 +1,7 @@
+## [0.4.2] - Fixed versioning
+
+- fixed versioning
+
 ## [0.4.1] - Bug fixes
 
 - [\#75 issue](https://github.com/magillus/flutter-fimber/issues/75) - Fix for TimedRollingFileTree missing passed logLevels and logFormat
