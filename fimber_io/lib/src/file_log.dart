@@ -268,7 +268,8 @@ class TimedRollingFileTree extends RollingFileTree {
       logFormat = CustomFormatTree.defaultFormat,
       this.filenamePrefix = "log_",
       this.filenamePostfix = ".txt",
-      logLevels = CustomFormatTree.defaultLevels}) {
+      logLevels = CustomFormatTree.defaultLevels})
+      : super(logLevels: logLevels, logFormat: logFormat) {
     fileNameFormatter = LogFileNameFormatter.full(
         prefix: filenamePrefix, postfix: filenamePostfix);
     rollToNextFile();
