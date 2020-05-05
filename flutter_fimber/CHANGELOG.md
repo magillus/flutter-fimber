@@ -1,3 +1,14 @@
+## [0.4.2] - Fixed versioning
+
+- fixed versioning
+
+## [0.4.1] - Bug fixes
+
+- [\#75 issue](https://github.com/magillus/flutter-fimber/issues/75) - Fix for TimedRollingFileTree missing passed logLevels and logFormat
+- [\#73 issue](https://github.com/magillus/flutter-fimber/issues/73) - Fix for mute levels list not being distinct
+
+## 0.4.0 Update to match fimber io/base split.
+
 ## 0.3.2 AndroidX update and versions bump (thx: g123k)
 
 ## 0.3.1 Fixes incorrect Android package structure

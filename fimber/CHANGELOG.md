@@ -1,3 +1,12 @@
+## [0.4.2] - Fixed versioning
+
+- fixed versioning
+
+## [0.4.1] - Bug fixes
+
+- [\#75 issue](https://github.com/magillus/flutter-fimber/issues/75) - Fix for TimedRollingFileTree missing passed logLevels and logFormat
+- [\#73 issue](https://github.com/magillus/flutter-fimber/issues/73) - Fix for mute levels list not being distinct
+
 ## [0.4.0] - Release of Fimber ready for Web (JS/FlutterWeb)
 
 - Moving File loggers to separate [`fimber_io`](https://pub.dev/packages/fimber_io/) package

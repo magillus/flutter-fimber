@@ -276,12 +276,16 @@ void main() async {
     });
 
     test("File Tree - Rolling time append test", () async {
+      
+      var logLevels = CustomFormatTree.defaultLevels.toList();
+      logLevels.remove("D");
       var tree = TimedRollingFileTree(
-          filenamePrefix: "$testDirName${dirSeparator}mul_tree_time_append");
+          filenamePrefix: "$testDirName${dirSeparator}mul_tree_time_append", logLevels: logLevels);
       // todo test file name generation
       Fimber.plantTree(tree);
       await Future.delayed(Duration(milliseconds: 100));
       Fimber.i("Test log line 1.");
+      Fimber.d("Test log line 1.");// should be ignored
       //todo test order of adding lines - remove the delays
       await Future.delayed(Duration(milliseconds: 10));
       Fimber.i("Test log line 2.");

@@ -68,7 +68,7 @@ class LogFileNameFormatter {
         .replaceAll(_dayToken, dateTime.day.toString().padLeft(2, '0'))
         .replaceAll(_dayOfWeekToken, _dayOfWeek(dateTime.weekday))
         .replaceAll(
-        _hour12Token, (dateTime.hour % 12).toString().padLeft(2, '0'))
+            _hour12Token, (dateTime.hour % 12).toString().padLeft(2, '0'))
         .replaceAll(_hour24Token, dateTime.hour.toString().padLeft(2, '0'))
         .replaceAll(_hourPmAmToken, _amPmHour(dateTime.hour))
         .replaceAll(_hourPmAmToken.toUpperCase(),

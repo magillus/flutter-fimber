@@ -302,6 +302,23 @@ void main() {
     assert(assertTree.allLines[1].contains("Test INFO unmute log."));
   });
 
+  test('Test Multiple mute and unmute', () {
+    Fimber.clearAll();
+    var assertTree = AssertTree(["V", "I", "D", "W"]);
+    Fimber.plantTree(assertTree);
+    Fimber.i("Test INFO log.");
+    Fimber.mute("I");
+    Fimber.i("Test INFO mute log.");
+    Fimber.mute("I");
+    Fimber.i("Test INFO mute log.");
+    Fimber.unmute("I");
+    Fimber.i("Test INFO unmute log.");
+
+    expect(2, assertTree.allLines.length);
+    assert(assertTree.allLines[0].contains("Test INFO log."));
+    assert(assertTree.allLines[1].contains("Test INFO unmute log."));
+  });
+
   group("COLORIZE", () {
     test("Debug colors - visual test only", () {
       Fimber.clearAll();

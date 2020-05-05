@@ -1,13 +1,15 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:fimber_io/fimber_io.dart';
 import 'package:flutter_fimber/flutter_fimber.dart';
 
 void main() {
   Fimber.plantTree(FimberTree(useColors: true));
   Fimber.plantTree(DebugBufferTree.elapsed());
   Fimber.plantTree(SizeRollingFileTree(DataSize.mega(3),
-      filenamePrefix: "/data/user/0/com.perlak.flutterfimberexample/app_flutter/log_"));
+      filenamePrefix:
+          "/data/user/0/com.perlak.flutterfimberexample/app_flutter/log_"));
 
   runApp(MyApp());
 }
@@ -19,7 +21,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   @override
   void initState() {
     super.initState();
@@ -82,8 +83,8 @@ class _MyAppState extends State<MyApp> {
                   try {
                     throw AssertionError();
                   } on dynamic catch (e, s) {
-                    Fimber.w("Warning message test ${DateTime.now()}", ex: e,
-                        stacktrace: s);
+                    Fimber.w("Warning message test ${DateTime.now()}",
+                        ex: e, stacktrace: s);
                   }
                 },
               ),
