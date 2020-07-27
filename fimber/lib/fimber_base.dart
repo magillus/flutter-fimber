@@ -413,10 +413,10 @@ class CustomFormatTree extends LogTree {
           stacktrace?.toString()?.split('\n') ?? LogTree.getStacktrace();
       var stackTraceMessage =
           tmpStacktrace.map((stackLine) => "\t$stackLine").join("\n");
-      printLog(
-          "$level\t$logTag:\t $msg \n${ex.toString()}\n$stackTraceMessage");
+      printLog("$level\t$logTag:\t $msg \n${ex.toString()}\n$stackTraceMessage",
+          level: level);
     } else {
-      printLog("$level\t$logTag:\t $msg");
+      printLog("$level\t$logTag:\t $msg", level: level);
     }
   }
 
