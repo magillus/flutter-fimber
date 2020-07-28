@@ -50,7 +50,8 @@ class Fimber {
 
   /// Logs a [message] with provided [level]
   /// and optional [tag], [ex] and [stacktrace]
-  static void log(String level, String message, {String tag, dynamic ex, StackTrace stacktrace}) {
+  static void log(String level, String message,
+      {String tag, dynamic ex, StackTrace stacktrace}) {
     if (_muteLevels.contains(level)) {
       return; // skip logging if muted.
     }
@@ -130,8 +131,14 @@ class DebugTree extends LogTree {
   static final Map<String, ColorizeStyle> _defaultColorizeMap = {
     "V": ColorizeStyle([AnsiStyle.foreground(AnsiColor.blue)]),
     "D": ColorizeStyle([AnsiStyle.foreground(AnsiColor.green)]),
-    "W": ColorizeStyle([AnsiStyle.foreground(AnsiColor.yellow), AnsiStyle.background(AnsiColor.black)]),
-    "E": ColorizeStyle([AnsiStyle.bright(AnsiColor.white), AnsiStyle.background(AnsiColor.red)])
+    "W": ColorizeStyle([
+      AnsiStyle.foreground(AnsiColor.yellow),
+      AnsiStyle.background(AnsiColor.black)
+    ]),
+    "E": ColorizeStyle([
+      AnsiStyle.bright(AnsiColor.white),
+      AnsiStyle.background(AnsiColor.red)
+    ])
   };
 
   /// Log levels processed by this [DebugTree]
@@ -147,7 +154,10 @@ class DebugTree extends LogTree {
 
   /// Creates DebugTree with defaults
   /// or with defined [printTimeType], [logLevels], [useColors]
-  DebugTree({this.printTimeType = timeClockType, this.logLevels = defaultLevels, bool useColors = false}) {
+  DebugTree(
+      {this.printTimeType = timeClockType,
+      this.logLevels = defaultLevels,
+      bool useColors = false}) {
     if (printTimeType == timeElapsedType) {
       _elapsedTimeStopwatch = Stopwatch();
       _elapsedTimeStopwatch.start();
@@ -159,18 +169,25 @@ class DebugTree extends LogTree {
 
   /// Creates elapsed time type Debug log tree
   /// with optional [logLevels] and [useColors]
-  factory DebugTree.elapsed({List<String> logLevels = defaultLevels, bool useColors = false}) {
-    return DebugTree(logLevels: logLevels, printTimeType: timeElapsedType, useColors: useColors);
+  factory DebugTree.elapsed(
+      {List<String> logLevels = defaultLevels, bool useColors = false}) {
+    return DebugTree(
+        logLevels: logLevels,
+        printTimeType: timeElapsedType,
+        useColors: useColors);
   }
 
   /// Logs [message] with [level]
   /// and optional [tag], [ex] (exception, [stacktrace]
   @override
-  void log(String level, String message, {String tag, dynamic ex, StackTrace stacktrace}) {
+  void log(String level, String message,
+      {String tag, dynamic ex, StackTrace stacktrace}) {
     var logTag = tag ?? LogTree.getTag();
     if (ex != null) {
-      var tmpStacktrace = stacktrace?.toString()?.split('\n') ?? LogTree.getStacktrace();
-      var stackTraceMessage = tmpStacktrace.map((stackLine) => "\t$stackLine").join("\n");
+      var tmpStacktrace =
+          stacktrace?.toString()?.split('\n') ?? LogTree.getStacktrace();
+      var stackTraceMessage =
+          tmpStacktrace.map((stackLine) => "\t$stackLine").join("\n");
       printLog(
           "$level\t$logTag:\t $message \n"
           "${ex.toString()}\n$stackTraceMessage",
@@ -212,7 +229,8 @@ abstract class LogTree {
 
   /// Logs [message] with log [level]
   /// and optional [tag], [ex] (exception) [stacktrace]
-  void log(String level, String message, {String tag, dynamic ex, StackTrace stacktrace});
+  void log(String level, String message,
+      {String tag, dynamic ex, StackTrace stacktrace});
 
   /// Gets levels of logging serviced by this [LogTree]
   List<String> getLevels();
@@ -222,7 +240,8 @@ abstract class LogTree {
   static String getTag({int stackIndex = 4}) {
     var stackTraceList = StackTrace.current.toString().split('\n');
     if (stackTraceList.length > stackIndex) {
-      var lineChunks = stackTraceList[stackIndex].replaceAll("<anonymous closure>", "<ac>");
+      var lineChunks =
+          stackTraceList[stackIndex].replaceAll("<anonymous closure>", "<ac>");
       if (lineChunks.length > 6) {
         var lineParts = lineChunks.split(' ');
         if (lineParts.length > 8 && lineParts[6] == 'new') {
@@ -289,7 +308,8 @@ class FimberLog {
 
   /// Logs [message] with [tag] and [level]
   /// with optional exception and [stacktrace]
-  _log(String level, String tag, String message, {dynamic ex, StackTrace stacktrace}) {
+  _log(String level, String tag, String message,
+      {dynamic ex, StackTrace stacktrace}) {
     Fimber.log(level, message, tag: tag, ex: ex, stacktrace: stacktrace);
   }
 }
@@ -323,7 +343,8 @@ class CustomFormatTree extends LogTree {
   static const String exceptionStackToken = "{EX_STACK}";
 
   /// Default format for timestamp based log message.
-  static const String defaultFormat = "$timeStampToken\t$levelToken $tagToken: $messageToken";
+  static const String defaultFormat =
+      "$timeStampToken\t$levelToken $tagToken: $messageToken";
 
   /// Flag elapsed time in format
   static const int timeElapsedFlag = 1;
@@ -334,8 +355,14 @@ class CustomFormatTree extends LogTree {
   static final Map<String, ColorizeStyle> _defaultColorizeMap = {
     "V": ColorizeStyle([AnsiStyle.foreground(AnsiColor.blue)]),
     "D": ColorizeStyle([AnsiStyle.foreground(AnsiColor.green)]),
-    "W": ColorizeStyle([AnsiStyle.foreground(AnsiColor.yellow), AnsiStyle.background(AnsiColor.black)]),
-    "E": ColorizeStyle([AnsiStyle.bright(AnsiColor.white), AnsiStyle.background(AnsiColor.red)])
+    "W": ColorizeStyle([
+      AnsiStyle.foreground(AnsiColor.yellow),
+      AnsiStyle.background(AnsiColor.black)
+    ]),
+    "E": ColorizeStyle([
+      AnsiStyle.bright(AnsiColor.white),
+      AnsiStyle.background(AnsiColor.red)
+    ])
   };
 
   List<String> _logLevels;
@@ -348,7 +375,10 @@ class CustomFormatTree extends LogTree {
   Map<String, ColorizeStyle> colorizeMap = {};
 
   /// Creates custom format logging tree
-  CustomFormatTree({this.logFormat = defaultFormat, List<String> logLevels = defaultLevels, bool useColors = false}) {
+  CustomFormatTree(
+      {this.logFormat = defaultFormat,
+      List<String> logLevels = defaultLevels,
+      bool useColors = false}) {
     _logLevels = logLevels;
     _useColors = useColors;
     if (_useColors) {
@@ -370,7 +400,8 @@ class CustomFormatTree extends LogTree {
   @override
 
   /// Logs a message with level/tag and optional stacktrace or exception.
-  void log(String level, String msg, {String tag, dynamic ex, StackTrace stacktrace}) {
+  void log(String level, String msg,
+      {String tag, dynamic ex, StackTrace stacktrace}) {
     var logTag = tag ?? LogTree.getTag();
 
     if (logFormat != null) {
@@ -378,9 +409,12 @@ class CustomFormatTree extends LogTree {
       return;
     }
     if (ex != null) {
-      var tmpStacktrace = stacktrace?.toString()?.split('\n') ?? LogTree.getStacktrace();
-      var stackTraceMessage = tmpStacktrace.map((stackLine) => "\t$stackLine").join("\n");
-      printLog("$level\t$logTag:\t $msg \n${ex.toString()}\n$stackTraceMessage", level: level);
+      var tmpStacktrace =
+          stacktrace?.toString()?.split('\n') ?? LogTree.getStacktrace();
+      var stackTraceMessage =
+          tmpStacktrace.map((stackLine) => "\t$stackLine").join("\n");
+      printLog("$level\t$logTag:\t $msg \n${ex.toString()}\n$stackTraceMessage",
+          level: level);
     } else {
       printLog("$level\t$logTag:\t $msg", level: level);
     }
@@ -395,17 +429,24 @@ class CustomFormatTree extends LogTree {
     }
   }
 
-  void _printFormattedLog(String level, String msg, String tag, ex, StackTrace stacktrace) {
+  void _printFormattedLog(
+      String level, String msg, String tag, ex, StackTrace stacktrace) {
     if (ex != null) {
-      var tmpStacktrace = stacktrace?.toString()?.split('\n') ?? LogTree.getStacktrace();
-      var stackTraceMessage = tmpStacktrace.map((stackLine) => "\t$stackLine").join("\n");
-      printLine(_formatLine(logFormat, level, msg, tag, "\n${ex.toString()}", "\n$stackTraceMessage"), level: level);
+      var tmpStacktrace =
+          stacktrace?.toString()?.split('\n') ?? LogTree.getStacktrace();
+      var stackTraceMessage =
+          tmpStacktrace.map((stackLine) => "\t$stackLine").join("\n");
+      printLine(
+          _formatLine(logFormat, level, msg, tag, "\n${ex.toString()}",
+              "\n$stackTraceMessage"),
+          level: level);
     } else {
       printLine(_formatLine(logFormat, level, msg, tag, "", ""), level: level);
     }
   }
 
-  String _formatLine(String format, String level, String msg, String tag, String exMsg, String stacktrace) {
+  String _formatLine(String format, String level, String msg, String tag,
+      String exMsg, String stacktrace) {
     var date = DateTime.now().toIso8601String();
     var elapsed = _elapsedTimeStopwatch?.elapsed?.toString() ?? "";
 
