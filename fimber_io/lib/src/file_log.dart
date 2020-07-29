@@ -30,8 +30,8 @@ class FimberFileTree extends CustomFormatTree with CloseableTree {
   /// optional [bufferWriteInterval] in milliseconds.
   FimberFileTree(this.outputFileName,
       {logLevels = CustomFormatTree.defaultLevels,
-      logFormat = "${CustomFormatTree.timeStampToken}"
-          "\t${CustomFormatTree.messageToken}",
+      logFormat = '${CustomFormatTree.timeStampToken}'
+          '\t${CustomFormatTree.messageToken}',
       int maxBufferSize = bufferSizeLimit,
       int bufferWriteInterval = fileBufferFlushInterval})
       : super(logLevels: logLevels, logFormat: logFormat) {
@@ -44,7 +44,7 @@ class FimberFileTree extends CustomFormatTree with CloseableTree {
       _bufferSize = 0;
       return dumpBuffer;
     }).listen((newLines) async {
-      _flushBuffer(newLines);
+      await _flushBuffer(newLines);
     });
   }
 
@@ -87,8 +87,8 @@ class FimberFileTree extends CustomFormatTree with CloseableTree {
   factory FimberFileTree.elapsed(String fileName,
       {List<String> logLevels = CustomFormatTree.defaultLevels}) {
     return FimberFileTree(fileName,
-        logFormat: "${CustomFormatTree.timeElapsedToken}"
-            "\t${CustomFormatTree.messageToken}");
+        logFormat: '${CustomFormatTree.timeElapsedToken}'
+            '\t${CustomFormatTree.messageToken}');
   }
 
   @override
@@ -130,8 +130,8 @@ class SizeRollingFileTree extends RollingFileTree {
   /// will create new log file.
   SizeRollingFileTree(this.maxDataSize,
       {logFormat = CustomFormatTree.defaultFormat,
-      this.filenamePrefix = "log_",
-      this.filenamePostfix = ".txt",
+      this.filenamePrefix = 'log_',
+      this.filenamePostfix = '.txt',
       logLevels = CustomFormatTree.defaultLevels})
       : super(logFormat: logFormat, logLevels: logLevels) {
     detectFileIndex();
@@ -151,7 +151,7 @@ class SizeRollingFileTree extends RollingFileTree {
         .where((i) => i >= 0)
         .toList();
     logListIndexes.sort();
-    print("log list indexes: $logListIndexes");
+    print('log list indexes: $logListIndexes');
     if (logListIndexes.isNotEmpty) {
       var max = logListIndexes.last;
       _fileIndex = max;
@@ -159,7 +159,7 @@ class SizeRollingFileTree extends RollingFileTree {
         rollToNextFile();
       } else {
         outputFileName = _currentFile();
-        print("Logfile is $outputFileName");
+        print('Logfile is $outputFileName');
       }
     } else {
       _fileIndex = 0;
@@ -204,7 +204,7 @@ class SizeRollingFileTree extends RollingFileTree {
   }
 
   RegExp get _fileRegExp => RegExp(
-      "${filenamePrefix.replaceAll("\\", "\\\\")}([0-9]+)?$filenamePostfix");
+      '${filenamePrefix.replaceAll("\\", "\\\\")}([0-9]+)?$filenamePostfix');
 
   /// Gets log index from a file path.
   int getLogIndex(String filePath) {
@@ -266,8 +266,8 @@ class TimedRollingFileTree extends RollingFileTree {
   TimedRollingFileTree(
       {this.timeSpan = TimedRollingFileTree.dailyTime,
       logFormat = CustomFormatTree.defaultFormat,
-      this.filenamePrefix = "log_",
-      this.filenamePostfix = ".txt",
+      this.filenamePrefix = 'log_',
+      this.filenamePostfix = '.txt',
       logLevels = CustomFormatTree.defaultLevels})
       : super(logLevels: logLevels, logFormat: logFormat) {
     fileNameFormatter = LogFileNameFormatter.full(

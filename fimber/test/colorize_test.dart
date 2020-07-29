@@ -3,13 +3,14 @@ import 'package:fimber/fimber.dart';
 import 'package:test/test.dart';
 
 void main() async {
-  group("Colorize", () {
-    var testDirName = "test_logs";
-
+  group('Colorize', () {
+    
     setUp(() {
+      print("setup test - Colorize");
       Fimber.clearAll();
     });
     tearDown(() {
+      print("tear down test - Colorize");
       Fimber.clearAll();
     });
 
