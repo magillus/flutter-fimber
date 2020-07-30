@@ -7,8 +7,9 @@ environment:
   sdk: '>=2.7.0 <3.0.0'
 
 dependencies:
-  fimber: ^0.4.2
+  fimber: 
+    path: ../fimber
 
 dev_dependencies:
   test: '^1.15.3'
-  pedantic: '^1.9.2'
+  pedantic: '^1.8.0'
