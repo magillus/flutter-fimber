@@ -1,8 +1,9 @@
 // ignore: avoid_classes_with_only_static_members
 import 'colorize.dart';
 
-/// Main static Fimber logging.
+
 // ignore: avoid_classes_with_only_static_members
+/// Main static Fimber logging.
 class Fimber {
   static final List<String> _muteLevels = [];
 
@@ -372,6 +373,7 @@ class CustomFormatTree extends LogTree {
   /// Log line format style.
   String logFormat;
   bool _useColors;
+  /// Map of log levels and their colorizing style.
   Map<String, ColorizeStyle> colorizeMap = {};
 
   /// Creates custom format logging tree
@@ -413,10 +415,10 @@ class CustomFormatTree extends LogTree {
           stacktrace?.toString()?.split('\n') ?? LogTree.getStacktrace();
       var stackTraceMessage =
           tmpStacktrace.map((stackLine) => "\t$stackLine").join("\n");
-      printLog(
-          "$level\t$logTag:\t $msg \n${ex.toString()}\n$stackTraceMessage");
+      printLog("$level\t$logTag:\t $msg \n${ex.toString()}\n$stackTraceMessage",
+          level: level);
     } else {
-      printLog("$level\t$logTag:\t $msg");
+      printLog("$level\t$logTag:\t $msg", level: level);
     }
   }
 

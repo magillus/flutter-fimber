@@ -3,13 +3,14 @@ import 'package:fimber/fimber.dart';
 import 'package:test/test.dart';
 
 void main() async {
-  group("Colorize", () {
-    var testDirName = "test_logs";
-
+  group('Colorize', () {
+    
     setUp(() {
+      print("setup test - Colorize");
       Fimber.clearAll();
     });
     tearDown(() {
+      print("tear down test - Colorize");
       Fimber.clearAll();
     });
 
@@ -23,7 +24,7 @@ void main() async {
       colorize =
           Colorize(foreground: AnsiColor.cyan, background: AnsiColor.green);
       print("${colorize.wrap("TEXT more tests")}\n"
-          "${colorize.wrap("TESXT TEXT....", foreground: AnsiColor.white)}");
+          "${colorize.wrap("TEST TEXT....", foreground: AnsiColor.white)}");
 
       print(Colorize.wrapWith("Magenta", foreground: AnsiColor.magenta));
       print(Colorize.wrapWith("Blue reversed",

@@ -3,8 +3,6 @@ import 'package:test/test.dart';
 
 void main() {
   group("Custom format", () {
-    var testDirName = "test_logs-format";
-
     test('Format based logger', () {
       print("");
 
@@ -12,8 +10,8 @@ void main() {
       var defaultFormat = AssertFormattedTree();
 
       var elapsedMsg = AssertFormattedTree.elapsed(
-          logFormat:
-              "${CustomFormatTree.timeElapsedToken} ${CustomFormatTree.messageToken}");
+          logFormat: '''${CustomFormatTree.timeElapsedToken}
+${CustomFormatTree.messageToken}''');
       Fimber.plantTree(defaultFormat);
       Fimber.plantTree(elapsedMsg);
 
