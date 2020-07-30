@@ -5,11 +5,10 @@ homepage: https://github.com/magillus/flutter-fimber
 
 environment:
   sdk: '>=2.7.0 <3.0.0'
+  flutter: '>=1.12.0 <2.0.0'
 
 dependencies:
-  fimber: 
-    path: ../fimber
-
+  fimber: ^0.4.3
   flutter:
     sdk: flutter
 
@@ -19,5 +18,9 @@ dev_dependencies:
 
 flutter:
   plugin:
-    androidPackage: com.perlak.flutterfimber
-    pluginClass: FlutterFimberPlugin
+    platforms:
+      android:
+        package: com.perlak.flutterfimber
+        pluginClass: FlutterFimberPlugin
+      ios:
+        pluginClass: FlutterFimberPlugin
