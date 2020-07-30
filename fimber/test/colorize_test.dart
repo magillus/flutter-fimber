@@ -24,7 +24,7 @@ void main() async {
       colorize =
           Colorize(foreground: AnsiColor.cyan, background: AnsiColor.green);
       print("${colorize.wrap("TEXT more tests")}\n"
-          "${colorize.wrap("TESXT TEXT....", foreground: AnsiColor.white)}");
+          "${colorize.wrap("TEST TEXT....", foreground: AnsiColor.white)}");
 
       print(Colorize.wrapWith("Magenta", foreground: AnsiColor.magenta));
       print(Colorize.wrapWith("Blue reversed",

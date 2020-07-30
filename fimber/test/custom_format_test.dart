@@ -10,7 +10,7 @@ void main() {
       var defaultFormat = AssertFormattedTree();
 
       var elapsedMsg = AssertFormattedTree.elapsed(
-          logFormat: '''${CustomFormatTree.timeElapsedToken} 
+          logFormat: '''${CustomFormatTree.timeElapsedToken}
 ${CustomFormatTree.messageToken}''');
       Fimber.plantTree(defaultFormat);
       Fimber.plantTree(elapsedMsg);

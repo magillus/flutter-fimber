@@ -45,7 +45,7 @@ void main() async {
       Fimber.clearAll();
       Fimber.plantTree(FimberFileTree(filePath,
           logFormat:
-              '"${CustomFormatTree.timeElapsedToken} ${CustomFormatTree.messageToken} ${CustomFormatTree.timeStampToken}'));
+              '${CustomFormatTree.timeElapsedToken} ${CustomFormatTree.messageToken} ${CustomFormatTree.timeStampToken}'));
 
       Fimber.i('Test log');
 
