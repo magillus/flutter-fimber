@@ -439,9 +439,9 @@ class CustomFormatTree extends LogTree {
       var stackTraceMessage =
           tmpStacktrace.map((stackLine) => "\t$stackLine").join("\n");
       printLine(_formatLine(logFormat, level, msg, tag, "\n${ex.toString()}",
-          "\n$stackTraceMessage"));
+          "\n$stackTraceMessage"), level: level);
     } else {
-      printLine(_formatLine(logFormat, level, msg, tag, "", ""));
+      printLine(_formatLine(logFormat, level, msg, tag, "", ""), level: level);
     }
   }
 
