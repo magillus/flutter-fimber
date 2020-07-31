@@ -11,7 +11,7 @@ To start add using it:
 ### Add `fimber` to `pubspec.yaml` 
 ```yaml
 dependencies:
-  fimber: ^0.4.3
+  fimber: ^0.4.4
   ```
 - remember about import in file you plan to use Fimber 
 

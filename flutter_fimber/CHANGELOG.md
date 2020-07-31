@@ -1,3 +1,7 @@
+## [0.4.4] - Fix for printing color when with level output 
+
+Same as 0.4.3 - missed one usecase.
+
 ## [0.4.3] - Fix for printing color when with level output
 
 - [\#78 issue](https://github.com/magillus/flutter-fimber/issues/78) Fixing coloring output on the formatted log output.
