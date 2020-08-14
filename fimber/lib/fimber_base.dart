@@ -1,7 +1,6 @@
 // ignore: avoid_classes_with_only_static_members
 import 'colorize.dart';
 
-
 // ignore: avoid_classes_with_only_static_members
 /// Main static Fimber logging.
 class Fimber {
@@ -71,6 +70,9 @@ class Fimber {
         _trees[level] = logList;
       }
       logList.add(tree);
+      if (tree is UnPlantableTree) {
+        (tree as UnPlantableTree).planted();
+      }
     }
     ;
   }
@@ -82,6 +84,9 @@ class Fimber {
     }
     _trees.forEach((level, levelTrees) {
       levelTrees.remove(tree);
+      if (tree is UnPlantableTree) {
+        (tree as UnPlantableTree).unplanted();
+      }
     });
   }
 
@@ -222,6 +227,16 @@ class DebugTree extends LogTree {
   List<String> getLevels() {
     return logLevels;
   }
+}
+
+/// Interface for `LogTree` that have some lifecycle with it.
+/// Introduces callbacks to plant and unroot events.
+abstract class UnPlantableTree {
+  /// Called when the tree is planted.
+  void planted();
+
+  /// Called when the tree is unrooted.
+  void unplanted();
 }
 
 /// Interface for LogTree
@@ -373,6 +388,7 @@ class CustomFormatTree extends LogTree {
   /// Log line format style.
   String logFormat;
   bool _useColors;
+
   /// Map of log levels and their colorizing style.
   Map<String, ColorizeStyle> colorizeMap = {};
 
@@ -438,8 +454,10 @@ class CustomFormatTree extends LogTree {
           stacktrace?.toString()?.split('\n') ?? LogTree.getStacktrace();
       var stackTraceMessage =
           tmpStacktrace.map((stackLine) => "\t$stackLine").join("\n");
-      printLine(_formatLine(logFormat, level, msg, tag, "\n${ex.toString()}",
-          "\n$stackTraceMessage"), level: level);
+      printLine(
+          _formatLine(logFormat, level, msg, tag, "\n${ex.toString()}",
+              "\n$stackTraceMessage"),
+          level: level);
     } else {
       printLine(_formatLine(logFormat, level, msg, tag, "", ""), level: level);
     }
