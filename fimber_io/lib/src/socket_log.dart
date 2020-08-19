@@ -52,14 +52,15 @@ class NetworkLoggingTree extends CustomFormatTree implements UnPlantableTree {
   }
 
   void _prepareTcpSocket() {
-    if (_socketTcpComplete ==null) {
+    if (_socketTcpComplete == null) {
       _socketTcpComplete = Completer();
       print('TCP Socket about to open.');
       _socketTcpComplete.future.then((value) {
-          print('TCP Socket opened. $value');
-          _socket = value;
+        print('TCP Socket opened. $value');
+        _socket = value;
       });
-      _socketTcpComplete.complete(Socket.connect(_server, _port, timeout: timeout));
+      _socketTcpComplete
+          .complete(Socket.connect(_server, _port, timeout: timeout));
     }
   }
 
@@ -76,20 +77,28 @@ class NetworkLoggingTree extends CustomFormatTree implements UnPlantableTree {
   @override
   void printLine(String line, {String level}) {
     super.printLine(line, level: level);
-    if (_socket != null) {
-      print('TCP socket available - will send: ${line.length}');
-      _socket.writeln(line);
-    } else if (_socketUdp != null) {
-      var bytesToSend = utf8.encoder.convert(line).toList();
-      print('UDP socket available - will send: ${bytesToSend.length}');
-      _socketUdp.send(bytesToSend, InternetAddress(_server), _port);
+    if (isTcpSocket) {
+      if (_socket != null) {
+        print('TCP socket available - will send: ${line.length}');
+        _socket.writeln(line);
+      } else {
+        print('No socket available - will wait for one with this message.');
+        _socketTcpComplete.future.then((value) => value.writeln(line));
+      }
     } else {
-      print('No socket available - will wait for one with this message.');
-      /// TODO make a small cache locally before socket is available
-      _socketUdpComplete.future.then((value) => value.send(
-          utf8.encoder.convert(line).toList(),
-          InternetAddress(_server),
-          _port));
+      if (_socketUdp != null) {
+        var bytesToSend = utf8.encoder.convert(line).toList();
+        print('UDP socket available - will send: ${bytesToSend.length}');
+        _socketUdp.send(bytesToSend, InternetAddress(_server), _port);
+      } else {
+        print('No socket available - will wait for one with this message.');
+
+        /// TODO make a small cache locally before socket is available
+        _socketUdpComplete.future.then((value) => value.send(
+            utf8.encoder.convert(line).toList(),
+            InternetAddress(_server),
+            _port));
+      }
     }
   }
 }

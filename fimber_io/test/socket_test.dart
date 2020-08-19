@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -54,10 +55,10 @@ void main() async {
   });
 
   group('TCP Socket log tests.', () {
-    NetworkLoggingTree logTree;
-
     var logMessages = <String>[];
     ServerSocket testReceiveSocket;
+    StreamSubscription socketSubscription;
+    StreamSubscription clientSubscription;
 
     setUp(() async {
       Fimber.clearAll();
@@ -67,17 +68,14 @@ void main() async {
       print('Datagram socket ready to receive');
       print('${testReceiveSocket.address.address}:${testReceiveSocket.port}');
 
-      testReceiveSocket.listen((client) {
+      socketSubscription = testReceiveSocket.listen((client) {
         print('Socket connected. $client');
-        client.listen((event) {
+        clientSubscription = client.listen((event) {
           var message = utf8.decoder.convert(event);
           logMessages.add(message);
         }, onError: (t) => print('Error with socket ' + t));
       }, onDone: () => print('Socket client disconnected.'));
 
-      logTree = NetworkLoggingTree('127.0.0.1', testPort, isTcpSocket: true);
-
-      Fimber.plantTree(logTree);
       print('Delay to start sockets');
       await Future.delayed(Duration(milliseconds: 100));
 
@@ -85,18 +83,35 @@ void main() async {
     });
 
     tearDown(() {
-      testReceiveSocket.close();
-      Fimber.clearAll();
+      clientSubscription?.cancel();
+      socketSubscription?.cancel();
+      testReceiveSocket?.close();
       print('TearDown.');
     });
 
     test('Test TCP socket logger', () async {
+      var logTree =
+          NetworkLoggingTree('127.0.0.1', testPort, isTcpSocket: true);
+
+      Fimber.plantTree(logTree);
       Fimber.i('test log out2');
 
       await Future.delayed(Duration(milliseconds: 100));
 
       expect(1, logMessages.length);
       expect(true, logMessages.last.contains('test log out2'));
+
+      Fimber.clearAll();
+
     });
+
+    // test('Test TCP not available socket logger', () async {
+    //   var logTree =
+    //       NetworkLoggingTree('127.0.0.1', testPort + 1, isTcpSocket: true);
+    //   Fimber.plantTree(logTree);
+
+    //   Fimber.i('test log out3');
+    //   Fimber.clearAll();
+    // });
   });
 }
