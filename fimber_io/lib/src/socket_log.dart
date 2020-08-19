@@ -9,7 +9,7 @@ import '../fimber_io.dart';
 class NetworkLoggingTree extends CustomFormatTree implements UnPlantableTree {
   /// Internal constructor to start socket.
   NetworkLoggingTree(this._server, this._port,
-      {this.timeout = const Duration(seconds: 10)})
+      {this.timeout = const Duration(seconds: 10), this.isTcpSocket = false})
       : super(
           useColors: true,
           logFormat:
@@ -19,49 +19,77 @@ class NetworkLoggingTree extends CustomFormatTree implements UnPlantableTree {
   final Duration timeout;
   final String _server;
   final int _port;
+  final bool isTcpSocket;
 
-  Completer<RawDatagramSocket> _socketComplete;
-  RawDatagramSocket _socket;
+  Completer<RawDatagramSocket> _socketUdpComplete;
+  Completer<Socket> _socketTcpComplete;
+  RawDatagramSocket _socketUdp;
+  Socket _socket;
 
   @override
   void planted() {
     // start socket and listen
-    if (_socketComplete == null) {
-      _socketComplete = Completer();
-      print('Socket about to open.');
-      _socketComplete.future.then((value) {
+    if (isTcpSocket) {
+      _prepareTcpSocket();
+    } else {
+      _prepareUdpSocket();
+    }
+  }
+
+  void _prepareUdpSocket() {
+    if (_socketUdpComplete == null) {
+      _socketUdpComplete = Completer();
+      print('UDP Socket about to open.');
+      _socketUdpComplete.future.then((value) {
         print('Socket opened. $value');
-        return _socket = value;
+        _socketUdp = value;
       });
-      _socketComplete.complete(RawDatagramSocket.bind(
+      _socketUdpComplete.complete(RawDatagramSocket.bind(
         _server,
-        0,// use any available port
+        0, // use any available port
       ));
+    }
+  }
+
+  void _prepareTcpSocket() {
+    if (_socketTcpComplete ==null) {
+      _socketTcpComplete = Completer();
+      print('TCP Socket about to open.');
+      _socketTcpComplete.future.then((value) {
+          print('TCP Socket opened. $value');
+          _socket = value;
+      });
+      _socketTcpComplete.complete(Socket.connect(_server, _port, timeout: timeout));
     }
   }
 
   @override
   void unplanted() {
     _socket?.close();
-    _socketComplete = null;
+    _socketTcpComplete = null;
     _socket = null;
+    _socketUdp?.close();
+    _socketUdpComplete = null;
+    _socketUdp = null;
   }
 
   @override
   void printLine(String line, {String level}) {
     super.printLine(line, level: level);
     if (_socket != null) {
+      print('TCP socket available - will send: ${line.length}');
+      _socket.writeln(line);
+    } else if (_socketUdp != null) {
       var bytesToSend = utf8.encoder.convert(line).toList();
-      print('socket available - will send: ${bytesToSend.length}');
-      _socket.send(bytesToSend, InternetAddress(_server), _port);
+      print('UDP socket available - will send: ${bytesToSend.length}');
+      _socketUdp.send(bytesToSend, InternetAddress(_server), _port);
     } else {
       print('No socket available - will wait for one with this message.');
-      _socketComplete.future.then((value) => value.send(
+      /// TODO make a small cache locally before socket is available
+      _socketUdpComplete.future.then((value) => value.send(
           utf8.encoder.convert(line).toList(),
           InternetAddress(_server),
           _port));
-      // super.printLine(
-      //     'Socket not available: $_server : $_port to send logs.'); //todo add error level
     }
   }
 }
