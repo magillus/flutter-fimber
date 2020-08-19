@@ -29,7 +29,7 @@ void main() async {
         logMessages.add(message);
       }, onError: (t) => print('Error with socket ' + t));
 
-      logTree = NetworkLoggingTree('127.0.0.1', testPort);
+      logTree = NetworkLoggingTree.udp('127.0.0.1', testPort);
 
       Fimber.plantTree(logTree);
       print('Delay to start sockets');
@@ -91,7 +91,7 @@ void main() async {
 
     test('Test TCP socket logger', () async {
       var logTree =
-          NetworkLoggingTree('127.0.0.1', testPort, isTcpSocket: true);
+          NetworkLoggingTree.tcp('127.0.0.1', testPort);
 
       Fimber.plantTree(logTree);
       Fimber.i('test log out2');

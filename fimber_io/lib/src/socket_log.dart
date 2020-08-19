@@ -4,11 +4,13 @@ import 'dart:io';
 
 import '../fimber_io.dart';
 
-/// Terminal
+/// NetworkLoggingTree uses TCP or UDP sockets to send log entries to.
+///
+/// Example in terminal:
 /// nc -kvl 5601 | grep TheClassName
 class NetworkLoggingTree extends CustomFormatTree implements UnPlantableTree {
-  /// Internal constructor to start socket.
-  NetworkLoggingTree(this._server, this._port,
+  /// Creates isntance of [NetworkLoggingTree]
+  NetworkLoggingTree._(this._server, this._port,
       {this.timeout = const Duration(seconds: 10), this.isTcpSocket = false})
       : super(
           useColors: true,
@@ -16,9 +18,20 @@ class NetworkLoggingTree extends CustomFormatTree implements UnPlantableTree {
               '${CustomFormatTree.levelToken} ${CustomFormatTree.tagToken}: ${CustomFormatTree.messageToken}',
         );
 
+  /// Creates UDP version of the [NetworkLoggingTree]
+  factory NetworkLoggingTree.udp(String server, int port) =>
+      NetworkLoggingTree._(server, port);
+
+  /// Creates TCP version of the [NetworkLoggingTree]
+  factory NetworkLoggingTree.tcp(String server, int port) =>
+      NetworkLoggingTree._(server, port, isTcpSocket: true);
+
+  /// Connection timeout (used on TCP socket)
   final Duration timeout;
   final String _server;
   final int _port;
+
+  /// If true it is TCP socket to be used.
   final bool isTcpSocket;
 
   Completer<RawDatagramSocket> _socketUdpComplete;
