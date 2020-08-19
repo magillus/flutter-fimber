@@ -102,7 +102,7 @@ void main() async {
       expect(true, logMessages.last.contains('test log out2'));
 
       Fimber.clearAll();
-
+      // TODO fix stalled test - it doesn't exit
     });
 
     // test('Test TCP not available socket logger', () async {
