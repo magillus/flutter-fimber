@@ -155,9 +155,11 @@ class DebugBufferTree extends DebugTree {
         logLevels: logLevels, printTimeType: DebugTree.timeElapsedType);
   }
 
-  /// prints log line with `debugPrint`.
+  /// prints log lines breaking them into multiple lines if its too long.
+  /// src: https://github.com/flutter/flutter/issues/22665#issuecomment-458186456
   @override
   void printLog(String logLine, {String level}) {
-    debugPrint(logLine);
+    final pattern = RegExp('.{1,800}'); // 800 is the size of each chunk
+    pattern.allMatches(logLine).forEach((match) => debugPrint(match.group(0)));
   }
 }
