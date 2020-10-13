@@ -142,11 +142,17 @@ class LogLine {
 /// which is not skipping log lines printed on Android
 /// https://flutter.io/docs/testing/debugging#print-and-debugprint-with-flutter-logs
 class DebugBufferTree extends DebugTree {
+  /// Max limit that a log can reach to start dividing it into multiple chunks
+  /// avoiding them to be cut by android log
+  /// - when -1 will disable chunking of the logs
+  final int maxLineSize;
+
   /// Creates Debug Tree compatible with Android.
-  DebugBufferTree(
-      {int printTimeType = DebugTree.timeClockType,
-      List<String> logLevels = DebugTree.defaultLevels})
-      : super(printTimeType: printTimeType, logLevels: logLevels);
+  DebugBufferTree({
+    int printTimeType = DebugTree.timeClockType,
+    List<String> logLevels = DebugTree.defaultLevels,
+    this.maxLineSize = 800,
+  }) : super(printTimeType: printTimeType, logLevels: logLevels);
 
   /// Creates elapsed time Debug Tree compatible with Android.
   factory DebugBufferTree.elapsed(
@@ -155,9 +161,18 @@ class DebugBufferTree extends DebugTree {
         logLevels: logLevels, printTimeType: DebugTree.timeElapsedType);
   }
 
-  /// prints log line with `debugPrint`.
+  /// prints log lines breaking them into multiple lines if its too long.
+  /// src: https://github.com/flutter/flutter/issues/22665#issuecomment-458186456
   @override
   void printLog(String logLine, {String level}) {
-    debugPrint(logLine);
+    if (maxLineSize == -1) {
+      debugPrint(logLine);
+    } else {
+      final pattern = RegExp('.{1,$maxLineSize}');
+
+      pattern
+          .allMatches(logLine)
+          .forEach((match) => debugPrint(match.group(0)));
+    }
   }
 }
