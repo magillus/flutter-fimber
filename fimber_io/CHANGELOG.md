@@ -1,4 +1,4 @@
-## [0.5.0] - Updated to support dart null-safety
+## [0.5.0-nullsafety.1] - Updated to support dart null-safety
 
 -- No other fixes/updates, just null-safety
 
