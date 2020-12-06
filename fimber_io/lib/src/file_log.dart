@@ -21,7 +21,7 @@ class FimberFileTree extends CustomFormatTree with CloseableTree {
 
   int _bufferSize = 0;
   List<String> _logBuffer = [];
-  StreamSubscription<List<String>> _bufferWriteInterval;
+  StreamSubscription<List<String>>? _bufferWriteInterval;
   int _maxBufferSize = bufferSizeLimit;
 
   /// Creates Instance of FimberFileTree
@@ -61,7 +61,7 @@ class FimberFileTree extends CustomFormatTree with CloseableTree {
 
   Future _flushBuffer(List<String> buffer) async {
     if (buffer.isNotEmpty) {
-      IOSink logSink;
+      IOSink? logSink;
       try {
         if (outputFileName != null) {
           // check if file's directory exists
@@ -92,9 +92,10 @@ class FimberFileTree extends CustomFormatTree with CloseableTree {
   }
 
   @override
-  void printLine(String line, {String level}) {
-    if (colorizeMap[level] != null) {
-      _logBuffer.add(colorizeMap[level].wrap(line));
+  void printLine(String line, {String? level}) {
+    var colorizeWrapper = (level != null) ? colorizeMap[level] : null;
+    if (colorizeWrapper != null) {
+      _logBuffer.add(colorizeWrapper.wrap(line));
     } else {
       _logBuffer.add(line);
     }
@@ -210,12 +211,14 @@ class SizeRollingFileTree extends RollingFileTree {
   int getLogIndex(String filePath) {
     if (isLogFile(filePath)) {
       return _fileRegExp.allMatches(filePath).map((match) {
-        if (match != null && match.groupCount > 0) {
-          return int.parse(match.group(1));
-        } else {
-          return -1;
+        if (match.groupCount > 0) {
+          var parseGroup = match.group(1);
+          if (parseGroup != null) {
+            return int.parse(parseGroup);
+          }
         }
-      }).firstWhere((i) => i != null, orElse: () => null);
+        return -1;
+      }).firstWhere((i) => i != -1, orElse: () => -1);
     } else {
       return -1;
     }
@@ -249,8 +252,8 @@ class TimedRollingFileTree extends RollingFileTree {
   int timeSpan = hourlyTime;
 
   /// Maximum of number of files in history.
-  int maxHistoryFiles;
-  DateTime _currentFileDate;
+  int maxHistoryFiles = 10;
+  DateTime _currentFileDate = DateTime.now();
 
   /// Generated filename prefix, supports path to the file.
   String filenamePrefix;
@@ -259,7 +262,7 @@ class TimedRollingFileTree extends RollingFileTree {
   String filenamePostfix;
 
   /// Log filename formatter see: [LogFileNameFormatter]
-  LogFileNameFormatter fileNameFormatter;
+  late LogFileNameFormatter fileNameFormatter;
 
   /// Creates Time based rolling file tree.
   /// It allows to define time span when this
@@ -277,15 +280,6 @@ class TimedRollingFileTree extends RollingFileTree {
 
   @override
   void rollToNextFile() {
-    var localNow = DateTime.now();
-    _currentFileDate ??= localNow;
-    if (fileNameFormatter == null) {
-      var diffSeconds = _currentFileDate.difference(localNow).inSeconds;
-      if (diffSeconds > timeSpan) {
-        fileNameFormatter = LogFileNameFormatter.full(
-            prefix: filenamePrefix, postfix: filenamePostfix);
-      }
-    }
     outputFileName = fileNameFormatter.format(_currentFileDate);
   }
 
@@ -309,8 +303,8 @@ class TimedRollingFileTree extends RollingFileTree {
 /// This class handles file logging and printing lines,
 /// also provides abstract methods to check if the file should rotate.
 abstract class RollingFileTree extends FimberFileTree {
-  /// Path format for log file.
-  String pathFormat;
+  // /// Path format for log file.
+  // TODO String pathFormat;
 
   /// Creates RollingFileTree with log format and levels as optional parameters.
   RollingFileTree(
@@ -325,9 +319,9 @@ abstract class RollingFileTree extends FimberFileTree {
   void rollToNextFile();
 
   @override
-  void printLine(String line, {String level}) async {
+  void printLine(String line, {String? level}) async {
     if (await shouldRollNextFile()) {
-      await rollToNextFile();
+      rollToNextFile();
     }
     super.printLine(line, level: level);
   }
