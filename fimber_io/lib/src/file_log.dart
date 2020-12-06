@@ -63,19 +63,17 @@ class FimberFileTree extends CustomFormatTree with CloseableTree {
     if (buffer.isNotEmpty) {
       IOSink? logSink;
       try {
-        if (outputFileName != null) {
-          // check if file's directory exists
-          final parentDir = File(outputFileName).parent;
-          if (!parentDir.existsSync()) {
-            parentDir.createSync(recursive: true);
-          }
-          logSink =
-              File(outputFileName).openWrite(mode: FileMode.writeOnlyAppend);
-          for (var newLine in buffer) {
-            logSink.writeln(newLine);
-          }
-          await logSink.flush();
+        // check if file's directory exists
+        final parentDir = File(outputFileName).parent;
+        if (!parentDir.existsSync()) {
+          parentDir.createSync(recursive: true);
         }
+        logSink =
+            File(outputFileName).openWrite(mode: FileMode.writeOnlyAppend);
+        for (var newLine in buffer) {
+          logSink.writeln(newLine);
+        }
+        await logSink.flush();
       } finally {
         await logSink?.close();
       }
@@ -227,12 +225,12 @@ class SizeRollingFileTree extends RollingFileTree {
   /// Checks if this is matching log file.
   bool isLogFile(String filePath) {
     return _fileRegExp.allMatches(filePath).map((match) {
-      if (match != null && match.groupCount > 0) {
+      if (match.groupCount > 0) {
         return true;
       } else {
         return false;
       }
-    }).lastWhere((e) => e != null, orElse: () => false);
+    }).lastWhere((_) => true, orElse: () => false);
   }
 }
 
@@ -303,9 +301,6 @@ class TimedRollingFileTree extends RollingFileTree {
 /// This class handles file logging and printing lines,
 /// also provides abstract methods to check if the file should rotate.
 abstract class RollingFileTree extends FimberFileTree {
-  // /// Path format for log file.
-  // TODO String pathFormat;
-
   /// Creates RollingFileTree with log format and levels as optional parameters.
   RollingFileTree(
       {logFormat = CustomFormatTree.defaultFormat,
