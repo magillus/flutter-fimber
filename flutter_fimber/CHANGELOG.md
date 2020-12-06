@@ -1,3 +1,5 @@
+## [0.5.0-nullsafety.1] - Updated to Dart nullsafety.
+
 ## [0.4.4] - Fix for printing color when with level output 
 
 Same as 0.4.3 - missed one usecase.
