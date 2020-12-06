@@ -1,11 +1,11 @@
 name: fimber
 description: Extensible logging for Flutter - based on Timber on Andoird, using similar (as far as Dart lang allows) method API with same concepts for tree and planting logging tree.
-version: 0.4.4
+version: 0.5.0-nullsafety.1
 homepage: https://github.com/magillus/flutter-fimber/tree/master/fimber
 
 environment:
-  sdk: '>=2.7.0 <3.0.0'
+  sdk: ">=2.12.0-0 <3.0.0"
 
 dev_dependencies:
-  test: '^1.15.3'
-  pedantic: '^1.8.0'
+  test: '^1.16.0-nullsafety'
+  pedantic: '^1.10.0-nullsafety'

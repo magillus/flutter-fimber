@@ -13,7 +13,7 @@ class DataSize {
   static const bytesInTera = bytesInGiga * bytesInKilo;
 
   /// Real size in bytes.
-  int realSize;
+  int realSize = 0;
 
   /// Create DataSize object with predefined size as optional.
   DataSize(
@@ -22,11 +22,7 @@ class DataSize {
       int gigabytes = 0,
       int terabytes = 0,
       int bytes = 0}) {
-    if (bytes != null) {
-      realSize = bytes;
-    } else {
-      realSize = 0;
-    }
+    realSize = bytes;
     realSize += kilobytes * bytesInKilo;
     realSize += megabytes * byteInMega;
     realSize += gigabytes * bytesInGiga;
