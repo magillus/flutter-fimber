@@ -20,7 +20,7 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.perlak.flutterfimber
+        package: com.magillus.flutterfimber
         pluginClass: FlutterFimberPlugin
       ios:
         pluginClass: FlutterFimberPlugin

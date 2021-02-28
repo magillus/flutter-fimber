@@ -5,11 +5,13 @@ import 'package:fimber_io/fimber_io.dart';
 import 'package:flutter_fimber/flutter_fimber.dart';
 
 void main() {
+  /// You can pick one of them or combine,
+  /// be aware that 2 or more console loggers will output multiple times
+  // Example tree of using Fimber with color logging
   Fimber.plantTree(FimberTree(useColors: true));
+
+  /// Debug tree with time of process running
   Fimber.plantTree(DebugBufferTree.elapsed());
-  Fimber.plantTree(SizeRollingFileTree(DataSize.mega(3),
-      filenamePrefix:
-          "/data/user/0/com.perlak.flutterfimberexample/app_flutter/log_"));
 
   runApp(MyApp());
 }
@@ -49,25 +51,25 @@ class _MyAppState extends State<MyApp> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text('Fimber test'),
-              FlatButton(
+              TextButton(
                 child: Text("LOG - ERROR"),
                 onPressed: () {
                   Fimber.e("Error message test ${DateTime.now()}");
                 },
               ),
-              FlatButton(
+              TextButton(
                 child: Text("LOG - INFO"),
                 onPressed: () {
                   Fimber.i("Info message test ${DateTime.now()}");
                 },
               ),
-              FlatButton(
+              TextButton(
                 child: Text("LOG - DEBUG"),
                 onPressed: () {
                   Fimber.d("Debug message test ${DateTime.now()}");
                 },
               ),
-              FlatButton(
+              TextButton(
                 child: Text("LOG - WARNING with exception"),
                 onPressed: () {
                   try {
@@ -77,7 +79,7 @@ class _MyAppState extends State<MyApp> {
                   }
                 },
               ),
-              FlatButton(
+              TextButton(
                 child: Text("LOG - WARNING with Error and stacktrace"),
                 onPressed: () {
                   try {
