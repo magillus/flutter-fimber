@@ -16,3 +16,4 @@
 **/android/local.properties
 **/pubspec.lock
 .flutter-plugins*
+flutter_fimber/example/.flutter-plugins-dependencies
