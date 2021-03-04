@@ -1,3 +1,7 @@
+## [0.6.0] - Release of Nullsafety 
+
+- Update to support null-safety 
+
 ## [0.5.0-nullsafety.1] - first RC - Updated to support dart null-safety
 
 -- No other fixes/updates, just null-safety
