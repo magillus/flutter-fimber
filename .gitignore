@@ -16,3 +16,4 @@
 **/android/local.properties
 **/pubspec.lock
 .flutter-plugins*
+flutter_fimber/example/ios/Flutter/flutter_export_environment.sh
