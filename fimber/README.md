@@ -15,26 +15,9 @@ To start add using it:
 
 ```yaml
 dependencies:
-  fimber: ^0.4.4
+  fimber: ^0.6.1
   ```
 - remember about import in file you plan to use Fimber
-
-#### with null safety
-
-```yaml
-
-dependencies:
-  fimber: ^0.5.0-nullsafety.1
-```
-
-  or from git branch:
-
-```yaml
-    git:
-      url: git@github.com:magillus/flutter-fimber
-      path: fimber
-      ref: nullsafety.update
-```
 
 ```dart
 import 'package:fimber/fimber.dart';
@@ -57,6 +40,23 @@ void main() {
 }
  
 ```
+
+### Remove a tree from logging
+
+If the `Tree` implements `UnPlantableTree` interface, its methods will be called.
+
+```dart
+
+void main() {
+  var myDebugTree = DebugTree();
+
+  Fimber.plantTree(myDebugTree;
+
+  /// Do something
+
+  Fimber.unplantTree(myDebugTree);
+
+}
 
 ### Start using it with static methods:
 
