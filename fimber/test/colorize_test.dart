@@ -1,10 +1,8 @@
-import 'package:fimber/colorize.dart';
 import 'package:fimber/fimber.dart';
 import 'package:test/test.dart';
 
 void main() async {
   group('Colorize', () {
-    
     setUp(() {
       print("setup test - Colorize");
       Fimber.clearAll();
