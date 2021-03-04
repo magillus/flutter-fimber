@@ -1,10 +1,14 @@
+## [0.6.1-dev] Network Logger dev release
+
+- Added TCP/UDB socket loggers that allow network based connection to send logs.
+
 ## [0.6.0] - Release to null-safety on stable
 
 - Update to null-safety support on stable channel
 
 ## [0.5.0-nullsafety.1] - Updated to support dart null-safety
 
--- No other fixes/updates, just null-safety
+- No other fixes/updates, just null-safety
 
 ## [0.4.4] - Fix for printing color when with level output 
 
