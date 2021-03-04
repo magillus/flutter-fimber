@@ -1,3 +1,5 @@
+## [0.6.0] - Update to null-safety channel
+
 ## [0.5.0-nullsafety.1] - Updated to Dart nullsafety.
 
 ## [0.4.4] - Fix for printing color when with level output 

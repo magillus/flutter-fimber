@@ -7,9 +7,9 @@ import 'package:flutter_fimber/flutter_fimber.dart';
 void main() {
   Fimber.plantTree(FimberTree(useColors: true));
   Fimber.plantTree(DebugBufferTree.elapsed());
-  Fimber.plantTree(SizeRollingFileTree(DataSize.mega(3),
-      filenamePrefix:
-          "/data/user/0/com.perlak.flutterfimberexample/app_flutter/log_"));
+  // Fimber.plantTree(SizeRollingFileTree(DataSize.mega(3),
+  //     filenamePrefix:
+  //         "/data/user/0/com.perlak.flutterfimberexample/app_flutter/log_"));
 
   runApp(MyApp());
 }
