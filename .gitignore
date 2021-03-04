@@ -17,3 +17,4 @@
 **/pubspec.lock
 .flutter-plugins*
 flutter_fimber/example/.flutter-plugins-dependencies
+flutter_fimber/example/ios/Flutter/flutter_export_environment.sh

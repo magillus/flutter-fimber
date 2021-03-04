@@ -9,12 +9,33 @@ Also check out `flutter_fimber` which extends `fimber` to platform specific outp
 ## Getting Started
 
 To start add using it:
-### Add `fimber` to `pubspec.yaml` 
+### Add `fimber` to `pubspec.yaml`
+
+#### pre-nullsafety
+
 ```yaml
 dependencies:
   fimber: ^0.4.4
   ```
 - remember about import in file you plan to use Fimber
+
+#### with null safety
+
+```yaml
+
+dependencies:
+  fimber: ^0.5.0-nullsafety.1
+```
+
+  or from git branch:
+
+```yaml
+    git:
+      url: git@github.com:magillus/flutter-fimber
+      path: fimber
+      ref: nullsafety.update
+```
+
 ```dart
 import 'package:fimber/fimber.dart';
 
