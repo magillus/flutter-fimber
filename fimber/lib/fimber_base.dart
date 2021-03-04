@@ -70,6 +70,9 @@ class Fimber {
         _trees[level] = logList;
       }
       logList.add(tree);
+      if (tree is UnPlantableTree) {
+        (tree as UnPlantableTree).planted();
+      }
     }
     ;
   }
@@ -81,6 +84,9 @@ class Fimber {
     }
     _trees.forEach((level, levelTrees) {
       levelTrees.remove(tree);
+      if (tree is UnPlantableTree) {
+        (tree as UnPlantableTree).unplanted();
+      }
     });
   }
 
@@ -223,6 +229,16 @@ class DebugTree extends LogTree {
   List<String> getLevels() {
     return logLevels;
   }
+}
+
+/// Interface for `LogTree` that have some lifecycle with it.
+/// Introduces callbacks to plant and unroot events.
+abstract class UnPlantableTree {
+  /// Called when the tree is planted.
+  void planted();
+
+  /// Called when the tree is unrooted.
+  void unplanted();
 }
 
 /// Interface for LogTree
