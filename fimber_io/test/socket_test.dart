@@ -12,7 +12,7 @@ void main() async {
     NetworkLoggingTree logTree;
 
     var logMessages = <String>[];
-    RawDatagramSocket testReceiveSocket;
+    late RawDatagramSocket testReceiveSocket;
 
     setUp(() async {
       Fimber.clearAll();
@@ -56,9 +56,9 @@ void main() async {
 
   group('TCP Socket log tests.', () {
     var logMessages = <String>[];
-    ServerSocket testReceiveSocket;
-    StreamSubscription socketSubscription;
-    StreamSubscription clientSubscription;
+    late ServerSocket testReceiveSocket;
+    late StreamSubscription socketSubscription;
+    late StreamSubscription clientSubscription;
 
     setUp(() async {
       Fimber.clearAll();
@@ -83,15 +83,14 @@ void main() async {
     });
 
     tearDown(() {
-      clientSubscription?.cancel();
-      socketSubscription?.cancel();
-      testReceiveSocket?.close();
+      clientSubscription.cancel();
+      socketSubscription.cancel();
+      testReceiveSocket.close();
       print('TearDown.');
     });
 
     test('Test TCP socket logger', () async {
-      var logTree =
-          NetworkLoggingTree.tcp('127.0.0.1', testPort);
+      var logTree = NetworkLoggingTree.tcp('127.0.0.1', testPort);
 
       Fimber.plantTree(logTree);
       Fimber.i('test log out2');

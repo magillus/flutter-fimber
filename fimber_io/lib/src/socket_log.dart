@@ -34,10 +34,10 @@ class NetworkLoggingTree extends CustomFormatTree implements UnPlantableTree {
   /// If true it is TCP socket to be used.
   final bool isTcpSocket;
 
-  Completer<RawDatagramSocket> _socketUdpComplete;
-  Completer<Socket> _socketTcpComplete;
-  RawDatagramSocket _socketUdp;
-  Socket _socket;
+  Completer<RawDatagramSocket>? _socketUdpComplete;
+  Completer<Socket>? _socketTcpComplete;
+  RawDatagramSocket? _socketUdp;
+  Socket? _socket;
 
   @override
   void planted() {
@@ -53,11 +53,11 @@ class NetworkLoggingTree extends CustomFormatTree implements UnPlantableTree {
     if (_socketUdpComplete == null) {
       _socketUdpComplete = Completer();
       print('UDP Socket about to open.');
-      _socketUdpComplete.future.then((value) {
+      _socketUdpComplete?.future.then((value) {
         print('Socket opened. $value');
         _socketUdp = value;
       });
-      _socketUdpComplete.complete(RawDatagramSocket.bind(
+      _socketUdpComplete?.complete(RawDatagramSocket.bind(
         _server,
         0, // use any available port
       ));
@@ -68,12 +68,12 @@ class NetworkLoggingTree extends CustomFormatTree implements UnPlantableTree {
     if (_socketTcpComplete == null) {
       _socketTcpComplete = Completer();
       print('TCP Socket about to open.');
-      _socketTcpComplete.future.then((value) {
+      _socketTcpComplete?.future.then((value) {
         print('TCP Socket opened. $value');
         _socket = value;
       });
       _socketTcpComplete
-          .complete(Socket.connect(_server, _port, timeout: timeout));
+          ?.complete(Socket.connect(_server, _port, timeout: timeout));
     }
   }
 
@@ -88,26 +88,26 @@ class NetworkLoggingTree extends CustomFormatTree implements UnPlantableTree {
   }
 
   @override
-  void printLine(String line, {String level}) {
+  void printLine(String line, {String? level}) {
     super.printLine(line, level: level);
     if (isTcpSocket) {
       if (_socket != null) {
         print('TCP socket available - will send: ${line.length}');
-        _socket.writeln(line);
+        _socket?.writeln(line);
       } else {
         print('No socket available - will wait for one with this message.');
-        _socketTcpComplete.future.then((value) => value.writeln(line));
+        _socketTcpComplete?.future.then((value) => value.writeln(line));
       }
     } else {
       if (_socketUdp != null) {
         var bytesToSend = utf8.encoder.convert(line).toList();
         print('UDP socket available - will send: ${bytesToSend.length}');
-        _socketUdp.send(bytesToSend, InternetAddress(_server), _port);
+        _socketUdp?.send(bytesToSend, InternetAddress(_server), _port);
       } else {
         print('No socket available - will wait for one with this message.');
 
         /// TODO make a small cache locally before socket is available
-        _socketUdpComplete.future.then((value) => value.send(
+        _socketUdpComplete?.future.then((value) => value.send(
             utf8.encoder.convert(line).toList(),
             InternetAddress(_server),
             _port));
