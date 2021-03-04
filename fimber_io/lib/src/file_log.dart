@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:core';
 import 'dart:io';
 
-import 'package:fimber/filename_format.dart';
 import 'package:fimber/fimber.dart';
 
 /// File based logging output tree.

@@ -1,8 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:fimber/data_size.dart';
-import 'package:fimber/filename_format.dart';
+import 'package:fimber/fimber.dart';
 import 'package:fimber_io/fimber_io.dart';
 import 'package:test/test.dart';
 
