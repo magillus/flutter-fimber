@@ -8,7 +8,7 @@ void main() {
       var assertTree = AssertTree(["I", "W"]);
       Fimber.plantTree(assertTree);
       Fimber.d("Test message", ex: Exception("test error"));
-      expect(null, assertTree.lastLogLine);
+      expect('', assertTree.lastLogLine);
     });
 
     test('log DEBUG when expected', () {
@@ -17,7 +17,7 @@ void main() {
       Fimber.plantTree(DebugTree());
       Fimber.plantTree(assertTree);
       Fimber.d("Test message", ex: Exception("test error"));
-      assert(assertTree.lastLogLine != null);
+      assert(assertTree.lastLogLine != '');
     });
 
     test('log DEBUG with exception', () {
@@ -221,7 +221,7 @@ void main() {
 
     var assertTree = AssertTree(["I", "W", "D", "E", "V"]);
     Fimber.plantTree(assertTree);
-    Fimber.plantTree(DebugTree(printTimeType: null));
+    Fimber.plantTree(DebugTree());
 
     Fimber.i("Start log test");
     TestClass();
@@ -355,8 +355,8 @@ class TestClass {
 }
 
 class AssertTree extends LogTree {
-  List<String> logLevels;
-  String lastLogLine;
+  List<String> logLevels = [];
+  String lastLogLine = "";
   List<String> allLines = [];
 
   AssertTree(this.logLevels);
@@ -368,10 +368,11 @@ class AssertTree extends LogTree {
 
   @override
   void log(String level, String msg,
-      {String tag, dynamic ex, StackTrace stacktrace}) {
+      {String? tag, dynamic? ex, StackTrace? stacktrace}) {
     tag = (tag ?? LogTree.getTag());
-    lastLogLine =
-        "$level:$tag\t$msg\t$ex\n${stacktrace?.toString()?.split('\n') ?? ""}";
-    allLines.add(lastLogLine);
+    var newLogLine =
+        "$level:$tag\t$msg\t$ex\n${stacktrace?.toString().split('\n') ?? ""}";
+    lastLogLine = newLogLine;
+    allLines.add(newLogLine);
   }
 }

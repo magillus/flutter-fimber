@@ -21,6 +21,7 @@ void main() async {
       if (logDir.existsSync()) {
         logDir.deleteSync(recursive: true);
       }
+      Fimber.clearAll();
     });
 
     test('File output logger', () async {

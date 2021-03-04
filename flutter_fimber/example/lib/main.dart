@@ -12,7 +12,6 @@ void main() {
 
   /// Debug tree with time of process running
   Fimber.plantTree(DebugBufferTree.elapsed());
-
   runApp(MyApp());
 }
 
