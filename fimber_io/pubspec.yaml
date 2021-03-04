@@ -1,14 +1,14 @@
 name: fimber_io
 description: Version of Fimber package with support for File based loggers - dependent on dart::io
-version: 0.5.0-nullsafety.1
+version: 0.6.0
 homepage: https://github.com/magillus/flutter-fimber/tree/master/fimber
 
 environment:
-  sdk: ">=2.12.0-0 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
-  fimber: ^0.5.0-nullsafety
+  fimber: ^0.6.0
 
 dev_dependencies:
-  test: '^1.16.0-nullsafety'
-  pedantic: '^1.10.0-nullsafety'
+  test: '^1.16.5'
+  pedantic: '^1.11.0'
