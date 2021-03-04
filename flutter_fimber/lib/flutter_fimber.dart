@@ -44,22 +44,22 @@ class FimberTree extends LogTree {
   /// and optional [tag], [ex] (exception) and [stacktrace]
   @override
   void log(String level, String message,
-      {String tag, dynamic ex, StackTrace stacktrace}) {
+      {String? tag, dynamic ex, StackTrace? stacktrace}) {
     var logTag = tag ?? LogTree.getTag();
-    String exDump;
+    String? exDump;
     if (ex != null) {
       var tmpStacktrace =
-          stacktrace?.toString()?.split('\n') ?? LogTree.getStacktrace();
+          stacktrace?.toString().split('\n') ?? LogTree.getStacktrace();
       var stackTraceMessage =
           tmpStacktrace.map((stackLine) => "\t$stackLine").join("\n");
       exDump = "${ex.toString()} \n$stackTraceMessage";
     }
-    String postFix, preFix;
+    String? postFix, preFix;
     if (useColors) {
-      if (_defaultColorizeMap[level] != null) {
-        var postPrefix = _defaultColorizeMap[level]
-            .wrap("PREFIX_SPLITTER")
-            .split("PREFIX_SPLITTER");
+      var colorizeWrapper = _defaultColorizeMap[level];
+      if (colorizeWrapper != null) {
+        var postPrefix =
+            colorizeWrapper.wrap("PREFIX_SPLITTER").split("PREFIX_SPLITTER");
         if (postPrefix.length == 2) {
           preFix = postPrefix[0];
           postFix = postPrefix[1];
@@ -93,13 +93,13 @@ class LogLine {
   String message;
 
   /// Exception dump if attached to log line.
-  String exceptionDump;
+  String? exceptionDump;
 
   /// Log line prefix.
-  String preFix;
+  String? preFix;
 
   /// Log line postfix.
-  String postFix;
+  String? postFix;
 
   /// Creates instance of [LogLine] with optional fields.
   LogLine(this.level, this.tag, this.message,
@@ -111,7 +111,7 @@ class LogLine {
     _putString(buffer, level);
     _putString(buffer, tag);
     _putString(buffer, message);
-    _putString(buffer, exceptionDump);
+    _putString(buffer, exceptionDump ?? "");
     _putString(buffer, preFix ?? "");
     _putString(buffer, postFix ?? "");
     return buffer.done();
@@ -142,11 +142,17 @@ class LogLine {
 /// which is not skipping log lines printed on Android
 /// https://flutter.io/docs/testing/debugging#print-and-debugprint-with-flutter-logs
 class DebugBufferTree extends DebugTree {
+  /// Max limit that a log can reach to start dividing it into multiple chunks
+  /// avoiding them to be cut by android log
+  /// - when -1 will disable chunking of the logs
+  final int maxLineSize;
+
   /// Creates Debug Tree compatible with Android.
-  DebugBufferTree(
-      {int printTimeType = DebugTree.timeClockType,
-      List<String> logLevels = DebugTree.defaultLevels})
-      : super(printTimeType: printTimeType, logLevels: logLevels);
+  DebugBufferTree({
+    int printTimeType = DebugTree.timeClockType,
+    List<String> logLevels = DebugTree.defaultLevels,
+    this.maxLineSize = 800,
+  }) : super(printTimeType: printTimeType, logLevels: logLevels);
 
   /// Creates elapsed time Debug Tree compatible with Android.
   factory DebugBufferTree.elapsed(
@@ -155,9 +161,18 @@ class DebugBufferTree extends DebugTree {
         logLevels: logLevels, printTimeType: DebugTree.timeElapsedType);
   }
 
-  /// prints log line with `debugPrint`.
+  /// prints log lines breaking them into multiple lines if its too long.
+  /// src: https://github.com/flutter/flutter/issues/22665#issuecomment-458186456
   @override
-  void printLog(String logLine, {String level}) {
-    debugPrint(logLine);
+  void printLog(String logLine, {String? level}) {
+    if (maxLineSize == -1) {
+      debugPrint(logLine);
+    } else {
+      final pattern = RegExp('.{1,$maxLineSize}');
+
+      pattern
+          .allMatches(logLine)
+          .forEach((match) => debugPrint(match.group(0)));
+    }
   }
 }
