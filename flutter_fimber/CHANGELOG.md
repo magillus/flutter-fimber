@@ -1,3 +1,5 @@
+## [0.6.1] - Build fix after fimber moved some files to `src`
+
 ## [0.6.0] - Update to null-safety channel
 
 ## [0.5.0-nullsafety.1] - Updated to Dart nullsafety.
