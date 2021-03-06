@@ -1,6 +1,6 @@
 library fimber;
 
-export 'package:fimber/colorize.dart';
-export 'package:fimber/data_size.dart';
-export 'package:fimber/filename_format.dart';
-export 'package:fimber/fimber_base.dart';
+export 'package:fimber/src/colorize.dart';
+export 'package:fimber/src/data_size.dart';
+export 'package:fimber/src/filename_format.dart';
+export 'package:fimber/src/fimber_base.dart';

@@ -7,7 +7,8 @@ environment:
   sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
-  fimber: ^0.6.0
+  fimber:
+    path: ../fimber
 
 dev_dependencies:
   test: '^1.16.5'
