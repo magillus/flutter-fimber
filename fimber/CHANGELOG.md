@@ -1,3 +1,7 @@
+## [0.6.1] - UnPlantableTree interface
+
+-- Added support for Unplantable Trees, that will have end of lifecycle method for cleanup after it is removed.
+
 ## [0.6.0] - Release of Nullsafety 
 
 - Update to support null-safety 
