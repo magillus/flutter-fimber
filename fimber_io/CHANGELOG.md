@@ -1,4 +1,6 @@
 
+## [0.6.2] - Build and merge fix
+
 ## [0.6.1-dev] Network Logger dev release
 
 - Added TCP/UDB socket loggers that allow network based connection to send logs.

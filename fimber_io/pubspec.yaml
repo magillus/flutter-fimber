@@ -1,6 +1,6 @@
 name: fimber_io
 description: Version of Fimber package with support for File based loggers - dependent on dart::io
-version: 0.6.1
+version: 0.6.2
 
 homepage: https://github.com/magillus/flutter-fimber/tree/master/fimber
 
