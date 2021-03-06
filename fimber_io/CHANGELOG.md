@@ -1,3 +1,5 @@
+## [0.6.1] - Build fix
+
 ## [0.6.0] - Release to null-safety on stable
 
 - Update to null-safety support on stable channel
