@@ -168,6 +168,27 @@ void main() async {
           'log_20190124_133415.txt');
     });
 
+    test('No old file detection test', () async {
+      var logTree = SizeRollingFileTree(DataSize.bytes(20),
+          filenamePrefix:
+              '$testDirName${dirSeparator}empty${dirSeparator}log_');
+
+      var logFile = logTree.outputFileName;
+      // detects if file was created
+      expect(
+          logTree.isLogFile(
+              '$testDirName${dirSeparator}empty${dirSeparator}log_1.txt'),
+          true);
+
+      Fimber.plantTree(logTree);
+
+      await Future.delayed(Duration(milliseconds: 200));
+      Fimber.i('Log single line - A');
+      await waitForAppendBuffer();
+
+      File(logFile).deleteSync();
+    });
+
     test('Old file detection test', () async {
       // roll file every 20 bytes (in reality every log line)
       var logTree = SizeRollingFileTree(DataSize.bytes(20),
