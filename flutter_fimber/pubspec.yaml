@@ -8,7 +8,7 @@ environment:
   flutter: '>=2.0.0'
 
 dependencies:
-  fimber: ^0.6.0
+  fimber: ^0.6.1
   flutter:
     sdk: flutter
 
