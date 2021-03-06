@@ -1,4 +1,8 @@
 
+## [0.6.3] - SizeRollingFileTree bug fix
+
+-- [\#86](https://github.com/magillus/flutter-fimber/issues/86) - fix for this bug
+
 ## [0.6.2] - Build and merge fix
 
 ## [0.6.1-dev] Network Logger dev release
