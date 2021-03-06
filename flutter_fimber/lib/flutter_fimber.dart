@@ -1,4 +1,3 @@
-import 'package:fimber/colorize.dart';
 import 'package:fimber/fimber.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
