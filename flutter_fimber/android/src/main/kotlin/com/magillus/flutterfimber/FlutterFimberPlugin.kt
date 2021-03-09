@@ -18,7 +18,7 @@ class FlutterFimberPlugin :FlutterPlugin, MethodCallHandler {
     private lateinit var channel : MethodChannel
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-        channel = MethodChannel(flutterPluginBinding.binaryMessenger, "mytestplugin")
+        channel = MethodChannel(flutterPluginBinding.binaryMessenger, "flutter_fimber")
         channel.setMethodCallHandler(this)
     }
 
