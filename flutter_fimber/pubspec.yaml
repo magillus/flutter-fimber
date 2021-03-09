@@ -1,6 +1,6 @@
 name: flutter_fimber
 description: Flutter extension for Fimber logging API, it will use native OS Logging statements via channel.
-version: 0.6.1
+version: 0.6.2
 homepage: https://github.com/magillus/flutter-fimber
 
 environment:
