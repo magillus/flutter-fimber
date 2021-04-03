@@ -218,21 +218,16 @@ void main() async {
 
       print(logFile2);
       expect(logFile2, '$testDirName${dirSeparator}log_2.txt');
-      await Future.delayed(Duration(milliseconds: 200));
 
-      logTree = SizeRollingFileTree(DataSize.bytes(20),
-          filenamePrefix: '$testDirName${dirSeparator}log_');
-
-      Fimber.clearAll();
-      Fimber.plantTree(logTree);
       await Future.delayed(Duration(milliseconds: 200));
-      Fimber.i('Log single line - C');
+      Fimber.i('Log single line - C with some chars');
       await waitForAppendBuffer();
 
       var logFile3 = logTree.outputFileName;
       print(logFile3);
       expect(logFile3, '$testDirName${dirSeparator}log_3.txt');
 
+      Fimber.i('add some new');
       await Future.delayed(Duration(milliseconds: 200));
 
       File(logFile2).deleteSync();
