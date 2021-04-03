@@ -1,3 +1,5 @@
+## [0.6.3] - Fix for Android plugin with NonNull annotation
+
 ## [0.6.2] - Fix for channel name in Android side
 
 ## [0.6.1] - Build fix after fimber moved some files to `src`
