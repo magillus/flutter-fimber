@@ -101,6 +101,47 @@ Here is output of test output.
 
 ![Colorize Test Output](doc/colorize_fimber_test.PNG "Colorize Test Output")
 
+### CustomFormatTree format your line of code
+
+Use any of the Tokens at [CustomFormatTree] class to configure the log lines.
+
+more at file
+```dart
+
+  /// Format token for time stamp
+  static const String timeStampToken = "{TIME_STAMP}";
+
+  /// Format token for time elapsed
+  static const String timeElapsedToken = "{TIME_ELAPSED}";
+
+  /// Format token for log level character
+  static const String levelToken = "{LEVEL}";
+
+  /// Format token for log tag
+  static const String tagToken = "{TAG}";
+
+  /// Format token for main log message
+  static const String messageToken = "{MESSAGE}";
+
+  /// Format token for exception message
+  static const String exceptionMsgToken = "{EX_MSG}";
+
+  /// Format token for exception's stacktrace
+  static const String exceptionStackToken = "{EX_STACK}";
+
+  /// Format token for file path.
+  static const String filePathToken = "{FILE_PATH}";
+
+  /// Format token for file name.
+  static const String fileNameToken = "{FILE_NAME}";
+
+  /// Format token for file's line number
+  static const String lineNumberToken = "{LINE_NUMBER}";
+
+  /// Format token for character index on the line
+  static const String charAtIndexToken = "{CHAR_INDEX}";
+  ```
+
 
 ### Create tagged version of Fimber 
 
@@ -158,8 +199,8 @@ import 'package:fimber_io/fimber_io.dart';
 ...
 
     Fimber.plantTree(FimberFileTree("my-Log-File.txt",
-        logFormat: "${CustomFormatTree.TIME_ELAPSED_TOKEN} ${CustomFormatTree
-            .MESSAGE_TOKEN} ${CustomFormatTree.TIME_STAMP_TOKEN}"
+        logFormat: "${CustomFormatTree.timeElapsedToken} ${CustomFormatTree
+            .messageToken} ${CustomFormatTree.timeStampToken}"
     ));
 ```
 

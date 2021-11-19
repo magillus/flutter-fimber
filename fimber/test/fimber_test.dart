@@ -1,4 +1,5 @@
 import 'package:fimber/fimber.dart';
+import 'package:fimber/src/fimber_base.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -319,6 +320,19 @@ void main() {
     assert(assertTree.allLines[1].contains("Test INFO unmute log."));
   });
 
+  group("Custom format tree", () {
+    test("Test custom format with linenumber", () {
+      final formatTree = AssertFormatTree(
+          "${CustomFormatTree.tagToken}\t${CustomFormatTree.fileNameToken}\t- ${CustomFormatTree.filePathToken} : ${CustomFormatTree.lineNumberToken}");
+      Fimber.plantTree(formatTree);
+      Fimber.i("Test message");
+      expect(
+          'main.<ac>.<ac>\tfimber_test.dart\t- //Users/magillus/Projects/opensource/flutter-fimber/fimber/test/fimber_test.dart : 328',
+          formatTree.allLines.first);
+      Fimber.unplantTree(formatTree);
+    });
+  });
+
   group("COLORIZE", () {
     test("Debug colors - visual test only", () {
       Fimber.clearAll();
@@ -351,6 +365,16 @@ class TestClass {
   @override
   String toString() {
     return "TestClass.instance";
+  }
+}
+
+class AssertFormatTree extends CustomFormatTree {
+  AssertFormatTree(String testLogFormat) : super(logFormat: testLogFormat);
+  List<String> allLines = [];
+  @override
+  void printLine(String line, {String? level}) {
+    super.printLine(line, level: level);
+    allLines.add(line);
   }
 }
 

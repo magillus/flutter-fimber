@@ -1,3 +1,7 @@
+## [0.6.4] - Added log line/path to file to [CustomFormatTree]
+
+-- Additional tokens for [CustomFormatTree] with filename/filepath log line and character.
+
 ## [0.6.3] - Fix for Android plugin with NonNull annotation
 
 ## [0.6.2] - Fix for channel name in Android side

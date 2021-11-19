@@ -197,6 +197,7 @@ class DebugTree extends LogTree {
           stacktrace?.toString().split('\n') ?? LogTree.getStacktrace();
       var stackTraceMessage =
           tmpStacktrace.map((stackLine) => "\t$stackLine").join("\n");
+
       printLog(
           "$level\t$logTag:\t $message \n"
           "${ex.toString()}\n$stackTraceMessage",
@@ -241,6 +242,29 @@ abstract class UnPlantableTree {
   void unplanted();
 }
 
+/// Log Line Information.
+/// Used when extracting tag and attaching log line number value.
+class LogLineInfo {
+  /// Tag extracted from stacktrace (usually class)
+  String tag;
+
+  /// Log file path.
+  String? logFilePath;
+
+  /// Line number of the log line.
+  int lineNumber;
+
+  /// Character at the log line.
+  int characterIndex;
+
+  /// Creates LogLineInfo instance.
+  LogLineInfo(
+      {required this.tag,
+      this.logFilePath,
+      this.lineNumber = 0,
+      this.characterIndex = 0});
+}
+
 /// Interface for LogTree
 abstract class LogTree {
   static const String _defaultTag = "Flutter";
@@ -252,6 +276,42 @@ abstract class LogTree {
 
   /// Gets levels of logging serviced by this [LogTree]
   List<String> getLevels();
+  static final _logMatcher =
+      RegExp(r"([a-zA-Z\<\>\s\.]*)\s\(file:\/(.*\.dart):(\d*):(\d*)");
+
+  /// Gets [LogLineInfo] with [stackIndex]
+  /// which provides data for tag and line of code
+  static LogLineInfo getLogLineInfo({int stackIndex = 4}) {
+    ///([a-zA-Z\<\>\s\.]*)\s\(file:\/(.*\.dart):(\d*):(\d*)
+    /// group 1 = tag
+    /// group 2 = filepath
+    /// group 3 = line number
+    /// group 4 = column
+    /// "#4      main.<anonymous closure>.<anonymous closure> (file:///Users/magillus/Projects/opensource/flutter-fimber/fimber/test/fimber_test.dart:19:14)"
+    var stackTraceList = StackTrace.current.toString().split('\n');
+    if (stackTraceList.length > stackIndex) {
+      var logline = stackTraceList[stackIndex];
+      final matches = _logMatcher.allMatches(logline);
+
+      if (matches.isNotEmpty) {
+        final match = matches.first;
+        return LogLineInfo(
+          tag: match
+                  .group(1)
+                  ?.trim()
+                  .replaceAll("<anonymous closure>", "<ac>") ??
+              _defaultTag,
+          logFilePath: match.group(2),
+          lineNumber: int.tryParse(match.group(3) ?? '-1') ?? -1,
+          characterIndex: int.tryParse(match.group(4) ?? '-1') ?? -1,
+        );
+      } else {
+        return LogLineInfo(tag: _defaultTag);
+      }
+    } else {
+      return LogLineInfo(tag: _defaultTag);
+    }
+  }
 
   /// Gets tag with [stackIndex],
   /// how many steps in stacktrace should be taken to grab log call.
@@ -360,6 +420,18 @@ class CustomFormatTree extends LogTree {
   /// Format token for exception's stacktrace
   static const String exceptionStackToken = "{EX_STACK}";
 
+  /// Format token for file path.
+  static const String filePathToken = "{FILE_PATH}";
+
+  /// Format token for file name.
+  static const String fileNameToken = "{FILE_NAME}";
+
+  /// Format token for file's line number
+  static const String lineNumberToken = "{LINE_NUMBER}";
+
+  /// Format token for character index on the line
+  static const String charAtIndexToken = "{CHAR_INDEX}";
+
   /// Default format for timestamp based log message.
   static const String defaultFormat =
       "$timeStampToken\t$levelToken $tagToken: $messageToken";
@@ -391,6 +463,11 @@ class CustomFormatTree extends LogTree {
   String logFormat = defaultFormat;
   bool _useColors = false;
 
+  bool _printFilePath = false;
+  bool _printFileName = false;
+  bool _printLineNumber = false;
+  bool _printCharIndex = false;
+
   /// Map of log levels and their colorizing style.
   Map<String, ColorizeStyle> colorizeMap = {};
 
@@ -410,8 +487,25 @@ class CustomFormatTree extends LogTree {
     if (logFormat.contains(timeElapsedToken)) {
       _printTimeFlag |= timeElapsedFlag;
     }
+    _printFilePath = logFormat.contains(filePathToken);
+    _printLineNumber = logFormat.contains(lineNumberToken);
+    _printCharIndex = logFormat.contains(charAtIndexToken);
+    _printFileName = logFormat.contains(fileNameToken);
     if (_printTimeFlag & timeElapsedFlag > 0) {
       _elapsedTimeStopwatch = Stopwatch()..start();
+    }
+  }
+
+  String _extractFileName(String? filePath) {
+    if (filePath == null) {
+      return '';
+    } else {
+      if (filePath.lastIndexOf('/') >= 0) {
+        return filePath.substring(
+            filePath.lastIndexOf('/') + 1, filePath.length);
+      } else {
+        return filePath;
+      }
     }
   }
 
@@ -420,7 +514,11 @@ class CustomFormatTree extends LogTree {
   /// Logs a message with level/tag and optional stacktrace or exception.
   void log(String level, String msg,
       {String? tag, dynamic? ex, StackTrace? stacktrace}) {
-    var logTag = tag ?? LogTree.getTag();
+    LogLineInfo logTag;
+    logTag = LogTree.getLogLineInfo();
+    if (tag != null) {
+      logTag.tag = tag;
+    }
     _printFormattedLog(level, msg, logTag, ex, stacktrace);
   }
 
@@ -434,26 +532,27 @@ class CustomFormatTree extends LogTree {
     }
   }
 
-  void _printFormattedLog(
-      String level, String msg, String tag, ex, StackTrace? stacktrace) {
+  void _printFormattedLog(String level, String msg, LogLineInfo logLineInfo, ex,
+      StackTrace? stacktrace) {
     if (ex != null) {
       var tmpStacktrace =
           stacktrace?.toString().split('\n') ?? LogTree.getStacktrace();
       var stackTraceMessage =
           tmpStacktrace.map((stackLine) => "\t$stackLine").join("\n");
       printLine(
-          _formatLine(logFormat, level, msg, tag, "\n${ex.toString()}",
+          _formatLine(logFormat, level, msg, logLineInfo, "\n${ex.toString()}",
               "\n$stackTraceMessage"),
           level: level);
     } else {
-      printLine(_formatLine(logFormat, level, msg, tag, "", ""), level: level);
+      printLine(_formatLine(logFormat, level, msg, logLineInfo, "", ""),
+          level: level);
     }
   }
 
-  String _formatLine(String format, String level, String msg, String tag,
-      String exMsg, String stacktrace) {
+  String _formatLine(String format, String level, String msg,
+      LogLineInfo logLineInfo, String exMsg, String stacktrace) {
     var date = DateTime.now().toIso8601String();
-    var elapsed = _elapsedTimeStopwatch?.elapsed.toString() ?? "";
+    var elapsed = _elapsedTimeStopwatch?.elapsed.toString() ?? '';
 
     var logLine = _replaceAllSafe(logFormat, timeStampToken, date);
     logLine = _replaceAllSafe(logLine, timeElapsedToken, elapsed);
@@ -461,7 +560,23 @@ class CustomFormatTree extends LogTree {
     logLine = _replaceAllSafe(logLine, messageToken, msg);
     logLine = _replaceAllSafe(logLine, exceptionMsgToken, exMsg);
     logLine = _replaceAllSafe(logLine, exceptionStackToken, stacktrace);
-    logLine = _replaceAllSafe(logLine, tagToken, tag);
+    logLine = _replaceAllSafe(logLine, tagToken, logLineInfo.tag);
+    if (_printFilePath) {
+      logLine = _replaceAllSafe(
+          logLine, filePathToken, logLineInfo.logFilePath ?? '');
+    }
+    if (_printFileName) {
+      logLine = _replaceAllSafe(
+          logLine, fileNameToken, _extractFileName(logLineInfo.logFilePath));
+    }
+    if (_printLineNumber) {
+      logLine = _replaceAllSafe(
+          logLine, lineNumberToken, logLineInfo.lineNumber.toString());
+    }
+    if (_printCharIndex) {
+      logLine = _replaceAllSafe(
+          logLine, charAtIndexToken, logLineInfo.characterIndex.toString());
+    }
     return logLine;
   }
 
