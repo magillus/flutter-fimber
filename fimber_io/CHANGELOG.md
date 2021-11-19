@@ -1,3 +1,6 @@
+## [0.6.4] - Added log line/path to file to [CustomFormatTree]
+
+-- Additional tokens for [CustomFormatTree] with filename/filepath log line and character.
 
 ## [0.6.3] - SizeRollingFileTree bug fix
 
