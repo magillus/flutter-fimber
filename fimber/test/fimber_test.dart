@@ -271,21 +271,33 @@ void main() {
       testClass.throwSomeError();
       // ignore: avoid_catches_without_on_clauses
     } catch (e, s) {
-      Fimber.w("Eror caught", ex: e, stacktrace: s);
+      Fimber.w("Error caught 1", ex: e, stacktrace: s);
     }
     try {
       testClass.throwSomeError();
       // ignore: avoid_catches_without_on_clauses
     } catch (e) {
-      Fimber.w("Eror caught", ex: e);
+      Fimber.w("Error caught 2", ex: e);
+    }
+    try {
+      testClass.throwSomeError();
+      // ignore: avoid_catches_without_on_clauses
+    } catch (e, s) {
+      Fimber.w("Error caught 3", stacktrace: s);
     }
     // with stacktrace provided
-    assert(assertTree.allLines[2].contains("Eror caught"));
+    assert(assertTree.allLines[2].contains("Error caught"));
     assert(assertTree.allLines[2].contains("Test exception from TestClass"));
     assert(assertTree.allLines[2].contains("TestClass.throwSomeError"));
     // without stacktrace provided
     assert(assertTree.allLines[3].contains("Test exception from TestClass"));
     assert(!assertTree.allLines[3].contains("TestClass.throwSomeError"));
+    // without exception
+
+    assert(assertTree.allLines[4].contains("Error caught"));
+
+    assert(!assertTree.allLines[4].contains("Test exception from TestClass"));
+    assert(assertTree.allLines[4].contains("TestClass.throwSomeError"));
   });
 
   test('Test mute/unmute', () {
@@ -327,7 +339,7 @@ void main() {
       Fimber.plantTree(formatTree);
       Fimber.i("Test message");
       expect(
-          'main.<ac>.<ac>\tfimber_test.dart\t- //Users/magillus/Projects/opensource/flutter-fimber/fimber/test/fimber_test.dart : 328',
+          'main.<ac>.<ac>\tfimber_test.dart\t- //Users/magillus/Projects/opensource/flutter-fimber/fimber/test/fimber_test.dart : 340',
           formatTree.allLines.first);
       Fimber.unplantTree(formatTree);
     });
