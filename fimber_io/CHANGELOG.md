@@ -1,3 +1,8 @@
+## [0.6.5] - Bug fixes
+
+-- Update android dependencies to mavenCentral (from jcenter) [#116](https://github.com/magillus/flutter-fimber/issues/116)
+-- Fix for Log without exception but with stack trace [#115](https://github.com/magillus/flutter-fimber/issues/115)
+
 ## [0.6.4] - Added log line/path to file to [CustomFormatTree]
 
 -- Additional tokens for [CustomFormatTree] with filename/filepath log line and character.

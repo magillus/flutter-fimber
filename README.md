@@ -15,26 +15,9 @@ To start add using it:
 
 ```yaml
 dependencies:
-  fimber: ^0.4.4
+  fimber: ^0.6.5
   ```
 - remember about import in file you plan to use Fimber
-
-#### with null safety
-
-```yaml
-
-dependencies:
-  fimber: ^0.5.0-nullsafety.1
-```
-
-  or from git branch:
-
-```yaml
-    git:
-      url: git@github.com:magillus/flutter-fimber
-      path: fimber
-      ref: nullsafety.update
-```
 
 ```dart
 import 'package:fimber/fimber.dart';
