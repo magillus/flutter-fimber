@@ -192,19 +192,18 @@ class DebugTree extends LogTree {
   void log(String level, String message,
       {String? tag, dynamic? ex, StackTrace? stacktrace}) {
     var logTag = tag ?? LogTree.getTag();
+    final logLineBuilder = StringBuffer("$level\t$logTag:\t $message");
+
     if (ex != null) {
-      var tmpStacktrace =
-          stacktrace?.toString().split('\n') ?? LogTree.getStacktrace();
+      logLineBuilder.write("\n${ex.toString()}");
+    }
+    if (stacktrace != null) {
+      var tmpStacktrace = stacktrace.toString().split('\n');
       var stackTraceMessage =
           tmpStacktrace.map((stackLine) => "\t$stackLine").join("\n");
-
-      printLog(
-          "$level\t$logTag:\t $message \n"
-          "${ex.toString()}\n$stackTraceMessage",
-          level: level);
-    } else {
-      printLog("$level\t$logTag:\t $message", level: level);
+      logLineBuilder.write("\n$stackTraceMessage");
     }
+    printLog(logLineBuilder.toString(), level: level);
   }
 
   /// Method to overload printing to output stream the formatted [logLine]
