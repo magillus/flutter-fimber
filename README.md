@@ -128,17 +128,24 @@ Due to nature of auto-tag generation from stacktrace this block only does it onc
       return i;
     });
 ```
-
-## **Deprecated** moved to [`fimber_io`](https://pub.dev/packages/fimber_io/) package
-
-### Custom line formatters 
+### Custon line formatters
 
 Use custom line formatters to define your logging format.
 
 ```dart
-import 'package:fimber_io/fimber_io.dart';
 
-...
+    Fimber.plantTree(CustomFormatTree(
+        logFormat: "${CustomFormatTree.TIME_ELAPSED_TOKEN} ${CustomFormatTree
+            .MESSAGE_TOKEN} ${CustomFormatTree.TIME_STAMP_TOKEN}"
+    ));
+```
+
+
+## **Deprecated** moved to [`fimber_io`](https://pub.dev/packages/fimber_io/) package
+
+
+```dart
+import 'package:fimber_io/fimber_io.dart';
 
     Fimber.plantTree(FimberFileTree("my-Log-File.txt",
         logFormat: "${CustomFormatTree.TIME_ELAPSED_TOKEN} ${CustomFormatTree
