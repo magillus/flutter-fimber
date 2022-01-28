@@ -1,0 +1,74 @@
+# src: https://gist.github.com/rodydavis/bde9a9a8c2fcdcf3474c0f50248f2e3a
+
+name: Flutter Checks
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+
+# Cancel jobs and just run the last one
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref == 'refs/heads/master' && github.run_number || github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: example/
+
+jobs:
+  unit_test:
+    name: Unit Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: subosito/flutter-action@v1
+        with:
+          flutter-version: '2.0.0'
+      - run: flutter pub get
+      - run: flutter config --enable-web
+      - run: flutter test
+
+  build_web:
+    name: Build Web
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: subosito/flutter-action@v1
+        with:
+          flutter-version: '2.0.0'
+      - run: flutter pub get
+      - run: flutter config --enable-web
+      - run: flutter build web
+
+  build_ios:
+    name: Build iOS
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '12.x'
+      - uses: subosito/flutter-action@v1
+        with:
+          flutter-version: '2.0.0'
+      - run: flutter pub get
+      - run: flutter clean
+      - run: flutter build ios --release --no-codesign
+
+  build_android:
+    name: Build Android
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '12.x'
+      - uses: subosito/flutter-action@v1
+        with:
+          flutter-version: '2.0.0'
+      - run: flutter pub get
+      - run: flutter build appbundle
+
