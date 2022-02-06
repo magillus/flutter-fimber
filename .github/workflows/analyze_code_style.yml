@@ -13,8 +13,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      
       - name: Change Dir Fimber
         run: cd fimber
+        
       - name: Setup Flutter
         id: flutter
         uses: DanTup/gh-actions/setup-flutter@master
