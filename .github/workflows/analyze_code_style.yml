@@ -1,0 +1,26 @@
+name: Analyze Code Style
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  analyze_code_style:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Flutter
+        id: flutter
+        uses: DanTup/gh-actions/setup-flutter@master
+        with:
+          channel: 2.2.2
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze project source
+        run: flutter analyze --no-pub --no-fatal-infos --no-fatal-warnings
