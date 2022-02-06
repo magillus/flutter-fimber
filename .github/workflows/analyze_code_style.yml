@@ -20,17 +20,8 @@ jobs:
         with:
           channel: 2.2.2
 
-      - name: Change Dir Fimber
-        run: pwd && cd fimber && pwd
-        
-      - name: Check directory
-        run: pwd
-        
-      - name: List files
-        run: ls -latr
-        
-      - name: Install dependencies
-        run: flutter pub get
+      - name: Install dependencies - Fimber
+        run: cd fimber && flutter pub get
 
-      - name: Analyze project source
-        run: flutter analyze --no-pub --no-fatal-infos --no-fatal-warnings
+      - name: Analyze project source - Fimber
+        run: cd fimber && pflutter analyze --no-pub --no-fatal-infos --no-fatal-warnings
