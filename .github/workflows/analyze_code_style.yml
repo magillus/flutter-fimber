@@ -24,4 +24,4 @@ jobs:
         run: cd fimber && flutter pub get
 
       - name: Analyze project source - Fimber
-        run: cd fimber && pflutter analyze --no-pub --no-fatal-infos --no-fatal-warnings
+        run: cd fimber && flutter analyze --no-pub --no-fatal-infos --no-fatal-warnings
