@@ -14,15 +14,21 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       
-      - name: Change Dir Fimber
-        run: cd fimber
-        
       - name: Setup Flutter
         id: flutter
         uses: DanTup/gh-actions/setup-flutter@master
         with:
           channel: 2.2.2
 
+      - name: Change Dir Fimber
+        run: cd fimber
+        
+      - name: Check directory
+        run: pwd
+        
+      - name: List files
+        run: ls -latr
+        
       - name: Install dependencies
         run: flutter pub get
 
