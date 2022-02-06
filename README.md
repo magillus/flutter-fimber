@@ -1,3 +1,6 @@
+[![Analyze Code Style](https://github.com/magillus/flutter-fimber/actions/workflows/analyze_code_style.yml/badge.svg)](https://github.com/magillus/flutter-fimber/actions/workflows/analyze_code_style.yml)
+
+
 # fimber 
 
 Extensible logging for Dart and Flutter.
