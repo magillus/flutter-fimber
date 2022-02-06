@@ -1,6 +1,7 @@
 name: Analyze Code Style
 
 on:
+  workflow_dispatch:
   push:
     branches: [ master ]
   pull_request:
