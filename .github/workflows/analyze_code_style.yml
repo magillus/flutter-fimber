@@ -21,7 +21,7 @@ jobs:
           channel: 2.2.2
 
       - name: Change Dir Fimber
-        run: cd fimber
+        run: pwd && cd fimber && pwd
         
       - name: Check directory
         run: pwd
