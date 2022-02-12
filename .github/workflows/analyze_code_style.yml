@@ -25,3 +25,15 @@ jobs:
 
       - name: Analyze project source - Fimber
         run: cd fimber && flutter analyze --no-pub --no-fatal-infos --no-fatal-warnings
+
+      - name: Install dependencies - Fimber IO
+        run: cd fimber_io && flutter pub get
+
+      - name: Analyze project source - Fimber
+        run: cd fimber_io && flutter analyze --no-pub --no-fatal-infos --no-fatal-warnings
+
+      - name: Install dependencies - Fimber
+        run: cd flutter_fimber && flutter pub get
+
+      - name: Analyze project source - Fimber
+        run: cd flutter_fimber && flutter analyze --no-pub --no-fatal-infos --no-fatal-warnings
