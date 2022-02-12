@@ -28,9 +28,21 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           flutter-version: '2.0.0'
-      - run: flutter pub get
-      - run: flutter config --enable-web
-      - run: flutter test
+      - name: Install dependencies - Fimber
+        run: cd fimber && flutter pub get
+      - run: cd fimber && flutter config --enable-web
+      - name: Run tests - Fimber
+        run: cd fimber && flutter test
+      - name: Install dependencies - Fimber IO
+        run: cd fimber_io && flutter pub get
+      - run: cd fimber_io && flutter config --enable-web
+      - name: Run tests - Fimber IO
+        run: cd fimber_io && flutter test
+      - name: Install dependencies - Flutter Fimber
+        run: cd flutter_fimber && flutter pub get
+      - run: cd flutter_fimber && flutter config --enable-web
+      - name: Run tests - Fimber
+        run: cd flutter_fimber && flutter test
 
   build_web:
     name: Build Web
@@ -55,9 +67,9 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           flutter-version: '2.0.0'
-      - run: flutter pub get
-      - run: flutter clean
-      - run: flutter build ios --release --no-codesign
+      - run: cd flutter_fimber && flutter pub get
+      - run: cd flutter_fimber && flutter clean
+      - run: cd flutter_fimber && flutter build ios --release --no-codesign
 
   build_android:
     name: Build Android
@@ -70,6 +82,6 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           flutter-version: '2.0.0'
-      - run: flutter pub get
-      - run: flutter build appbundle
+      - run: cd flutter_fimber && flutter pub get
+      - run: cd flutter_fimber && flutter build appbundle
 
