@@ -3,9 +3,9 @@ name: Analyze Code Style
 on:
   workflow_dispatch:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   analyze_code_style:
