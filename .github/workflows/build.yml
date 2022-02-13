@@ -15,10 +15,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref == 'refs/heads/main' && github.run_number || github.ref }}
   cancel-in-progress: true
 
-defaults:
-  run:
-    working-directory: example/
-
 jobs:
   unit_test:
     name: Unit Test
