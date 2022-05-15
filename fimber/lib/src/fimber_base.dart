@@ -276,7 +276,7 @@ abstract class LogTree {
   /// Gets levels of logging serviced by this [LogTree]
   List<String> getLevels();
   static final _logMatcher =
-      RegExp(r"([a-zA-Z\<\>\s\.]*)\s\(file:\/(.*\.dart):(\d*):(\d*)");
+      RegExp(r"([a-zA-Z\<\>\s\.]*)\s\(\w+:\/(.*\.dart):(\d*):(\d*)");
 
   /// Gets [LogLineInfo] with [stackIndex]
   /// which provides data for tag and line of code
