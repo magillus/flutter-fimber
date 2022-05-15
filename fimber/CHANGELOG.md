@@ -1,3 +1,5 @@
+## [0.6.6] - Bugfix for log matcher to include package not only files 
+
 ## [0.6.5] - Bug fixes
 
 -- Update android dependencies to mavenCentral (from jcenter) [#116](https://github.com/magillus/flutter-fimber/issues/116)

@@ -141,6 +141,8 @@ class SizeRollingFileTree extends RollingFileTree {
     var rootDir;
 
     if (filenamePrefix.contains(Platform.pathSeparator)) {
+      /// Create if separator has directories
+      Directory(filenamePrefix).parent.createSync(recursive: true);
     } else {
       rootDir = Directory(filenamePrefix);
       if (!rootDir.existsSync()) {
@@ -151,8 +153,7 @@ class SizeRollingFileTree extends RollingFileTree {
       }
     }
 
-    rootDir = Directory(filenamePrefix.substring(
-        0, filenamePrefix.lastIndexOf(Platform.pathSeparator)));
+    rootDir = Directory(filenamePrefix).parent;
 
     var logListIndexes = rootDir
         .listSync()

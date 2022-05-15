@@ -338,9 +338,11 @@ void main() {
           "${CustomFormatTree.tagToken}\t${CustomFormatTree.fileNameToken}\t- ${CustomFormatTree.filePathToken} : ${CustomFormatTree.lineNumberToken}");
       Fimber.plantTree(formatTree);
       Fimber.i("Test message");
-      expect(
-          'main.<ac>.<ac>\tfimber_test.dart\t- //Users/magillus/Projects/opensource/flutter-fimber/fimber/test/fimber_test.dart : 340',
-          formatTree.allLines.first);
+      assert(formatTree.allLines.first
+          .startsWith('main.<ac>.<ac>\tfimber_test.dart\t'));
+      assert(formatTree.allLines.first
+          .endsWith('flutter-fimber/fimber/test/fimber_test.dart : 340'));
+
       Fimber.unplantTree(formatTree);
     });
   });
