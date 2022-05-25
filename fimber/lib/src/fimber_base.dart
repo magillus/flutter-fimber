@@ -275,9 +275,46 @@ abstract class LogTree {
 
   /// Gets levels of logging serviced by this [LogTree]
   List<String> getLevels();
+
+  static final _lineInfoMatcher = RegExp(r"\(\w+:(.*\.dart):(\d*):(\d*)");
+
+  /// Gets [LogLineInfo] with [stackIndex]
+  /// which provides data for tag and line of code
+  static LogLineInfo getLogLineInfo({int stackIndex = 4}) {
+    var stackTraceList = StackTrace.current.toString().split('\n');
+    if (stackTraceList.length > stackIndex) {
+      var stackinfo = stackTraceList[stackIndex];
+      var lineParts = _getLineChunks(stackinfo);
+      var tag = _defaultTag;
+      var lineinfo = '(package:flutter_fimber/error.dart:0:0)';
+      if (lineParts.length > 3 && lineParts[1] == 'new') {
+        // constructor logging
+        tag = "${lineParts[1]} ${lineParts[2]}";
+        lineinfo = lineParts[3];
+      } else if (lineParts.length > 2) {
+        lineinfo = lineParts[2];
+        tag = lineParts[1];
+      } else if (lineParts.length > 1) {
+        tag = lineParts[1];
+      }
+
+      final matches = _lineInfoMatcher.allMatches(lineinfo);
+      final match = matches.first;
+      return LogLineInfo(
+        tag: tag,
+        logFilePath: match.group(1),
+        lineNumber: int.tryParse(match.group(2) ?? '-1') ?? -1,
+        characterIndex: int.tryParse(match.group(3) ?? '-1') ?? -1,
+      );
+    }
+    return LogLineInfo(
+      tag: _defaultTag,
+    );
+  }
+
+  /*
   static final _logMatcher =
       RegExp(r"([a-zA-Z\<\>\s\.]*)\s\(\w+:(.*\.dart):(\d*):(\d*)");
-
   /// Gets [LogLineInfo] with [stackIndex]
   /// which provides data for tag and line of code
   static LogLineInfo getLogLineInfo({int stackIndex = 4}) {
@@ -307,29 +344,23 @@ abstract class LogTree {
           characterIndex: int.tryParse(match.group(4) ?? '-1') ?? -1,
         );
       } else {
-        var consoletag = _getTag(logline);
-        return LogLineInfo(tag: consoletag);
+        return LogLineInfo(tag: _defaultTag);
       }
     } else {
       return LogLineInfo(tag: _defaultTag);
     }
   }
+  */
 
-  static String _getTag(String stackinfo) {
+  static List<String> _getLineChunks(String stackinfo) {
     var lineChunks = stackinfo.replaceAll("<anonymous closure>", "<ac>");
     if (lineChunks.length > 6) {
-      var lineParts = lineChunks.split(' ');
-      if (lineParts.length > 8 && lineParts[6] == 'new') {
-        // constructor logging
-        return "${lineParts[6]} ${lineParts[7]}";
-      } else if (lineParts.length > 6) {
-        return lineParts[6];
-      } else {
-        return _defaultTag;
-      }
-    } else {
-      return _defaultTag;
+      var spaces = RegExp(r' +');
+      var lineParts = lineChunks.split(spaces);
+
+      return lineParts;
     }
+    return <String>[];
   }
 
   /// Gets tag with [stackIndex],
@@ -337,10 +368,15 @@ abstract class LogTree {
   static String getTag({int stackIndex = 4}) {
     var stackTraceList = StackTrace.current.toString().split('\n');
     if (stackTraceList.length > stackIndex) {
-      return _getTag(stackTraceList[stackIndex]);
-    } else {
-      return _defaultTag; //default
+      var lineParts = _getLineChunks(stackTraceList[stackIndex]);
+      if (lineParts.length > 3 && lineParts[1] == 'new') {
+        // constructor logging
+        return "${lineParts[1]} ${lineParts[2]}";
+      } else if (lineParts.length > 1) {
+        return lineParts[1];
+      }
     }
+    return _defaultTag;
   }
 
   /// Gets tag with [stackIndex]
