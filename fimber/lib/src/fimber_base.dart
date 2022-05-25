@@ -276,7 +276,7 @@ abstract class LogTree {
   /// Gets levels of logging serviced by this [LogTree]
   List<String> getLevels();
   static final _logMatcher =
-      RegExp(r"([a-zA-Z\<\>\s\.]*)\s\(\w+:\/(.*\.dart):(\d*):(\d*)");
+      RegExp(r"([a-zA-Z\<\>\s\.]*)\s\(\w+:(.*\.dart):(\d*):(\d*)");
 
   /// Gets [LogLineInfo] with [stackIndex]
   /// which provides data for tag and line of code
@@ -287,6 +287,8 @@ abstract class LogTree {
     /// group 3 = line number
     /// group 4 = column
     /// "#4      main.<anonymous closure>.<anonymous closure> (file:///Users/magillus/Projects/opensource/flutter-fimber/fimber/test/fimber_test.dart:19:14)"
+    /// “#4      _MyAppState.build.<anonymous closure> (package:flutter_fimber_example/main.dart:83:26)
+
     var stackTraceList = StackTrace.current.toString().split('\n');
     if (stackTraceList.length > stackIndex) {
       var logline = stackTraceList[stackIndex];
@@ -305,10 +307,28 @@ abstract class LogTree {
           characterIndex: int.tryParse(match.group(4) ?? '-1') ?? -1,
         );
       } else {
-        return LogLineInfo(tag: _defaultTag);
+        var consoletag = _getTag(logline);
+        return LogLineInfo(tag: consoletag);
       }
     } else {
       return LogLineInfo(tag: _defaultTag);
+    }
+  }
+
+  static String _getTag(String stackinfo) {
+    var lineChunks = stackinfo.replaceAll("<anonymous closure>", "<ac>");
+    if (lineChunks.length > 6) {
+      var lineParts = lineChunks.split(' ');
+      if (lineParts.length > 8 && lineParts[6] == 'new') {
+        // constructor logging
+        return "${lineParts[6]} ${lineParts[7]}";
+      } else if (lineParts.length > 6) {
+        return lineParts[6];
+      } else {
+        return _defaultTag;
+      }
+    } else {
+      return _defaultTag;
     }
   }
 
@@ -317,21 +337,7 @@ abstract class LogTree {
   static String getTag({int stackIndex = 4}) {
     var stackTraceList = StackTrace.current.toString().split('\n');
     if (stackTraceList.length > stackIndex) {
-      var lineChunks =
-          stackTraceList[stackIndex].replaceAll("<anonymous closure>", "<ac>");
-      if (lineChunks.length > 6) {
-        var lineParts = lineChunks.split(' ');
-        if (lineParts.length > 8 && lineParts[6] == 'new') {
-          // constructor logging
-          return "${lineParts[6]} ${lineParts[7]}";
-        } else if (lineParts.length > 6) {
-          return lineParts[6];
-        } else {
-          return _defaultTag;
-        }
-      } else {
-        return _defaultTag;
-      }
+      return _getTag(stackTraceList[stackIndex]);
     } else {
       return _defaultTag; //default
     }
