@@ -299,13 +299,15 @@ abstract class LogTree {
       }
 
       final matches = _lineInfoMatcher.allMatches(lineinfo);
-      final match = matches.first;
-      return LogLineInfo(
-        tag: tag,
-        logFilePath: match.group(1),
-        lineNumber: int.tryParse(match.group(2) ?? '-1') ?? -1,
-        characterIndex: int.tryParse(match.group(3) ?? '-1') ?? -1,
-      );
+      if (matches.isNotEmpty) {
+        final match = matches.first;
+        return LogLineInfo(
+          tag: tag,
+          logFilePath: match.group(1),
+          lineNumber: int.tryParse(match.group(2) ?? '-1') ?? -1,
+          characterIndex: int.tryParse(match.group(3) ?? '-1') ?? -1,
+        );
+      }
     }
     return LogLineInfo(
       tag: _defaultTag,
