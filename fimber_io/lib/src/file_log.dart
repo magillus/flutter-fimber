@@ -161,7 +161,7 @@ class SizeRollingFileTree extends RollingFileTree {
         .where((i) => (i >= 0) as bool)
         .toList();
     logListIndexes.sort();
-    print('log list indexes: $logListIndexes');
+    //print('log list indexes: $logListIndexes');
     if (logListIndexes.isNotEmpty) {
       var max = logListIndexes.last;
       _fileIndex = max;

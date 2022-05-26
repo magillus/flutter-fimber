@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:fimber_io/fimber_io.dart';
 import 'package:flutter_fimber/flutter_fimber.dart';
+//import 'package:path_provider/path_provider.dart';
 
-void main() {
+///Fimber planTree
+void initlog() async {
   /// You can pick one of them or combine,
   /// be aware that 2 or more console loggers will output multiple times
   // Example tree of using Fimber with color logging
@@ -12,6 +14,23 @@ void main() {
 
   /// Debug tree with time of process running
   Fimber.plantTree(DebugBufferTree.elapsed());
+  /*
+  var dir = await getApplicationDocumentsDirectory();
+  var path = dir.path; //+"/log";
+  */
+  var path = '/storage/emulated/0/Documents';
+  var prefix = '$path/log_';
+  Fimber.d("filelog in $prefix");
+  Fimber.plantTree(SizeRollingFileTree(DataSize.mega(5),
+      logFormat: CustomFormatTree.defaultFormat +
+          CustomFormatTree.exceptionMsgToken +
+          CustomFormatTree.exceptionStackToken,
+      filenamePrefix: prefix));
+}
+
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  initlog();
   runApp(MyApp());
 }
 
