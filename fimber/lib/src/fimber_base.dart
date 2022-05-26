@@ -305,7 +305,7 @@ abstract class LogTree {
       final matches = _lineInfoMatcher.allMatches(lineinfo);
       if (matches.isNotEmpty) {
         final match = matches.first;
-        if (matches.length == 3) {
+        if (match.groupCount == 3) {
           return LogLineInfo(
             tag: tag,
             logFilePath: match.group(1),
