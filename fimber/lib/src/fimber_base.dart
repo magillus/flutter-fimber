@@ -564,9 +564,8 @@ class CustomFormatTree extends LogTree {
     }
   }
 
-  @override
-
   /// Logs a message with level/tag and optional stacktrace or exception.
+  @override
   void log(String level, String msg,
       {String? tag, dynamic? ex, StackTrace? stacktrace}) {
     LogLineInfo logTag;

@@ -3,8 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:fimber_io/fimber_io.dart';
 import 'package:flutter_fimber/flutter_fimber.dart';
-import 'package:path_provider/path_provider.dart';
+//import 'package:path_provider/path_provider.dart';
 
+///Fimber planTree
 void initlog() async {
   /// You can pick one of them or combine,
   /// be aware that 2 or more console loggers will output multiple times
@@ -20,8 +21,11 @@ void initlog() async {
   var path = '/storage/emulated/0/Documents';
   var prefix = '$path/log_';
   Fimber.d("filelog in $prefix");
-  Fimber.plantTree(
-      SizeRollingFileTree(DataSize.mega(5), filenamePrefix: prefix));
+  Fimber.plantTree(SizeRollingFileTree(DataSize.mega(5),
+      logFormat: CustomFormatTree.defaultFormat +
+          CustomFormatTree.exceptionMsgToken +
+          CustomFormatTree.exceptionStackToken,
+      filenamePrefix: prefix));
 }
 
 void main() {
