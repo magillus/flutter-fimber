@@ -276,7 +276,11 @@ abstract class LogTree {
   /// Gets levels of logging serviced by this [LogTree]
   List<String> getLevels();
 
-  static final _lineInfoMatcher = RegExp(r"\(\w+:(.*\.dart):(\d*):(\d*)");
+  static final _lineInfoMatcher = RegExp(r"\(\w+:(.*\.dart):(\d*)[:(\d*)]");
+
+  /// "#4      main.<anonymous closure>.<anonymous closure> (file:///Users/magillus/Projects/opensource/flutter-fimber/fimber/test/fimber_test.dart:19:14)"
+  /// “#4      _MyAppState.build.<anonymous closure> (package:flutter_fimber_example/main.dart:83:26)
+  /// “#4      _MyAppState.build (package:flutter_fimber_example/main.dart:83)
 
   /// Gets [LogLineInfo] with [stackIndex]
   /// which provides data for tag and line of code
@@ -301,11 +305,18 @@ abstract class LogTree {
       final matches = _lineInfoMatcher.allMatches(lineinfo);
       if (matches.isNotEmpty) {
         final match = matches.first;
+        if (matches.length == 3) {
+          return LogLineInfo(
+            tag: tag,
+            logFilePath: match.group(1),
+            lineNumber: int.tryParse(match.group(2) ?? '-1') ?? -1,
+            characterIndex: int.tryParse(match.group(3) ?? '-1') ?? -1,
+          );
+        }
         return LogLineInfo(
           tag: tag,
           logFilePath: match.group(1),
           lineNumber: int.tryParse(match.group(2) ?? '-1') ?? -1,
-          characterIndex: int.tryParse(match.group(3) ?? '-1') ?? -1,
         );
       }
     }
@@ -327,6 +338,7 @@ abstract class LogTree {
     /// group 4 = column
     /// "#4      main.<anonymous closure>.<anonymous closure> (file:///Users/magillus/Projects/opensource/flutter-fimber/fimber/test/fimber_test.dart:19:14)"
     /// “#4      _MyAppState.build.<anonymous closure> (package:flutter_fimber_example/main.dart:83:26)
+    /// “#4      _MyAppState.build (package:flutter_fimber_example/main.dart:83)
 
     var stackTraceList = StackTrace.current.toString().split('\n');
     if (stackTraceList.length > stackIndex) {
