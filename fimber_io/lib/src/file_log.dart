@@ -290,6 +290,35 @@ class TimedRollingFileTree extends RollingFileTree {
   @override
   void rollToNextFile() {
     outputFileName = fileNameFormatter.format(_currentFileDate);
+    _cleanupHistoryFiles();
+  }
+
+  Future<void> _cleanupHistoryFiles() async {
+    final basePath = filenamePrefix.split('/').first;
+    printLine('Base file path: $basePath');
+    final files = await Directory(basePath).list().toList();
+    files
+        .sort((a, b) => a.statSync().modified.compareTo(b.statSync().modified));
+    // list all files in directory
+    if (files.length > maxHistoryFiles) {
+      var filesToKeep = maxHistoryFiles;
+      for (var i = 0; i < files.length; i++) {
+        // if file matches the filename formatter?
+        if (fileNameFormatter
+            .doesFileNameMatch(files[i].uri.pathSegments.last)) {
+          // count down max history files
+          filesToKeep--;
+        }
+        // if history is maxed out - delete file.
+        if (filesToKeep <= 0) {
+          files[i].deleteSync();
+        }
+      }
+    }
+
+    files.forEach((element) {
+      fileNameFormatter.doesFileNameMatch(element.uri.pathSegments.last);
+    });
   }
 
   @override
