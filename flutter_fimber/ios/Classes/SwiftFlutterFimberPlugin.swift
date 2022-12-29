@@ -9,26 +9,6 @@ public class SwiftFlutterFimberPlugin: NSObject, FlutterPlugin {
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    guard call.method == "log" else {
-        result(FlutterMethodNotImplemented)
-        return
-    }
-        let data = call.arguments as! NSDictionary
-        let message = data["message"] as? String?
-        if (message != nil) {
-            let tag = (data["tag"] as? String) ?? "flutter"
-            let level = (data["level"] as? String) ?? "D"
-            let exDump = (data["ex"] as? String)
-//            let preFix = (data["preFix"] as? String) ?? ""
-//            let postFix = (data["postFix"] as? String) ?? ""
-
-            var logOutput = "\(Date()) \(tag)/\(level):\t\(message!!))"
-            if (exDump != nil) {
-                logOutput = "\(logOutput)\n\(String(describing: exDump!))"
-            }
-            // iOS devs help me to make it look better ;-)
-            print(logOutput);
-        }
-        result(0)
+    result("iOS " + UIDevice.current.systemVersion)
   }
 }
