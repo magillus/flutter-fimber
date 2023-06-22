@@ -6,7 +6,7 @@ void main() {
   group("STATIC", () {
     test('log DEBUG when filtered out', () {
       Fimber.clearAll();
-      var assertTree = AssertTree(["I", "W"]);
+      final assertTree = AssertTree(["I", "W"]);
       Fimber.plantTree(assertTree);
       Fimber.d("Test message", ex: Exception("test error"));
       expect('', assertTree.lastLogLine);
@@ -14,7 +14,7 @@ void main() {
 
     test('log DEBUG when expected', () {
       Fimber.clearAll();
-      var assertTree = AssertTree(["I", "W", "D"]);
+      final assertTree = AssertTree(["I", "W", "D"]);
       Fimber.plantTree(DebugTree());
       Fimber.plantTree(assertTree);
       Fimber.d("Test message", ex: Exception("test error"));
@@ -23,7 +23,7 @@ void main() {
 
     test('log DEBUG with exception', () {
       Fimber.clearAll();
-      var assertTree = AssertTree(["I", "W", "D"]);
+      final assertTree = AssertTree(["I", "W", "D"]);
       Fimber.plantTree(assertTree);
       Fimber.d("Test message", ex: Exception("test error"));
       assert(assertTree.lastLogLine.contains("Test message"));
@@ -32,7 +32,7 @@ void main() {
 
     test('log INFO message tag', () {
       Fimber.clearAll();
-      var assertTree = AssertTree(["I", "W"]);
+      final assertTree = AssertTree(["I", "W"]);
       Fimber.plantTree(assertTree);
       Fimber.i("Test message");
       assert(assertTree.lastLogLine.contains("Test message"));
@@ -40,7 +40,7 @@ void main() {
     });
 
     test('log DEBUG message tag', () {
-      var assertTree = AssertTree(["I", "W", "D", "E", "V"]);
+      final assertTree = AssertTree(["I", "W", "D", "E", "V"]);
       Fimber.plantTree(assertTree);
       Fimber.d("Test message");
       assert(assertTree.lastLogLine.contains("Test message"));
@@ -49,7 +49,7 @@ void main() {
 
     test('log VERBOSE message tag', () {
       Fimber.clearAll();
-      var assertTree = AssertTree(["I", "W", "D", "E", "V"]);
+      final assertTree = AssertTree(["I", "W", "D", "E", "V"]);
       Fimber.plantTree(assertTree);
       Fimber.v("Test message");
       assert(assertTree.lastLogLine.contains("Test message"));
@@ -58,7 +58,7 @@ void main() {
 
     test('log ERROR message tag', () {
       Fimber.clearAll();
-      var assertTree = AssertTree(["I", "W", "D", "E", "V"]);
+      final assertTree = AssertTree(["I", "W", "D", "E", "V"]);
       Fimber.plantTree(assertTree);
       Fimber.e("Test message");
       assert(assertTree.lastLogLine.contains("Test message"));
@@ -67,7 +67,7 @@ void main() {
 
     test('log WARNING message tag', () {
       Fimber.clearAll();
-      var assertTree = AssertTree(["I", "W", "D", "E", "V"]);
+      final assertTree = AssertTree(["I", "W", "D", "E", "V"]);
       Fimber.plantTree(assertTree);
       Fimber.w("Test message");
       assert(assertTree.lastLogLine.contains("Test message"));
@@ -78,9 +78,9 @@ void main() {
   group("TAGGED", () {
     test('log VERBOSE message with exception', () {
       Fimber.clearAll();
-      var assertTree = AssertTree(["I", "W", "D", "E", "V"]);
+      final assertTree = AssertTree(["I", "W", "D", "E", "V"]);
       Fimber.plantTree(assertTree);
-      var logger = FimberLog("MYTAG");
+      final logger = FimberLog("MYTAG");
       logger.v("Test message", ex: Exception("test error"));
       assert(assertTree.lastLogLine.contains("V:MYTAG"));
       assert(assertTree.lastLogLine.contains("Test message"));
@@ -89,9 +89,9 @@ void main() {
 
     test('log DEBUG message with exception', () {
       Fimber.clearAll();
-      var assertTree = AssertTree(["I", "W", "D", "E", "V"]);
+      final assertTree = AssertTree(["I", "W", "D", "E", "V"]);
       Fimber.plantTree(assertTree);
-      var logger = FimberLog("MYTAG");
+      final logger = FimberLog("MYTAG");
       logger.d("Test message", ex: Exception("test error"));
       assert(assertTree.lastLogLine.contains("D:MYTAG"));
       assert(assertTree.lastLogLine.contains("Test message"));
@@ -100,9 +100,9 @@ void main() {
 
     test('log INFO message with exception', () {
       Fimber.clearAll();
-      var assertTree = AssertTree(["I", "W", "D", "E", "V"]);
+      final assertTree = AssertTree(["I", "W", "D", "E", "V"]);
       Fimber.plantTree(assertTree);
-      var logger = FimberLog("MYTAG");
+      final logger = FimberLog("MYTAG");
       logger.i("Test message", ex: Exception("test error"));
       assert(assertTree.lastLogLine.contains("Test message"));
       assert(assertTree.lastLogLine.contains("test error"));
@@ -111,9 +111,9 @@ void main() {
 
     test('log WARNING message with exception', () {
       Fimber.clearAll();
-      var assertTree = AssertTree(["I", "W", "D", "E", "V"]);
+      final assertTree = AssertTree(["I", "W", "D", "E", "V"]);
       Fimber.plantTree(assertTree);
-      var logger = FimberLog("MYTAG");
+      final logger = FimberLog("MYTAG");
       logger.w("Test message", ex: Exception("test error"));
       assert(assertTree.lastLogLine.contains("Test message"));
       assert(assertTree.lastLogLine.contains("test error"));
@@ -122,9 +122,9 @@ void main() {
 
     test('log ERROR message with exception', () {
       Fimber.clearAll();
-      var assertTree = AssertTree(["I", "W", "D", "E", "V"]);
+      final assertTree = AssertTree(["I", "W", "D", "E", "V"]);
       Fimber.plantTree(assertTree);
-      var logger = FimberLog("MYTAG");
+      final logger = FimberLog("MYTAG");
       logger.e("Test message", ex: Exception("test error"));
       assert(assertTree.lastLogLine.contains("Test message"));
       assert(assertTree.lastLogLine.contains("test error"));
@@ -134,11 +134,11 @@ void main() {
 
   test('Test with block tag', () {
     Fimber.clearAll();
-    var assertTree = AssertTree(["I", "W", "D", "E", "V"]);
+    final assertTree = AssertTree(["I", "W", "D", "E", "V"]);
     Fimber.plantTree(assertTree);
     Fimber.plantTree(DebugTree());
-    var someMessage = "Test message from outside of block";
-    var output = Fimber.withTag("TEST BLOCK", (log) {
+    const someMessage = "Test message from outside of block";
+    final output = Fimber.withTag("TEST BLOCK", (log) {
       log.d("Started block");
       var i = 0;
       for (i = 0; i < 10; i++) {
@@ -149,26 +149,24 @@ void main() {
     });
     expect(10, output);
     expect(12, assertTree.allLines.length);
-    for (var line in assertTree.allLines) {
+    for (final line in assertTree.allLines) {
       // test tag
       assert(line.contains("TEST BLOCK"));
     }
-    ;
     //inside lines contain external value
-    for (var line in assertTree.allLines.sublist(1, 11)) {
+    for (final line in assertTree.allLines.sublist(1, 11)) {
       assert(line.contains(someMessage));
       assert(line.contains("D:TEST BLOCK"));
     }
-    ;
   });
 
   test('Test with block autotag', () {
     Fimber.clearAll();
-    var assertTree = AssertTree(["I", "W", "D", "E", "V"]);
+    final assertTree = AssertTree(["I", "W", "D", "E", "V"]);
     Fimber.plantTree(assertTree);
     Fimber.plantTree(DebugTree());
-    var someMessage = "Test message from outside of block";
-    var output = Fimber.block((log) {
+    const someMessage = "Test message from outside of block";
+    final output = Fimber.block((log) {
       log.d("Started block");
       var i = 0;
       for (i = 0; i < 10; i++) {
@@ -179,13 +177,12 @@ void main() {
     });
     expect(10, output);
     expect(12, assertTree.allLines.length); // 10 + start and end line
-    for (var line in assertTree.allLines) {
+    for (final line in assertTree.allLines) {
       // test tag
       assert(line.contains("main"));
     }
-    ;
     //inside lines contain external value
-    for (var line in assertTree.allLines.sublist(1, 11)) {
+    for (final line in assertTree.allLines.sublist(1, 11)) {
       assert(line.contains(someMessage));
       assert(line.contains("D:main"));
     }
@@ -193,8 +190,8 @@ void main() {
 
   test('Unplant trees test', () {
     Fimber.clearAll();
-    var assertTreeA = AssertTree(["I", "W", "D", "E", "V"]);
-    var assertTreeB = AssertTree(["I", "W", "E"]);
+    final assertTreeA = AssertTree(["I", "W", "D", "E", "V"]);
+    final assertTreeB = AssertTree(["I", "W", "E"]);
     Fimber.plantTree(assertTreeA);
     Fimber.plantTree(assertTreeB);
     Fimber.plantTree(DebugTree(printTimeType: DebugTree.timeElapsedType));
@@ -220,7 +217,7 @@ void main() {
   test('Constructor Log Tag generation', () {
     Fimber.clearAll();
 
-    var assertTree = AssertTree(["I", "W", "D", "E", "V"]);
+    final assertTree = AssertTree(["I", "W", "D", "E", "V"]);
     Fimber.plantTree(assertTree);
     Fimber.plantTree(DebugTree());
 
@@ -234,7 +231,7 @@ void main() {
   test('Factory method Log Tag generation', () {
     Fimber.clearAll();
 
-    var assertTree = AssertTree(["I", "W", "D", "E", "V"]);
+    final assertTree = AssertTree(["I", "W", "D", "E", "V"]);
     Fimber.plantTree(assertTree);
     Fimber.plantTree(DebugTree.elapsed());
 
@@ -248,25 +245,27 @@ void main() {
 
   test('Throw Error and other any class', () {
     Fimber.clearAll();
-    var assertTree = AssertTree(["I", "W"]);
+    final assertTree = AssertTree(["I", "W"]);
     Fimber.plantTree(assertTree);
     Fimber.plantTree(DebugTree.elapsed());
     Fimber.i("Test log statement");
     Fimber.i("Test throw ERROR", ex: ArgumentError.notNull("testValue"));
     Fimber.i("Test throw DATA", ex: TestClass());
     Fimber.w("End log statment");
-    assert(assertTree.allLines[1]
-        .contains("Invalid argument(s) (testValue): Must not be null"));
+    assert(
+      assertTree.allLines[1]
+          .contains("Invalid argument(s) (testValue): Must not be null"),
+    );
     assert(assertTree.allLines[3].contains("TestClass.instance"));
   });
 
   test('Test Stacktrace', () {
     Fimber.clearAll();
-    var assertTree = AssertTree(["I", "W"]);
+    final assertTree = AssertTree(["I", "W"]);
     Fimber.plantTree(assertTree);
     Fimber.plantTree(DebugTree.elapsed());
     Fimber.i("Test log statement");
-    var testClass = TestClass();
+    final testClass = TestClass();
     try {
       testClass.throwSomeError();
       // ignore: avoid_catches_without_on_clauses
@@ -302,7 +301,7 @@ void main() {
 
   test('Test mute/unmute', () {
     Fimber.clearAll();
-    var assertTree = AssertTree(["V", "I", "D", "W"]);
+    final assertTree = AssertTree(["V", "I", "D", "W"]);
     Fimber.plantTree(assertTree);
     Fimber.i("Test INFO log.");
     Fimber.mute("I");
@@ -317,7 +316,7 @@ void main() {
 
   test('Test Multiple mute and unmute', () {
     Fimber.clearAll();
-    var assertTree = AssertTree(["V", "I", "D", "W"]);
+    final assertTree = AssertTree(["V", "I", "D", "W"]);
     Fimber.plantTree(assertTree);
     Fimber.i("Test INFO log.");
     Fimber.mute("I");
@@ -335,13 +334,18 @@ void main() {
   group("Custom format tree", () {
     test("Test custom format with linenumber", () {
       final formatTree = AssertFormatTree(
-          "${CustomFormatTree.tagToken}\t${CustomFormatTree.fileNameToken}\t- ${CustomFormatTree.filePathToken} : ${CustomFormatTree.lineNumberToken}");
+        "${CustomFormatTree.tagToken}\t${CustomFormatTree.fileNameToken}\t- ${CustomFormatTree.filePathToken} : ${CustomFormatTree.lineNumberToken}",
+      );
       Fimber.plantTree(formatTree);
       Fimber.i("Test message");
-      assert(formatTree.allLines.first
-          .startsWith('main.<ac>.<ac>\tfimber_test.dart\t'));
-      assert(formatTree.allLines.first
-          .endsWith('flutter-fimber/fimber/test/fimber_test.dart : 340'));
+      assert(
+        formatTree.allLines.first
+            .startsWith('main.<ac>.<ac>\tfimber_test.dart\t'),
+      );
+      assert(
+        formatTree.allLines.first
+            .endsWith('flutter-fimber/fimber/test/fimber_test.dart : 340'),
+      );
 
       Fimber.unplantTree(formatTree);
     });
@@ -351,7 +355,8 @@ void main() {
     test("Debug colors - visual test only", () {
       Fimber.clearAll();
       Fimber.plantTree(
-          DebugTree(logLevels: ["V", "D", "I", "W", "E"], useColors: true));
+        DebugTree(logLevels: ["V", "D", "I", "W", "E"], useColors: true),
+      );
       Fimber.v("verbose logging");
       Fimber.d("debug logging");
       Fimber.i("info logging");
@@ -405,10 +410,15 @@ class AssertTree extends LogTree {
   }
 
   @override
-  void log(String level, String msg,
-      {String? tag, dynamic? ex, StackTrace? stacktrace}) {
+  void log(
+    String level,
+    String msg, {
+    String? tag,
+    dynamic? ex,
+    StackTrace? stacktrace,
+  }) {
     tag = (tag ?? LogTree.getTag());
-    var newLogLine =
+    final newLogLine =
         "$level:$tag\t$msg\t$ex\n${stacktrace?.toString().split('\n') ?? ""}";
     lastLogLine = newLogLine;
     allLines.add(newLogLine);

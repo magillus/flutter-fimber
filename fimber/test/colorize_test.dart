@@ -25,12 +25,21 @@ void main() async {
           "${colorize.wrap("TEST TEXT....", foreground: AnsiColor.white)}");
 
       print(Colorize.wrapWith("Magenta", foreground: AnsiColor.magenta));
-      print(Colorize.wrapWith("Blue reversed",
-          foreground: AnsiColor.blue, reverse: true));
-      print(Colorize.wrapWith("Yellow and Green bright reversed",
+      print(
+        Colorize.wrapWith(
+          "Blue reversed",
+          foreground: AnsiColor.blue,
+          reverse: true,
+        ),
+      );
+      print(
+        Colorize.wrapWith(
+          "Yellow and Green bright reversed",
           background: AnsiColor.green,
           foreground: AnsiColor.yellow,
-          reverse: true));
+          reverse: true,
+        ),
+      );
       print(Colorize.wrapWith("Yellow bright", bright: AnsiColor.yellow));
 
       print(Colorize.wrapWith("Some text", foreground: AnsiColor.magenta));
@@ -38,23 +47,25 @@ void main() async {
     });
 
     test("Test stylize", () {
-      var style = ColorizeStyle([
+      final style = ColorizeStyle([
         AnsiStyle(AnsiSelection.foreground, color: AnsiColor.green),
         AnsiStyle(AnsiSelection.background, color: AnsiColor.blue)
       ]);
       print(style.wrap("TEST GREEN ON blue"));
 
-      var styleB = ColorizeStyle([
+      final styleB = ColorizeStyle([
         AnsiStyle.background(AnsiColor.yellow),
         AnsiStyle.foreground(AnsiColor.black)
       ]);
       print(styleB.wrap("Test black on yellow background"));
 
-      var styleGray30 = ColorizeStyle(
-          [AnsiStyle.foreground(AnsiColor.bits)..bit9Pallete = 240]);
+      final styleGray30 = ColorizeStyle(
+        [AnsiStyle.foreground(AnsiColor.bits)..bit9Pallete = 240],
+      );
       print(styleGray30.wrap("Test with gray 30"));
-      var styleGray60 = ColorizeStyle(
-          [AnsiStyle.foreground(AnsiColor.bits)..bit9Pallete = 249]);
+      final styleGray60 = ColorizeStyle(
+        [AnsiStyle.foreground(AnsiColor.bits)..bit9Pallete = 249],
+      );
       print(styleGray60.wrap("Test with gray 60"));
     });
   });
