@@ -6,12 +6,12 @@ import 'package:fimber_io/fimber_io.dart';
 import 'package:test/test.dart';
 
 void main() async {
-  var testPort = 17779;
+  const testPort = 17779;
 
   group('UDP Socket log tests.', () {
     NetworkLoggingTree logTree;
 
-    var logMessages = <String>[];
+    final logMessages = <String>[];
     late RawDatagramSocket testReceiveSocket;
 
     setUp(() async {
@@ -21,19 +21,22 @@ void main() async {
 
       print('Datagram socket ready to receive');
       print('${testReceiveSocket.address.address}:${testReceiveSocket.port}');
-      testReceiveSocket.listen((RawSocketEvent e) {
-        print('Socket event: $e');
-        var d = testReceiveSocket.receive();
-        if (d == null) return;
-        var message = utf8.decoder.convert(d.data);
-        logMessages.add(message);
-      }, onError: (t) => print('Error with socket ' + t));
+      testReceiveSocket.listen(
+        (RawSocketEvent e) {
+          print('Socket event: $e');
+          final d = testReceiveSocket.receive();
+          if (d == null) return;
+          final message = utf8.decoder.convert(d.data);
+          logMessages.add(message);
+        },
+        onError: (t) => print('Error with socket $t'),
+      );
 
       logTree = NetworkLoggingTree.udp('127.0.0.1', testPort);
 
       Fimber.plantTree(logTree);
       print('Delay to start sockets');
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future.delayed(const Duration(milliseconds: 100));
 
       print('Test Setup complete.');
     });
@@ -47,7 +50,7 @@ void main() async {
     test('Test UDP socket logger', () async {
       Fimber.i('test log out1');
 
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future.delayed(const Duration(milliseconds: 100));
 
       expect(1, logMessages.length);
       expect(true, logMessages.last.contains('test log out1'));
@@ -55,7 +58,7 @@ void main() async {
   });
 
   group('TCP Socket log tests.', () {
-    var logMessages = <String>[];
+    final logMessages = <String>[];
     late ServerSocket testReceiveSocket;
     late StreamSubscription socketSubscription;
     late StreamSubscription clientSubscription;
@@ -68,16 +71,22 @@ void main() async {
       print('Datagram socket ready to receive');
       print('${testReceiveSocket.address.address}:${testReceiveSocket.port}');
 
-      socketSubscription = testReceiveSocket.listen((client) {
-        print('Socket connected. $client');
-        clientSubscription = client.listen((event) {
-          var message = utf8.decoder.convert(event);
-          logMessages.add(message);
-        }, onError: (t) => print('Error with socket ' + t));
-      }, onDone: () => print('Socket client disconnected.'));
+      socketSubscription = testReceiveSocket.listen(
+        (client) {
+          print('Socket connected. $client');
+          clientSubscription = client.listen(
+            (event) {
+              final message = utf8.decoder.convert(event);
+              logMessages.add(message);
+            },
+            onError: (t) => print('Error with socket $t'),
+          );
+        },
+        onDone: () => print('Socket client disconnected.'),
+      );
 
       print('Delay to start sockets');
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future.delayed(const Duration(milliseconds: 100));
 
       print('Test Setup complete.');
     });
@@ -90,12 +99,12 @@ void main() async {
     });
 
     test('Test TCP socket logger', () async {
-      var logTree = NetworkLoggingTree.tcp('127.0.0.1', testPort);
+      final logTree = NetworkLoggingTree.tcp('127.0.0.1', testPort);
 
       Fimber.plantTree(logTree);
       Fimber.i('test log out2');
 
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future.delayed(const Duration(milliseconds: 100));
 
       expect(1, logMessages.length);
       expect(true, logMessages.last.contains('test log out2'));
