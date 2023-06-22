@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:fimber_io/fimber_io.dart';
 import 'package:flutter_fimber/flutter_fimber.dart';
 
 void main() {
@@ -73,7 +72,7 @@ class _MyAppState extends State<MyApp> {
                 onPressed: () {
                   try {
                     throw Exception("Test exception here");
-                  } on dynamic catch (e) {
+                  } on Exception catch (e) {
                     Fimber.w("Warning message test ${DateTime.now()}", ex: e);
                   }
                 },
@@ -83,7 +82,7 @@ class _MyAppState extends State<MyApp> {
                 onPressed: () {
                   try {
                     throw AssertionError();
-                  } on dynamic catch (e, s) {
+                  } on Exception catch (e, s) {
                     Fimber.w("Warning message test ${DateTime.now()}",
                         ex: e, stacktrace: s);
                   }
