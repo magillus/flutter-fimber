@@ -10,21 +10,32 @@ import '../fimber_io.dart';
 /// nc -kvl 5601 | grep TheClassName
 class NetworkLoggingTree extends CustomFormatTree implements UnPlantableTree {
   /// Creates isntance of [NetworkLoggingTree]
-  NetworkLoggingTree._(this._server, this._port,
-      {this.timeout = const Duration(seconds: 10), this.isTcpSocket = false})
-      : super(
+  NetworkLoggingTree._(
+    this._server,
+    this._port,
+    this.timeout, {
+    this.isTcpSocket = false,
+  }) : super(
           useColors: true,
           logFormat:
               '${CustomFormatTree.levelToken} ${CustomFormatTree.tagToken}: ${CustomFormatTree.messageToken}',
         );
 
   /// Creates UDP version of the [NetworkLoggingTree]
-  factory NetworkLoggingTree.udp(String server, int port) =>
-      NetworkLoggingTree._(server, port);
+  factory NetworkLoggingTree.udp(
+    String server,
+    int port, {
+    Duration timeout = const Duration(seconds: 10),
+  }) =>
+      NetworkLoggingTree._(server, port, timeout);
 
   /// Creates TCP version of the [NetworkLoggingTree]
-  factory NetworkLoggingTree.tcp(String server, int port) =>
-      NetworkLoggingTree._(server, port, isTcpSocket: true);
+  factory NetworkLoggingTree.tcp(
+    String server,
+    int port, {
+    Duration timeout = const Duration(seconds: 10),
+  }) =>
+      NetworkLoggingTree._(server, port, timeout, isTcpSocket: true);
 
   /// Connection timeout (used on TCP socket)
   final Duration timeout;
@@ -57,10 +68,12 @@ class NetworkLoggingTree extends CustomFormatTree implements UnPlantableTree {
         print('Socket opened. $value');
         _socketUdp = value;
       });
-      _socketUdpComplete?.complete(RawDatagramSocket.bind(
-        _server,
-        0, // use any available port
-      ));
+      _socketUdpComplete?.complete(
+        RawDatagramSocket.bind(
+          _server,
+          0, // use any available port
+        ),
+      );
     }
   }
 
@@ -100,17 +113,20 @@ class NetworkLoggingTree extends CustomFormatTree implements UnPlantableTree {
       }
     } else {
       if (_socketUdp != null) {
-        var bytesToSend = utf8.encoder.convert(line).toList();
+        final bytesToSend = utf8.encoder.convert(line).toList();
         print('UDP socket available - will send: ${bytesToSend.length}');
         _socketUdp?.send(bytesToSend, InternetAddress(_server), _port);
       } else {
         print('No socket available - will wait for one with this message.');
 
         /// TODO make a small cache locally before socket is available
-        _socketUdpComplete?.future.then((value) => value.send(
+        _socketUdpComplete?.future.then(
+          (value) => value.send(
             utf8.encoder.convert(line).toList(),
             InternetAddress(_server),
-            _port));
+            _port,
+          ),
+        );
       }
     }
   }

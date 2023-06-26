@@ -1,2 +1,6 @@
-#include: package:pedantic/analysis_options.yaml
-include: effective-dart.yaml
+include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    always_use_package_imports: false
+    prefer_relative_imports: true

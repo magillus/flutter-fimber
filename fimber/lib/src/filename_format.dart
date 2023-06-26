@@ -26,53 +26,70 @@ class LogFileNameFormatter {
 
   /// Factory method to create date and time filename formatter with
   /// prefix and postfix.
-  factory LogFileNameFormatter.full(
-      {String prefix = "log_", String postfix = ".txt"}) {
+  factory LogFileNameFormatter.full({
+    String prefix = "log_",
+    String postfix = ".txt",
+  }) {
     return LogFileNameFormatter(
-        filenameFormat: "$prefix${_dayFormat}_$_timeFormat$postfix");
+      filenameFormat: "$prefix${_dayFormat}_$_timeFormat$postfix",
+    );
   }
 
   /// Factory method to create hourly filename formatter with
   /// prefix and postifx.
-  factory LogFileNameFormatter.hourly(
-      {String prefix = "log_", String postfix = ".txt"}) {
+  factory LogFileNameFormatter.hourly({
+    String prefix = "log_",
+    String postfix = ".txt",
+  }) {
     return LogFileNameFormatter(
-        filenameFormat: "$prefix${_dayFormat}_$_dayToken$postfix");
+      filenameFormat: "$prefix${_dayFormat}_$_dayToken$postfix",
+    );
   }
 
   /// Factory method to create daily filename formatter with
   /// prefix and postfix
-  factory LogFileNameFormatter.daily(
-      {String prefix = "log_", String postfix = ".txt"}) {
+  factory LogFileNameFormatter.daily({
+    String prefix = "log_",
+    String postfix = ".txt",
+  }) {
     return LogFileNameFormatter(
-        filenameFormat: "$prefix${_dayFormat}_$_dayToken$postfix");
+      filenameFormat: "$prefix${_dayFormat}_$_dayToken$postfix",
+    );
   }
 
   /// Factory method to create weekly filename formatter with
   /// prefix and postfix
-  factory LogFileNameFormatter.weekly(
-      {String prefix = "log_", String postfix = ".txt"}) {
+  factory LogFileNameFormatter.weekly({
+    String prefix = "log_",
+    String postfix = ".txt",
+  }) {
     return LogFileNameFormatter(filenameFormat: "$prefix$_dayFormat$postfix");
   }
 
   /// Formats date time based on defined formatter
   String format(DateTime dateTime) {
-    var name = filenameFormat;
+    final name = filenameFormat;
     return name
         .replaceAll(_fullYearToken, dateTime.year.toString().padLeft(4, '0'))
         .replaceAll(
-            _year2charToken, (dateTime.year % 1000).toString().padLeft(2, '0'))
+          _year2charToken,
+          (dateTime.year % 1000).toString().padLeft(2, '0'),
+        )
         .replaceAll(_monthToken, _month(dateTime.month))
         .replaceAll(_month3charToken, _month3(dateTime.month))
         .replaceAll(_month2charToken, dateTime.month.toString().padLeft(2, '0'))
         .replaceAll(_dayToken, dateTime.day.toString().padLeft(2, '0'))
         .replaceAll(_dayOfWeekToken, _dayOfWeek(dateTime.weekday))
         .replaceAll(
-            _hour12Token, (dateTime.hour % 12).toString().padLeft(2, '0'))
+          _hour12Token,
+          (dateTime.hour % 12).toString().padLeft(2, '0'),
+        )
         .replaceAll(_hour24Token, dateTime.hour.toString().padLeft(2, '0'))
         .replaceAll(_hourPmAmToken, _amPmHour(dateTime.hour))
-        .replaceAll(_hourPmAmToken.toUpperCase(),
-            _amPmHour(dateTime.hour).toUpperCase())
+        .replaceAll(
+          _hourPmAmToken.toUpperCase(),
+          _amPmHour(dateTime.hour).toUpperCase(),
+        )
         .replaceAll(_secondsToken, dateTime.second.toString().padLeft(2, '0'))
         .replaceAll(_minutesToken, dateTime.minute.toString().padLeft(2, '0'));
   }

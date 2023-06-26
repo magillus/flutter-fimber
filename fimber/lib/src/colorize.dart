@@ -83,7 +83,7 @@ class AnsiStyle {
     if (bit9Pallete != null && color == AnsiColor.bits) {
       return "8;5;$bit9Pallete";
     } else {
-      return (color?.index.toString()) ?? "";
+      return color?.index.toString() ?? "";
     }
   }
 
@@ -129,9 +129,9 @@ class ColorizeStyle {
 
   /// Wraps a text with list of AnsiStyles.
   String wrap(String text, {List<AnsiStyle> additionalStyles = const []}) {
-    var styles = List.from(_styles)..addAll(additionalStyles);
-    var retString = text;
-    for (var style in styles) {
+    final List<AnsiStyle> styles = List.from(_styles)..addAll(additionalStyles);
+    String retString = text;
+    for (final AnsiStyle style in styles) {
       retString = style.apply(retString);
     }
     return retString;
@@ -167,60 +167,67 @@ class Colorize {
   bool underline = false;
 
   /// Creates Colorize class with defined styles.
-  Colorize(
-      {this.foreground,
-      this.background,
-      this.bright,
-      this.reverse = false,
-      this.underline = false});
+  Colorize({
+    this.foreground,
+    this.background,
+    this.bright,
+    this.reverse = false,
+    this.underline = false,
+  });
 
   /// Wraps text into the defined styles with option to override a style.
-  String wrap(String text,
-      {AnsiColor? foreground,
-      AnsiColor? background,
-      AnsiColor? bright,
-      bool? reverse,
-      bool? underline}) {
-    var underlineStyle = (underline ?? false) ? underline : this.underline;
+  String wrap(
+    String text, {
+    AnsiColor? foreground,
+    AnsiColor? background,
+    AnsiColor? bright,
+    bool? reverse,
+    bool? underline,
+  }) {
+    final underlineStyle = (underline ?? false) ? underline : this.underline;
 
-    var rvStyle = (reverse ?? false) ? reverse : this.reverse;
+    final rvStyle = (reverse ?? false) ? reverse : this.reverse;
 
-    var fgColor = (foreground != null)
+    final fgColor = (foreground != null)
         ? foreground
         : (this.foreground != null)
             ? this.foreground
             : null;
 
-    var bgColor = (background != null)
+    final bgColor = (background != null)
         ? background
         : (this.background != null)
             ? this.background
             : null;
-    var brColor = (bright != null)
+    final brColor = (bright != null)
         ? bright
         : (this.bright != null)
             ? this.bright
             : null;
-    return wrapWith(text,
-        background: bgColor,
-        foreground: fgColor,
-        bright: brColor,
-        reverse: rvStyle,
-        underline: underlineStyle);
+    return wrapWith(
+      text,
+      background: bgColor,
+      foreground: fgColor,
+      bright: brColor,
+      reverse: rvStyle,
+      underline: underlineStyle,
+    );
   }
 
   /// Wraps text with provided styles.
-  static String wrapWith(String text,
-      {AnsiColor? background,
-      AnsiColor? foreground,
-      AnsiColor? bright,
-      bool? reverse,
-      bool? underline}) {
+  static String wrapWith(
+    String text, {
+    AnsiColor? background,
+    AnsiColor? foreground,
+    AnsiColor? bright,
+    bool? reverse,
+    bool? underline,
+  }) {
     var retString = text;
     if (reverse ?? false) {
       // if reverse and background/foreground are specified we should reverse their colors
       if (background != null || foreground != null || bright != null) {
-        var tmp = background;
+        final tmp = background;
         background = foreground ?? bright;
         foreground = tmp;
       } else {
@@ -242,11 +249,13 @@ class Colorize {
     return retString;
   }
 
-  static String _wrapSingle(String text,
-      {AnsiColor? foreground,
-      AnsiColor? background,
-      AnsiColor? bright,
-      bool? blink}) {
+  static String _wrapSingle(
+    String text, {
+    AnsiColor? foreground,
+    AnsiColor? background,
+    AnsiColor? bright,
+    bool? blink,
+  }) {
     var style = _foregroundType;
     var color = foreground;
     if (blink ?? false) {
