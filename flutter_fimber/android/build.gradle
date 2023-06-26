@@ -1,4 +1,4 @@
-group 'com.magillus.flutterfimber'
+group 'com.magillus.flutter_fimber'
 version '1.0-SNAPSHOT'
 
 buildscript {
