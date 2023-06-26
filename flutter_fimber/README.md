@@ -1,24 +1,15 @@
-# Flutter plug-in for Fimber
+# flutter_fimber
 
-This plug-in will make the logging via Fimber into native OS logging output.
+A new Flutter plugin project.
 
-## Getting Started - import 
+## Getting Started
 
-### Dependency setup
-```yaml
-  flutter_fimber: ^0.6.6
-```
-### Import setup
-```dart
-import 'package:flutter_fimber/flutter_fimber.dart';
-```
-### Plant a log tree
+This project is a starting point for a Flutter
+[plug-in package](https://flutter.dev/developing-packages/),
+a specialized package that includes platform-specific implementation code for
+Android and/or iOS.
 
-In code on start of your application add `FimberTree` like this:
-```dart
-  Fimber.plantTree(FimberTree());
-``` 
+For help getting started with Flutter development, view the
+[online documentation](https://flutter.dev/docs), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.
 
-iOS and Android platforms supported.
-
-For more usage see [Fimber project](https://pub.dartlang.org/packages/fimber)
