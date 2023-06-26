@@ -15,7 +15,7 @@ To start add using it:
 
 ```yaml
 dependencies:
-  fimber: ^0.6.6
+  fimber: ^0.6.7
   ```
 - remember about import in file you plan to use Fimber
 
