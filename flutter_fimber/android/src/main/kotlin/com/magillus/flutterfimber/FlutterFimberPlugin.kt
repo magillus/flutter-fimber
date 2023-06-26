@@ -1,4 +1,4 @@
-package com.magillus.flutter_fimber
+package com.magillus.flutterfimber
 
 import android.util.Log
 import androidx.annotation.NonNull

@@ -1,3 +1,5 @@
+## [0.7.0] - Dart 3 update.
+
 ## [0.6.6] - Bugfix for log matcher to include package not only files 
 
 ## [0.6.5] - Bug fixes
