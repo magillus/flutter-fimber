@@ -36,7 +36,5 @@ flutter:
       android:
         package: com.magillus.flutter_fimber
         pluginClass: FlutterFimberPlugin
-        sharedDarwinSource: true
       ios:
         pluginClass: FlutterFimberPlugin
-        sharedDarwinSource: true
