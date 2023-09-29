@@ -82,7 +82,7 @@ class _MyAppState extends State<MyApp> {
                 onPressed: () {
                   try {
                     throw AssertionError();
-                  } on Exception catch (e, s) {
+                  } on AssertionError catch (e, s) {
                     Fimber.w("Warning message test ${DateTime.now()}",
                         ex: e, stacktrace: s);
                   }
